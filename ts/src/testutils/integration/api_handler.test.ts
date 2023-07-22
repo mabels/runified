@@ -13,7 +13,6 @@ import { ErrorFactory } from "../../generated/error";
 import { MockResponseWriter } from "../response_writer";
 import { SystemAbstractionImpl } from "../../utils/system_abstraction";
 import { TimeMode } from "../../types/sys_abstraction";
-import { Time } from "../../types/time";
 
 const reqObj = {
   collectionAddress: "collectionAddress",
