@@ -13,6 +13,7 @@ import { ErrorFactory } from "../../generated/error";
 import { MockResponseWriter } from "../response_writer";
 import { SystemAbstractionImpl } from "../../utils/system_abstraction";
 import { TimeMode } from "../../types/sys_abstraction";
+import { Time } from "../../types/time";
 
 const reqObj = {
   collectionAddress: "collectionAddress",
@@ -64,7 +65,7 @@ describe("api_handler", () => {
       error: "test error",
       level: "error",
       msg: "API error",
-      ts: "2021-01-31T23:00:01.000Z",
+      ts: new SystemAbstractionImpl({TimeMode: TimeMode.STEP}).Time().Now().toISOString(),
     });
     expect(mw.StatusCode).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
     const body = mw.Body;
