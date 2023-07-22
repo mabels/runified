@@ -91,11 +91,15 @@ it("TestRunified", async () => {
       RunifiedResFactory,
       reqVal
     );
+    const mySys = new SystemAbstractionImpl({ TimeMode: TimeMode.STEP });
+    for (let i = 0; i < 3; i++) {
+      mySys.Time().Now();
+    }
     expect(rctx.Response.Value).toEqual(
       RunifiedResFactory.Builder()
         .Coerce({
           ...obj,
-          createdAt: new Date("2021-01-31T23:00:04.000Z"),
+          createdAt: mySys.Time().Now().toISOString(),
         })
         .unwrap()
     );
