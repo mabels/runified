@@ -19,7 +19,7 @@ export class HttpClientImpl implements HttpClient {
   }
 
   async Do(req: HttpRequest): Promise<HttpResponse> {
-    const duplex: {duplex?: string} = {};
+    const duplex: { duplex?: string } = {};
     if (req.Body) {
       duplex.duplex = "half";
     }
@@ -28,7 +28,7 @@ export class HttpClientImpl implements HttpClient {
       body: req.Body,
       headers: req.Header.Merge(this._defaultHeader).AsHeaderInit(),
       signal: this._abortController.signal,
-      ...duplex
+      ...duplex,
     });
     return Promise.resolve({
       Header: HttpHeader.from(fres.headers),
