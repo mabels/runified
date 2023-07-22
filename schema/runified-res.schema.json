@@ -1,0 +1,39 @@
+{
+	"$id": "https://schema.adviser.com/runified-res.schema.json",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "RunifiedRes",
+	"type": "object",
+	"properties": {
+		"id": {
+			"type": "string"
+		},
+		"contract": {
+			"type": "string"
+		},
+		"collectionAddress": {
+			"type": "string"
+		},
+		"price": {
+			"$ref": "file://./price.schema.json"
+		},
+		"tokenId": {
+			"type": "string"
+		},
+		"source": {
+			"$ref": "file://./source.schema.json"
+		},
+		"createdAt": {
+			"type": "string",
+			"format": "date-time"
+		}
+	},
+	"required": [
+		"id",
+		"contract",
+		"collectionAddress",
+		"price",
+		"tokenId",
+		"source",
+		"createdAt"
+	]
+}

@@ -1,0 +1,9 @@
+{
+  "url": "/hi?test=4",
+  "method": "POST",
+  "body": "Meno Doof",
+  "headers": {
+    "host": "header-host",
+    "X-Test": "meno"
+  }
+}

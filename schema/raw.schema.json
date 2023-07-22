@@ -1,0 +1,12 @@
+{
+	"$id": "https://schema.adviser.com/raw.schema.json",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "Raw",
+	"type": "object",
+	"properties": {
+	  "raw": {
+		"type": "string"
+	  }
+	},
+    "required": ["raw"]
+  }

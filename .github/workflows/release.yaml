@@ -1,0 +1,65 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Release - Wueste
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.20"
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: mabels/neckless@main
+        with:
+          version: v0.1.16
+
+      - name: Patch Version ${{ env.GITHUB_REF }}
+        run: |
+          env | grep 'v1'
+          node .github/workflows/patch-package.json.js "$GITHUB_REF"
+          git diff
+
+      - name: Publish wueste NPM
+        env:
+          NECKLESS_PRIVKEY: ${{ secrets.NECKLESS_PRIVKEY }}
+        run: |
+          rm -rf ./dist
+          eval $(neckless kv ls --shKeyValue --ghAddMask NPM_PASS  NPM_USER "NPM_TOTP@Totp()")
+          # env | sort | grep NPM
+          token=$(curl -H "npm-otp: $NPM_TOTP" \
+               -X PUT \
+               -H 'content-type: application/json' \
+               -d "{\"name\":\"$NPM_USER\", \"password\": \"$NPM_PASS\"}" \
+               https://registry.npmjs.org/-/user/org.couchdb.user:$NPM_USER | jq -r .token)
+          echo "//registry.npmjs.org/:_authToken=$token" > $HOME/.npmrc
+          npm install
+          npm run build
+          npm run test
+          npm run smoke
+          cd pubdir ; npm publish --otp=$(neckless kv ls --onlyValue "NPM_TOTP@Totp()")
+
+#      - name: Publish wueste latest
+#        run: |
+#          git tag -f latest
+#          git push -f origin latest

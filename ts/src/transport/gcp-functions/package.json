@@ -1,0 +1,14 @@
+{
+  "main": "./index.js",
+  "scripts": {
+    "gcp-build": "npm run build",
+    "build": "npx esbuild --bundle --platform=node --loader=ts  --format=cjs < index.ts > index.js",
+    "start": "npx functions-framework --target=runified --signature-type=http --port=8080"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.3"
+  }
+}

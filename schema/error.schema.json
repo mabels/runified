@@ -1,0 +1,28 @@
+{
+	"$id": "https://schema.adviser.com/error.schema.json",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "Error",
+	"type": "object",
+	"properties": {
+		"requestId": {
+			"type": "string"
+		},
+		"type": {
+			"type": "string",
+            "default": "error"
+		},
+		"message": {
+			"type": "string"
+		},
+		"status": {
+			"type": "integer",
+			"format": "int"
+		}
+	},
+	"required": [
+        "requestId",
+        "type",
+        "message",
+		"status"
+	]
+}

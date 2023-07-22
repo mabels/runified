@@ -1,0 +1,12 @@
+{
+	"scripts": {
+		"build": "npx esbuild --bundle --sourcemap --format=esm ./worker.ts > worker.js",
+		"start": "wrangler dev  ./worker.js -l"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20230518.0"
+	},
+	"dependencies": {
+		"esbuild": "^0.18.10"
+	}
+}

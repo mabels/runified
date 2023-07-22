@@ -1,0 +1,27 @@
+{
+	"$id": "https://schema.6265746f6f.tech/runified-req.schema.json",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "RunifiedReq",
+	"type": "object",
+	"properties": {
+		"id": {
+			"type": "string"
+		},
+		"contract": {
+			"type": "string"
+		},
+		"collectionAddress": {
+			"type": "string"
+		},
+		"price": {
+			"$ref": "file://./price.schema.json"
+		},
+		"tokenId": {
+			"type": "string"
+		},
+		"source": {
+			"$ref": "file://./source.schema.json"
+		}
+	},
+	"required": ["id", "contract", "collectionAddress", "price", "tokenId", "source"]
+}
