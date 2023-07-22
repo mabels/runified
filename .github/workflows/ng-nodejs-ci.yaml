@@ -32,7 +32,7 @@ jobs:
 
       - name: Patch Version ${{ env.GITHUB_REF }}
         run: |
-          node .github/workflows/patch-package.json.js "origin/head/0.0.0-smoke"
+          cd ts ; node ../.github/workflows/patch-package.json.js "origin/head/0.0.0-smoke"
           git diff
 
       - name: Build JS runified
