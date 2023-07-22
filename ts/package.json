@@ -4,8 +4,8 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "eslint . --ext .ts --fix",
-    "prettier": "prettier --write .",
+    "lint": "eslint . --ext .ts",
+    "prettier": "prettier",
     "build": "tsc",
     "build:aws": "npx esbuild --bundle --sourcemap --format=cjs ./index.ts > index.js; zip lambda.zip index.js",
     "prepare:aws": "aws iam create-role --role-name lambda-ex --assume-role-policy-document '{\"Version\": \"2012-10-17\",\"Statement\": [{ \"Effect\": \"Allow\", \"Principal\": {\"Service\": \"lambda.amazonaws.com\"}, \"Action\": \"sts:AssumeRole\"}]}'",
