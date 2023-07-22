@@ -65,7 +65,7 @@ describe("api_handler", () => {
       error: "test error",
       level: "error",
       msg: "API error",
-      ts: new SystemAbstractionImpl({TimeMode: TimeMode.STEP}).Time().Now().toISOString(),
+      ts: new SystemAbstractionImpl({ TimeMode: TimeMode.STEP }).Time().Now().toISOString(),
     });
     expect(mw.StatusCode).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
     const body = mw.Body;
