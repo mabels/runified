@@ -31,7 +31,7 @@ jobs:
 
       - name: Patch Version ${{ env.GITHUB_REF }}
         run: |
-          cd ts ; node .github/workflows/patch-package.json.js "$GITHUB_REF"
+          cd ts ; node ../.github/workflows/patch-package.json.js "$GITHUB_REF"
           git diff
 
       - name: Publish wueste NPM
