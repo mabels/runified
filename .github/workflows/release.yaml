@@ -53,7 +53,7 @@ jobs:
           npm run build
           npm run test
           npm run smoke
-          cd pubdir ; npm publish --otp=$(neckless kv ls --onlyValue "NPM_TOTP@Totp()")
+          cd pubdir ; npm publish --otp=$(neckless kv ls --onlyValue "NPM_TOTP@Totp()") --access public
 
 #      - name: Publish runified latest
 #        run: |

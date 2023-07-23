@@ -1,5 +1,5 @@
 {
-  "name": "runified",
+  "name": "@adviser/runified",
   "version": "0.0.0",
   "description": "unified runtime which able to build in any modern language an should abstract the underlying runtime",
   "repository": {
