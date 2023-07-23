@@ -46,6 +46,6 @@ jobs:
           npm run test
 
       - name: Smoke JS runified
-         run: |
-           cd ts
-           npm run smoke
+        run: |
+          cd ts
+          npm run smoke
