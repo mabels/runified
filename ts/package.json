@@ -36,7 +36,7 @@
     "generate": "rm -r src/generated ; npx wueste wueste-generator --input-file ../schema/error.schema.json  --input-file ../schema/runified-req.schema.json --input-file ../schema/runified-res.schema.json --output-dir ./src/generated",
     "pubdir": "npm run build; rm -rf pubdir ; mkdir -p pubdir; cp -pr ../.gitignore .npmignore package.json ../LICENSE ../README.md pubdir/; cd dist ; cp -pr . ../pubdir/",
     "presmoke": "npm run pubdir ; cd pubdir ; npm pack",
-    "smoke": "cd smoke; npm init -y -f ; npm install -f ../pubdir/runified-*.tgz; npx ts-node smoke.ts"
+    "smoke": "cd smoke; npm init -y -f ; npm install -f ../pubdir/adviser-runified-*.tgz; npx ts-node smoke.ts"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.21.5",
