@@ -60,4 +60,3 @@ startApp(async (baseUrl: string, app: App, log: Logger) => {
   .catch((err) => {
     console.error(err);
   });
-
