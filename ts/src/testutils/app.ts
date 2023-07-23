@@ -1,9 +1,6 @@
-import { App } from "../types/app/app";
-import { CLIConfig } from "../types/app/config";
-import { HTTPHandler } from "../types/http_handler";
-import { Logger } from "../types/logger";
-import { SysAbstraction } from "../types/sys_abstraction";
-import { SystemAbstractionImpl } from "../utils/system_abstraction";
+import { App, CLIConfig } from "../types/app";
+import { HTTPHandler, Logger, SysAbstraction } from "../types";
+import { SystemAbstractionImpl } from "../utils";
 import { MockLogger } from "./logger";
 
 interface MockAppParams {

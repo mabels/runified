@@ -1,18 +1,13 @@
-import { ApiHandler } from "../../app/api_handler";
+import { ApiHandler, FromCommandLine } from "../../app";
 import { MockApi } from "../api";
 import { MockApp } from "../app";
-import { FromCommandLine } from "../../app/cli_config";
-import { RunifiedReq } from "../../generated/runified_req";
+import { RunifiedReq, RunifiedReqFactory } from "../../generated/runified_req";
 import { RunifiedRes, RunifiedResFactory } from "../../generated/runified_res";
 import { MockLogger } from "../logger";
-import { RunifiedReqFactory } from "../../generated/runified_req";
-import { string2stream } from "../../utils/string2steam";
-import { DefaultHttpRequest } from "../../types/http_request";
-import { HttpStatusCode } from "../../types/http_statuscodes";
+import { SystemAbstractionImpl, string2stream } from "../../utils";
+import { DefaultHttpRequest, HttpStatusCode, TimeMode } from "../../types";
 import { ErrorFactory } from "../../generated/error";
 import { MockResponseWriter } from "../response_writer";
-import { SystemAbstractionImpl } from "../../utils/system_abstraction";
-import { TimeMode } from "../../types/sys_abstraction";
 
 const reqObj = {
   collectionAddress: "collectionAddress",

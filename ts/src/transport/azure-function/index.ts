@@ -1,12 +1,16 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 
-import { HttpResponseWriter } from "../../types/http_response_writer";
-import { HttpHeader } from "../../types/http_header";
-import { HttpStatusCode } from "../../types/http_statuscodes";
-import { ActionHandler, HttpServer } from "../../types/http_server";
+import {
+  ActionHandler,
+  AddrPort,
+  DefaultHttpRequest,
+  HttpHeader,
+  HttpResponseWriter,
+  HttpServer,
+  HttpStatusCode,
+  HttpURL,
+} from "../../types";
 import { setupTestServer } from "../test-server";
-import { DefaultHttpRequest, HttpURL } from "../../types/http_request";
-import { AddrPort } from "../../types/app/config";
 
 async function* streamAsyncIterable(stream: ReadableStream<Uint8Array>): AsyncIterable<Uint8Array> {
   const reader = stream.getReader();

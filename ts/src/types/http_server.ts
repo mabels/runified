@@ -1,6 +1,6 @@
 // package types
 
-import { AddrPort } from "./app/config";
+import { AddrPort } from "./app_port";
 import { HttpRequest } from "./http_request";
 import { HttpResponseWriter } from "./http_response_writer";
 

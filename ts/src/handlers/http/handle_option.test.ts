@@ -1,9 +1,7 @@
 // porting this go test to typescript
 
-import { FromCommandLine } from "../../app/cli_config";
-import { MockApiHandler } from "../../testutils/api_handler";
-import { MockHttpRequest } from "../../testutils/http_request";
-import { MockResponseWriter } from "../../testutils/response_writer";
+import { FromCommandLine } from "../../app";
+import { MockApiHandler, MockHttpRequest, MockResponseWriter } from "../../testutils";
 import { HandleOPTIONS } from "./handle_options";
 
 describe("TestHandleOption", () => {

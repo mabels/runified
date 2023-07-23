@@ -1,5 +1,5 @@
-import { MockResponseWriter } from "../testutils/response_writer";
-import { HttpHeader } from "../types/http_header";
+import { MockResponseWriter } from "../testutils";
+import { HttpHeader } from "../types";
 import { CalculateHeaderByteLength, CountingReadableStream, CountingResponseWriter, FilterHeaders } from "./counter";
 import { stream2string } from "./stream2string";
 

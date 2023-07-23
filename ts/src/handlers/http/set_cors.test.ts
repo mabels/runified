@@ -1,6 +1,5 @@
-import { FromCommandLine } from "../../app/cli_config";
-import { MockApiHandler } from "../../testutils/api_handler";
-import { MockHttpRequest } from "../../testutils/http_request";
+import { FromCommandLine } from "../../app";
+import { MockApiHandler, MockHttpRequest } from "../../testutils";
 import { SetCorsHeader } from "./set_cors";
 
 describe("TestSetCors", () => {

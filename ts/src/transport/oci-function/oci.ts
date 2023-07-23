@@ -1,17 +1,17 @@
-// import fdk from "@fnproject/fdk";
-
-// import { HttpResponseWriter } from "../../types/http_response_writer";
-// import { HttpHeader } from "../../types/http_header";
-import { HttpStatusCode } from "../../types/http_statuscodes";
-import { ActionHandler, HttpServer } from "../../types/http_server";
-import { setupTestServer } from "../test-server";
-// import { DefaultHttpRequest, HttpURL } from "../../types/http_request";
-
 import fdk from "@fnproject/fdk";
-import { HttpResponseWriter } from "../../types/http_response_writer";
-import { HttpHeader } from "../../types/http_header";
-import { HttpRequest, DefaultHttpRequest, HttpURL } from "../../types/http_request";
-import { AddrPort } from "../../types/app/config";
+
+import { setupTestServer } from "../test-server";
+import {
+  HttpRequest,
+  DefaultHttpRequest,
+  HttpURL,
+  ActionHandler,
+  AddrPort,
+  HttpHeader,
+  HttpResponseWriter,
+  HttpServer,
+  HttpStatusCode,
+} from "../../types";
 
 interface OciContext {
   _config: Record<string, string>;

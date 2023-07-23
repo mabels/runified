@@ -1,5 +1,5 @@
-import { ApiHandler } from "../../types/app/api_handler";
-import { HttpStatusCode } from "../../types/http_statuscodes";
+import { ApiHandler } from "../../types/app";
+import { HttpStatusCode } from "../../types";
 
 export function HandleOPTIONS(api: ApiHandler): Promise<boolean> {
   const r = api.Request();

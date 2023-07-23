@@ -1,13 +1,9 @@
 // TODO rename to http_handler_test.go
 
-import { HttpRequest } from "../../types/http_request";
-import { HttpResponseWriter } from "../../types/http_response_writer";
+import { HTTPHandler, HttpRequest, HttpResponseWriter } from "../../types";
 import { NodeHttpServer } from ".";
-import { HTTPHandler } from "../../types/http_handler";
 import { describe, expect, it } from "@jest/globals";
-import { HttpClientImpl } from "../../utils/http_client";
-import { stream2string } from "../../utils/stream2string";
-import { string2stream } from "../../utils/string2steam";
+import { HttpClientImpl, stream2string, string2stream } from "../../utils";
 describe("HTTPHandler", () => {
   it("StartStop", async () => {
     const hp = new HTTPHandler({

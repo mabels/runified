@@ -1,7 +1,6 @@
-import { WithLogger, Logger } from "../../types/logger";
 import { v4 } from "uuid";
-import { SysAbstraction } from "../../types/sys_abstraction";
-import { SystemAbstractionImpl } from "../system_abstraction";
+import { Logger, SysAbstraction, WithLogger } from "../types";
+import { SystemAbstractionImpl } from "./system_abstraction";
 
 const encoder = new TextEncoder();
 

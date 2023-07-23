@@ -1,9 +1,8 @@
-import { LoggerImpl } from ".";
-import { LogCollector } from "../../testutils/log_collector";
+import { LoggerImpl } from "./logger";
+import { LogCollector } from "../testutils";
 
-import { Logger } from "../../types/logger";
-import { TimeMode } from "../../types/sys_abstraction";
-import { SystemAbstractionImpl, TimeFactory } from "../system_abstraction";
+import { Logger, TimeMode } from "../types";
+import { SystemAbstractionImpl, TimeFactory } from "./system_abstraction";
 
 describe("TestLogger", () => {
   let logCollector: LogCollector;

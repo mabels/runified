@@ -1,4 +1,21 @@
 {
+  "name": "runified",
+  "version": "0.0.0",
+  "description": "unified runtime which able to build in any modern language an should abstract the underlying runtime",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mabels/runified.git"
+  },
+  "keywords": [
+    "runtime",
+    "typescript"
+  ],
+  "author": "Meno Abels <meno.abels@adviser.com>",
+  "license": "AFL-2.0",
+  "bugs": {
+    "url": "https://github.com/mabels/runified/issues"
+  },
+  "homepage": "https://github.com/mabels/runified#readme",
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
   },
@@ -16,11 +33,15 @@
     "deploy:oci": "npm run build; fn deploy --app runified",
     "build:gcp": "mkdir -p dist/gcp ; npx esbuild --bundle --platform=node  --format=cjs dist/transport/gcp-functions/index.js > dist/gcp/index.js",
     "start:gcp": "npx functions-framework --target=runified --signature-type=http --port=8080",
-    "generate": "rm -r src/generated ; npx wueste wueste-generator --input-file ../schema/error.schema.json  --input-file ../schema/runified-req.schema.json --input-file ../schema/runified-res.schema.json --output-dir ./src/generated"
+    "generate": "rm -r src/generated ; npx wueste wueste-generator --input-file ../schema/error.schema.json  --input-file ../schema/runified-req.schema.json --input-file ../schema/runified-res.schema.json --output-dir ./src/generated",
+    "pubdir": "npm run build; rm -rf pubdir ; mkdir -p pubdir; cp -pr ../.gitignore .npmignore package.json ../LICENSE ../README.md pubdir/; cd dist ; cp -pr . ../pubdir/",
+    "presmoke": "npm run pubdir ; cd pubdir ; npm pack",
+    "smoke": "cd smoke; npm init -y -f ; npm install -f ../pubdir/runified-*.tgz; npx ts-node smoke.ts"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.21.5",
     "@cloudflare/workers-types": "^4.20230518.0",
+    "@types/aws-lambda": "^8.10.119",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.4.4",
     "@types/uuid": "^9.0.2",
@@ -39,7 +60,6 @@
     "@azure/functions": "^4.0.0-alpha.9",
     "@fnproject/fdk": "^0.0.56",
     "@google-cloud/functions-framework": "^3.3.0",
-    "@types/aws-lambda": "^8.10.119",
     "azure-functions-core-tools": "^4.0.5198",
     "uuid": "^9.0.0",
     "wueste": "^1.0.2"

@@ -1,7 +1,5 @@
-import { App } from "../types/app/app";
-import { Api, ErrKVStoreNotSupported } from "../types/app/api";
-import { Logger } from "../types/logger";
-import { KeyValueStoreBlob } from "../types/key_value";
+import { Api, App, ErrKVStoreNotSupported } from "../types/app";
+import { KeyValueStoreBlob, Logger } from "../types";
 import { KVInMemory } from "../kv/kv_inmemory";
 
 export class ApiImpl implements Api {

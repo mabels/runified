@@ -1,10 +1,14 @@
-import { ActionHandler, HttpServer } from "../types/http_server";
-import { DefaultHttpRequest, HttpRequest, HttpURL } from "../types/http_request";
-import { HttpResponseWriter } from "../types/http_response_writer";
-import { HttpStatusCode } from "../types/http_statuscodes";
-
-import { HttpHeader } from "../types/http_header";
-import { AddrPort } from "../types/app/config";
+import {
+  ActionHandler,
+  AddrPort,
+  DefaultHttpRequest,
+  HttpHeader,
+  HttpRequest,
+  HttpResponseWriter,
+  HttpServer,
+  HttpStatusCode,
+  HttpURL,
+} from "../types";
 
 class FetchResponseWriter implements HttpResponseWriter {
   readonly _header: HttpHeader = new HttpHeader();

@@ -1,13 +1,18 @@
 import { Handler } from "aws-lambda";
 
-import { ActionHandler, HttpServer } from "../../types/http_server";
-import { HttpResponseWriter } from "../../types/http_response_writer";
-import { HttpStatusCode } from "../../types/http_statuscodes";
+import {
+  ActionHandler,
+  AddrPort,
+  DefaultHttpRequest,
+  HttpHeader,
+  HttpRequest,
+  HttpResponseWriter,
+  HttpServer,
+  HttpStatusCode,
+  HttpURL,
+} from "../../types";
 
-import { HttpHeader } from "../../types/http_header";
 import { setupTestServer } from "../test-server";
-import { DefaultHttpRequest, HttpRequest, HttpURL } from "../../types/http_request";
-import { AddrPort } from "../../types/app/config";
 
 class AWSResponseWriter implements HttpResponseWriter {
   readonly _header: HttpHeader = new HttpHeader();

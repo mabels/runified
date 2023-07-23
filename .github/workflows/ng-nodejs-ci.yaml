@@ -45,6 +45,7 @@ jobs:
           npm run build
           npm run test
 
-      # - name: Smoke JS runified
-      #   run: |
-      #     npm run smoke
+      - name: Smoke JS runified
+         run: |
+           cd ts
+           npm run smoke

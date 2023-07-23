@@ -1,8 +1,6 @@
-import { FromCommandLine } from "../../app/cli_config";
-import { MockApiHandler } from "../../testutils/api_handler";
-import { MockHttpRequest } from "../../testutils/http_request";
-import { MockResponseWriter } from "../../testutils/response_writer";
-import { HttpStatusCode } from "../../types/http_statuscodes";
+import { FromCommandLine } from "../../app";
+import { MockApiHandler, MockHttpRequest, MockResponseWriter } from "../../testutils";
+import { HttpStatusCode } from "../../types";
 import { AllowMethods } from "./allow_methods";
 
 describe("TestAllowMethod", () => {

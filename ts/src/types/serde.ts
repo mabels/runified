@@ -1,5 +1,3 @@
-// export type Factory<T> = (map: any) => Result<T, Error>;
-
 import { Result } from "wueste/result";
 import { WuestenFactory } from "wueste/wueste";
 

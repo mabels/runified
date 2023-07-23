@@ -1,5 +1,4 @@
-import { HttpHeader } from "../types/http_header";
-import { HttpRequest, HttpURL } from "../types/http_request";
+import { HttpHeader, HttpRequest, HttpURL } from "../types";
 
 class mapBrowserMethod implements HttpRequest {
   readonly _req: HttpRequest;

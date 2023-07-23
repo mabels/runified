@@ -1,9 +1,5 @@
+import { AddrPort } from "../app_port";
 import { TimeMode } from "../sys_abstraction";
-
-export interface AddrPort {
-  readonly Port: number;
-  readonly Addr?: string;
-}
 
 export interface FireBaseConfig {
   readonly DBUrl: string;

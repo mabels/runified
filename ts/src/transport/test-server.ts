@@ -1,8 +1,5 @@
-import { HTTPHandler } from "../types/http_handler";
-import { HttpRequest } from "../types/http_request";
-import { HttpResponseWriter } from "../types/http_response_writer";
-import { HttpServer } from "../types/http_server";
-import { stream2string } from "../utils/stream2string";
+import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpServer } from "../types";
+import { stream2string } from "../utils";
 
 async function handler(w: HttpResponseWriter, r: HttpRequest): Promise<void> {
   w.WriteHeader(203);

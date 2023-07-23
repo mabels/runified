@@ -1,10 +1,9 @@
-import { Logger as LoggerIf } from "../types/logger";
-import { SysAbstraction } from "../types/sys_abstraction";
-import { LoggerImpl } from "../utils/logger";
+import { Logger, SysAbstraction } from "../types";
+import { LoggerImpl } from "../utils";
 import { LogCollector } from "./log_collector";
 
 export interface MockLoggerReturn {
-  readonly logger: LoggerIf;
+  readonly logger: Logger;
   readonly logCollector: LogCollector;
 }
 

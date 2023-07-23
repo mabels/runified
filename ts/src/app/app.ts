@@ -1,16 +1,9 @@
 import { v4 } from "uuid";
-import { AllowMethods } from "../handlers/http/allow_methods";
-import { HandleOPTIONS } from "../handlers/http/handle_options";
-import { SetConnectionClose } from "../handlers/http/set_connection_close";
-import { ApiHandlerTyped, ApiHandlerUnTyped } from "../types/app/api_handler";
-import { App } from "../types/app/app";
-import { AppHandlerFn, AppHandler } from "../types/app/app_handler";
-import { HttpHandlerFunc } from "../types/http_handler_func";
-import { HttpRequest } from "../types/http_request";
-import { HttpResponseWriter } from "../types/http_response_writer";
-import { CountingResponseWriter, CountingReadableStream, FilterHeaders, CalculateHeaderByteLength } from "../utils/counter";
+import { AllowMethods, HandleOPTIONS, SetConnectionClose, SetCorsHeader } from "../handlers/http";
+import { ApiHandlerTyped, ApiHandlerUnTyped, App, AppHandler, AppHandlerFn } from "../types/app";
+import { HttpHandlerFunc, HttpRequest, HttpResponseWriter } from "../types";
+import { CountingResponseWriter, CountingReadableStream, FilterHeaders, CalculateHeaderByteLength } from "../utils";
 import { WrapUntypedApi } from "./api_handler";
-import { SetCorsHeader } from "../handlers/http/set_cors";
 
 export function BindAppToHandler(app: App, appHandlerfn: AppHandlerFn): HttpHandlerFunc {
   return async (s: HttpResponseWriter, q: HttpRequest) => {

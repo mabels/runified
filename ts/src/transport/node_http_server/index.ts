@@ -1,11 +1,16 @@
-import { AddrPort } from "../../types/app/config";
-import { ActionHandler, HttpServer } from "../../types/http_server";
-import { DefaultHttpRequest, HttpRequest, HttpURL } from "../../types/http_request";
-import { HttpResponseWriter } from "../../types/http_response_writer";
-import { HttpStatusCode } from "../../types/http_statuscodes";
+import {
+  ActionHandler,
+  AddrPort,
+  DefaultHttpRequest,
+  HttpHeader,
+  HttpRequest,
+  HttpResponseWriter,
+  HttpServer,
+  HttpStatusCode,
+  HttpURL,
+} from "../../types";
 
 import { createServer, IncomingMessage, ServerResponse } from "http";
-import { HttpHeader } from "../../types/http_header";
 
 class NodeResponseWriter implements HttpResponseWriter {
   readonly _header: HttpHeader = new HttpHeader();

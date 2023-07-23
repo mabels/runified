@@ -1,19 +1,14 @@
 import { MockLogger, MockLoggerReturn } from "../logger";
-import { AppHandler } from "../../types/app/app_handler";
-import { HttpClientImpl } from "../../utils/http_client";
-import { stream2string } from "../../utils/stream2string";
-import { string2stream } from "../../utils/string2steam";
+import { AppHandler } from "../../types/app";
+import { HttpClientImpl, stream2string, string2stream } from "../../utils";
 
 import { AppImpl } from "./app";
-import { FromCommandLine } from "../../app/cli_config";
+import { FromCommandLine } from "../../app";
 import { describe, expect, it } from "@jest/globals";
+import { DefaultHttpRequest, HttpHeader, TimeMode, TimeUnits } from "../../types";
+import { SystemAbstractionImpl } from "../../utils";
+import { globalToLocalBaseUrl } from "../global-to-local-base-url";
 import { BindAppToHandler } from "../../app/app";
-import { HttpHeader } from "../../types/http_header";
-import { SystemAbstractionImpl } from "../../utils/system_abstraction";
-import { TimeMode } from "../../types/sys_abstraction";
-import { DefaultHttpRequest } from "../../types/http_request";
-import { TimeUnits } from "../../types/time";
-import { globalToLocalBaseUrl } from "../base_url";
 
 describe("App", () => {
   const cliCFG = FromCommandLine(["", "--listen-port", "0"]);

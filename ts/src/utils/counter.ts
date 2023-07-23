@@ -1,5 +1,4 @@
-import { HttpHeader } from "../types/http_header";
-import { HttpResponseWriter } from "../types/http_response_writer";
+import { HttpHeader, HttpResponseWriter } from "../types";
 
 export interface CountingRequestReaderParams {
   readonly R?: ReadableStream<Uint8Array>;

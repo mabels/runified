@@ -1,5 +1,4 @@
-import { SysAbstraction, TimeMode } from "../types/sys_abstraction";
-import { Time } from "../types/time";
+import { SysAbstraction, Time, TimeMode } from "../types";
 
 class SysTime extends Time {
   Now(): Date {

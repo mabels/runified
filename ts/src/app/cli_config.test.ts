@@ -1,6 +1,6 @@
-import { TimeMode } from "../types/sys_abstraction";
+import { TimeMode } from "../types";
 import { FromCommandLine } from "./cli_config";
-import { describe, expect, it } from "@jest/globals";
+
 describe("cli_config", () => {
   it("default", () => {
     const cfg = FromCommandLine([]);

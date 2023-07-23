@@ -1,5 +1,4 @@
-import { AddrPort } from "../types/app/config";
-import { ActionHandler, HttpServer } from "../types/http_server";
+import { ActionHandler, AddrPort, HttpServer } from "../types";
 
 export class MockHttpServer implements HttpServer {
   Handler?: ActionHandler;

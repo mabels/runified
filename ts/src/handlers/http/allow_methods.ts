@@ -1,5 +1,5 @@
-import { ApiHandler, ApiHandlerUnTyped } from "../../types/app/api_handler";
-import { HttpStatusCode } from "../../types/http_statuscodes";
+import { ApiHandler, ApiHandlerUnTyped } from "../../types/app";
+import { HttpStatusCode } from "../../types";
 
 export function AllowMethods(...methods: string[]): ApiHandlerUnTyped {
   return function (api: ApiHandler): Promise<boolean> {

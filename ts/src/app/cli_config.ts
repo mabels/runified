@@ -1,6 +1,6 @@
 import { parse } from "ts-command-line-args";
-import { CLIConfig } from "../types/app/config";
-import { String2TimeMode } from "../types/sys_abstraction";
+import { CLIConfig } from "../types/app";
+import { String2TimeMode } from "../types";
 
 interface Transfer {
   "listen-port"?: number;

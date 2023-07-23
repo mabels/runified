@@ -1,16 +1,11 @@
-import { NewMockHttpClient } from "../testutils/http_client";
+import { NewMockHttpClient } from "../testutils";
 import { SDKClient, SdkClientParams } from "./sdk";
 import { postWithRequestContext } from "./request_context";
 import { RunifiedReq, RunifiedReqFactory } from "../generated/runified_req";
 import { RunifiedResFactory } from "../generated/runified_res";
-import { ErrSdkHttpRequestFailed } from "../types/sdk";
-import { string2stream, uint8array2stream } from "../utils/string2steam";
-import { SystemAbstractionImpl } from "../utils/system_abstraction";
-import { TimeMode } from "../types/sys_abstraction";
-import { JsonSerDe } from "../types/serde";
+import { ErrSdkHttpRequestFailed, HttpHeader, JsonSerDe, TimeMode, TimeUnits } from "../types";
+import { SystemAbstractionImpl, string2stream, uint8array2stream } from "../utils";
 import { v4 } from "uuid";
-import { HttpHeader } from "../types/http_header";
-import { TimeUnits } from "../types/time";
 
 describe("TestRequestContext", () => {
   it("TestRequestContextErrorStatusCode", async () => {

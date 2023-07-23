@@ -1,21 +1,18 @@
-import { HttpClientImpl } from "../utils/http_client";
-import { SystemAbstractionImpl } from "../utils/system_abstraction";
+import { HttpClientImpl, SystemAbstractionImpl } from "../utils";
 
-import { HttpClient as HttpClientIf } from "../types/http_client";
-import { SysAbstraction as SysAbstractionIf } from "../types/sys_abstraction";
-import { HttpHeader } from "../types/http_header";
+import { HttpClient as HttpClientIf, HttpHeader, SysAbstraction } from "../types";
 
 export interface SdkClientParams {
   readonly BaseUrl: string;
   readonly Client?: HttpClientIf;
-  readonly Sys?: SysAbstractionIf;
+  readonly Sys?: SysAbstraction;
   readonly DefaultRequestHeaders?: HttpHeader;
 }
 
 export class SDKClient {
   readonly BaseUrl: string;
   readonly Client: HttpClientIf;
-  readonly Sys: SysAbstractionIf;
+  readonly Sys: SysAbstraction;
   readonly DefaultRequestHeaders: HttpHeader = HttpHeader.from({ "User-Agent": "runified/1.0.0" });
   constructor(params: SdkClientParams) {
     this.BaseUrl = params.BaseUrl;

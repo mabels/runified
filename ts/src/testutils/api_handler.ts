@@ -1,9 +1,5 @@
-import { Api } from "../types/app/api";
-import { APIMsg } from "../types/app/api_handler";
-import { CLIConfig } from "../types/app/config";
-import { HttpRequest } from "../types/http_request";
-import { HttpResponseWriter } from "../types/http_response_writer";
-import { Logger } from "../types/logger";
+import { APIMsg, Api, CLIConfig } from "../types/app";
+import { HttpRequest, HttpResponseWriter, Logger } from "../types";
 import { MockApi } from "./api";
 import { MockApp } from "./app";
 import { MockResponseWriter } from "./response_writer";

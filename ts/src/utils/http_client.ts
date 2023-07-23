@@ -1,7 +1,4 @@
-import { HttpClient } from "../types/http_client";
-import { HttpHeader } from "../types/http_header";
-import { DefaultHttpRequest, HttpRequest, HttpURL } from "../types/http_request";
-import { HttpResponse } from "../types/http_response";
+import { DefaultHttpRequest, HttpClient, HttpHeader, HttpRequest, HttpResponse, HttpURL } from "../types";
 
 const defaultHeader = HttpHeader.from({
   "User-Agent": "runified/1.0.0",

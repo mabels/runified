@@ -1,22 +1,16 @@
-import path from "path";
-import { App } from "../../types/app/app";
-import { FromCommandLine } from "../../app/cli_config";
-import { AppImpl } from "./app";
-import { SystemAbstractionImpl } from "../../utils/system_abstraction";
-import { Logger } from "../../types/logger";
-import { string2stream } from "../../utils/string2steam";
-import { HttpClientImpl } from "../../utils/http_client";
-import { DefaultHttpRequest } from "../../types/http_request";
-import { SDKClient } from "../../sdk/sdk";
+import path from "node:path";
+import { App } from "../../types/app";
+import { FromCommandLine } from "../../app";
+import { HttpClientImpl, SystemAbstractionImpl, stream2string, string2stream } from "../../utils";
+import { DefaultHttpRequest, Logger, SysAbstraction, TimeMode } from "../../types";
+import { SDKClient, postWithRequestContext } from "../../sdk";
 import { RunifiedReq, RunifiedReqFactory } from "../../generated/runified_req";
 import { RunifiedRes, RunifiedResFactory } from "../../generated/runified_res";
-import { postWithRequestContext } from "../../sdk/request_context";
 import { MockLogger } from "../logger";
-import { stream2string } from "../../utils/stream2string";
 import { ErrorFactory } from "../../generated/error";
-import { SysAbstraction, TimeMode } from "../../types/sys_abstraction";
-import { globalToLocalBaseUrl } from "../base_url";
+import { globalToLocalBaseUrl } from "../global-to-local-base-url";
 import { HttpHeader } from "../../types/http_header";
+import { AppImpl } from "./app";
 
 async function startApp(sys: SysAbstraction, fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>) {
   const { logger: log } = MockLogger();

@@ -1,16 +1,18 @@
-import { DefaultHttpRequest, HttpRequest, HttpURL } from "../types/http_request";
-import { HttpResponse } from "../types/http_response";
-import { ErrSdkHttpRequestFailed, SDKContext, Stats } from "../types/sdk";
-
-import { CalculateHeaderByteLength } from "../utils/counter";
-
-import { stream2uint8array } from "../utils/stream2string";
-import { uint8array2stream } from "../utils/string2steam";
+import {
+  DefaultHttpRequest,
+  ErrSdkHttpRequestFailed,
+  HttpRequest,
+  HttpResponse,
+  HttpURL,
+  JsonSerDe,
+  SDKContext,
+  SerDe,
+  Stats,
+} from "../types";
+import { CalculateHeaderByteLength, stream2uint8array, uint8array2stream } from "../utils";
 import { SDKClient } from "./sdk";
-
 import { v4 } from "uuid";
 import { WuestenFactory } from "wueste/wueste";
-import { JsonSerDe, SerDe } from "../types/serde";
 
 interface WriteableStats {
   Length?: number;
@@ -31,7 +33,7 @@ interface BuildHttpValueStats<T, S, V> {
   Stats: S;
 }
 
-export class rctx<QQ, SS> {
+export class RequestContext<QQ, SS> {
   readonly Request: BuildHttpValueStats<HttpRequest, WriteableStatsStartSet, QQ>;
   readonly Response: BuildHttpValueStats<HttpResponse, WriteableStats, SS>;
   readonly RequestId: string;
@@ -190,7 +192,7 @@ export async function postWithRequestContext<Q, S>(
   params?: { RequestID: string }
 ): Promise<SDKContext<Q, S>> {
   try {
-    const ctx = new rctx(c, reqFactory, resFactory, params);
+    const ctx = new RequestContext(c, reqFactory, resFactory, params);
     const resp = await ctx.post(url, reqData);
 
     const bodyBytes = await stream2uint8array(resp.Body);

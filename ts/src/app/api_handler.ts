@@ -1,16 +1,9 @@
-import { APIMsg, ApiHandler as ApiHandlerIf, ApiHandlerTyped, ApiHandlerUnTyped } from "../types/app/api_handler";
-import { AppHandler } from "../types/app/app_handler";
-import { HttpHandlerFunc } from "../types/http_handler_func";
-import { HttpRequest } from "../types/http_request";
-import { HttpResponseWriter } from "../types/http_response_writer";
-import { HttpStatusCode } from "../types/http_statuscodes";
-import { Logger } from "../types/logger";
-import { stream2string } from "../utils/stream2string";
+import { APIMsg, Api, ApiHandler as ApiHandlerIf, ApiHandlerTyped, ApiHandlerUnTyped, AppHandler } from "../types/app";
+import { ErrorFactory, HttpHandlerFunc, HttpRequest, HttpResponseWriter, HttpStatusCode, Logger } from "../types";
+import { stream2string } from "../utils";
 import { MapBrowserMethod } from "./map-browser-method";
-import { Api } from "../types/app/api";
 import { WuestenFactory } from "wueste/wueste";
 import { BindAppToHandler } from "./app";
-import { ErrorFactory } from "../generated/error";
 
 // wraps typed apihandler into untyped apihandler
 export function WrapUntypedApi<Q, S>(apihandler: ApiHandlerTyped<Q, S>): ApiHandlerUnTyped {

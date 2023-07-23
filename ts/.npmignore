@@ -1,0 +1,10 @@
+entity-generator
+.neckless
+smoke
+.github
+go.*
+src
+*.tgz
+.prettierrc
+jest.config.js
+tsconfig.json
