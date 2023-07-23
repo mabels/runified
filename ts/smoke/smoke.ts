@@ -1,12 +1,12 @@
-import { App } from "runified/types/app";
-import { FromCommandLine } from "runified/app";
-import { HttpHeader, Logger } from "runified/types";
-import { AppImpl } from "runified/testutils/integration/app";
-import { globalToLocalBaseUrl } from "runified/testutils";
-import { LoggerImpl } from "runified/utils";
-import { RunifiedReqFactory, RunifiedReq } from "runified/generated/runified_req";
-import { RunifiedResFactory, RunifiedRes } from "runified/generated/runified_res";
-import { SDKClient, postWithRequestContext } from "runified/sdk";
+import { App } from "@adviser/runified/types/app";
+import { FromCommandLine } from "@adviser/runified/app";
+import { HttpHeader, Logger } from "@adviser/runified/types";
+import { AppImpl } from "@adviser/runified/testutils/integration/app";
+import { globalToLocalBaseUrl } from "@adviser/runified/testutils";
+import { LoggerImpl } from "@adviser/runified/utils";
+import { RunifiedReqFactory, RunifiedReq } from "@adviser/runified/generated/runified_req";
+import { RunifiedResFactory, RunifiedRes } from "@adviser/runified/generated/runified_res";
+import { SDKClient, postWithRequestContext } from "@adviser/runified/sdk";
 
 async function startApp(fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>) {
   const log = new LoggerImpl();
