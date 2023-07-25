@@ -4,9 +4,8 @@ import { HttpHeader } from "../../types";
 import { AddressInfo } from "node:net";
 import { stream2string } from "../../utils";
 
-
 const duplex: { duplex?: string } = {
-  duplex: "half"
+  duplex: "half",
 };
 
 describe("nodejs-transformer", () => {
@@ -22,20 +21,17 @@ describe("nodejs-transformer", () => {
             return new Response(req.body, {
               status: 200,
               statusText: "OK",
-              headers: HttpHeader.from(req.headers)
-                .Set("Connection", "close")
-                .Add("X-Test", "Test")
-                .AsHeaderInit(),
+              headers: HttpHeader.from(req.headers).Set("Connection", "close").Add("X-Test", "Test").AsHeaderInit(),
             });
           },
         })
       ).listen(port, () => {
-        const addr = server.address() as AddressInfo
-        port = addr.port
+        const addr = server.address() as AddressInfo;
+        port = addr.port;
         rs();
       });
-    })
-  })
+    });
+  });
 
   it("nodejs-transformer-empty-body", async () => {
     const res = await fetch(`http://localhost:${port}`, {
@@ -46,22 +42,20 @@ describe("nodejs-transformer", () => {
     });
     expect(res.status).toBe(200);
     expect(res.statusText).toBe("OK");
-    expect(res.headers.get("Connection")).toBe("close")
+    expect(res.headers.get("Connection")).toBe("close");
     expect(res.headers.get("X-Test")).toBe("Test");
     expect(res.headers.get("hello")).toBe("world");
     expect(await stream2string(res.body)).toBe("");
   });
 
-
   it("nodejs-transformer-constant-body", async () => {
-
     const res = await fetch(`http://localhost:${port}`, {
       method: "POST",
       headers: {
         hello: "world",
       },
       body: "hello world",
-      ...duplex
+      ...duplex,
     });
     expect(res.status).toBe(200);
     expect(res.statusText).toBe("OK");
@@ -89,7 +83,7 @@ describe("nodejs-transformer", () => {
         hello: "world",
       },
       body: rs,
-      ...duplex
+      ...duplex,
     });
     expect(res.status).toBe(200);
     expect(res.statusText).toBe("OK");

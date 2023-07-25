@@ -15,8 +15,8 @@ function toRequest(req: IncomingMessage): Request {
           controller.close();
         });
         req.on("error", (e) => {
-          controller.error(e)
-        })
+          controller.error(e);
+        });
       },
     });
   }
@@ -28,17 +28,17 @@ function toRequest(req: IncomingMessage): Request {
     throw new Error(`Invalid URL: ${req.url}`);
   }
 
-  const duplex: { duplex?: string} = {}
+  const duplex: { duplex?: string } = {};
 
   if (body) {
-    duplex.duplex = "half"
+    duplex.duplex = "half";
   }
 
   return new Request(reqUrl, {
     headers: fromNodeJS(req.headers),
     method: req.method || "GET",
     body: body,
-    ...duplex
+    ...duplex,
   });
 }
 
