@@ -1,0 +1,118 @@
+// import os from 'node:os'
+import { ParamEnvelopeWithoutPayload } from "./envelope-processor";
+import { AsBlob } from "./connection-processor.ts-off";
+
+export interface ConsoleFrame {
+  readonly Type: string;
+  readonly Data: string;
+  readonly Id: string;
+  readonly Msg: number;
+}
+
+const txtEncoder = new TextEncoder();
+export class ConsoleEncoder implements AsBlob, ConsoleFrame {
+  readonly Type: string;
+  readonly Data: string;
+  readonly Id: string;
+  readonly Msg: number;
+  constructor(cons: ConsoleFrame) {
+    this.Id = cons.Id;
+    this.Msg = cons.Msg;
+    this.Type = cons.Type;
+    this.Data = cons.Data;
+  }
+  asBlob(): Uint8Array {
+    return txtEncoder.encode(JSON.stringify(this));
+  }
+}
+
+export type EnvelopeSetter = (cons: ConsoleFrame) => ParamEnvelopeWithoutPayload;
+
+// export function noopEnvelopSetter(cons: ConsoleFrame): ParamEnvelopeWithoutPayload {
+//   return {};
+// }
+
+export class ConsoleProcessor {
+  static readonly Type = "Console";
+  readonly framer: ConnectionFrameProcessor;
+  readonly envSet: EnvelopeSetter;
+  readonly id: string = quickId();
+  count: number = 0;
+  realConsole?: Console;
+  inCall = false;
+
+  static patch(framer: ConnectionFrameProcessor, envSet?: EnvelopeSetter): ConsoleProcessor {
+    const c = new ConsoleProcessor(framer, envSet || noopEnvelopSetter);
+    // console.log('patching:', c.id);
+    c.patch();
+    // console.log('patched:', c.id);
+    return c;
+  }
+
+  private constructor(framer: ConnectionFrameProcessor, envSet: EnvelopeSetter) {
+    this.framer = framer;
+    this.envSet = envSet;
+  }
+
+  private patch() {
+    if (this.realConsole) {
+      return;
+    }
+    this.realConsole = console;
+    // (console as any).realConsole = this.realConsole;
+    const newConsole:Console = {
+      ...globalThis.console,
+      // realConsole: console,
+      log: this.sendFn("log"),
+      error: this.sendFn("error"),
+      warn: this.sendFn("warn"),
+    };
+    globalThis.console = newConsole;
+  }
+
+  unpatch() {
+    // console.log('unpatched:', this.id, this.realConsole);
+    if (this.realConsole) {
+      globalThis.console = this.realConsole;
+      this.realConsole = undefined;
+    }
+  }
+
+  static match(res: ConnectionFrame, fn: (console: ConsoleFrame) => void): boolean {
+    if (res.Type !== ConsoleProcessor.Type) {
+      return false;
+    }
+    // no type check we trust in the caller
+    fn(JSON.parse(new TextDecoder().decode(res.Data)));
+    return true;
+  }
+
+  private sendFn(type: string) {
+    // console.log(`sendFn: ${type}: ${this.id}`);
+    return function(this: ConsoleProcessor, ...args: any[]) {
+      if (this.inCall) {
+        if (this.realConsole) {
+          this.realConsole!.log('Incall', this.id, ...args)
+        } else {
+          process.stdout.write(`Incall ${this.id} ${args.join(' ')}\n`);
+        }
+        return;
+      }
+      this.inCall = true;
+      const out: ConsoleFrame = {
+        Type: type,
+        Data: args.join(" "),
+        Msg: this.count++,
+        Id: this.id,
+      };
+      this.framer.send(
+        this.framer.create({
+          Type: ConsoleProcessor.Type,
+          Data: new ConsoleEncoder(out).asBlob(),
+        }),
+        { ...this.envSet(out) }
+      );
+      this.inCall = false;
+    }.bind(this);
+  }
+}

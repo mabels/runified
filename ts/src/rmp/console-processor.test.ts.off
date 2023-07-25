@@ -1,0 +1,50 @@
+import { ConsoleProcessor } from "./console-processor.ts.off";
+import { EnvelopeProcessor } from "./envelope-processor";
+import { FrameProcessor } from "./frame-processor";
+import { ConnectionProcessor } from "./connection-processor.ts-off";
+
+it("console-frame", () => {
+  const msgs = [
+    { type: "log", data: "logged world" },
+    { type: "error", data: "error world" },
+    { type: "warn", data: "warn world" },
+  ];
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      const rframe = new ConnectionProcessor(controller);
+      const cframe = ConsoleProcessor.patch(rframe, (cf) => ({ Src: `${ConsoleProcessor.Type}.${cf.Msg}` }));
+      msgs.forEach((msg) => {
+        switch (msg.type) {
+          case "log":
+            console.log(msg.data);
+            break;
+          case "error":
+            console.error(msg.data);
+            break;
+          case "warn":
+            console.warn(msg.data);
+            break;
+        }
+      });
+      cframe.unpatch();
+      rframe.close();
+    },
+  });
+
+  return FrameProcessor.match(stream, (frame) => {
+    EnvelopeProcessor.match(frame.Payload, (env) => {
+      ConnectionProcessor.match(env, (resp) => {
+        ConsoleProcessor.match(resp, (con) => {
+          const msgNr = 3 - msgs.length;
+          const msg = msgs.shift();
+          expect(env.Src).toBe(`${ConsoleProcessor.Type}.${msgNr}`);
+          expect(resp.Type).toBe(ConsoleProcessor.Type);
+          expect(con.Type).toEqual(msg!.type);
+          expect(con.Data).toEqual(msg!.data);
+          expect(con.Msg).toEqual(msgNr);
+          expect(con.Id.length).toBeGreaterThan(0);
+        });
+      });
+    });
+  });
+});

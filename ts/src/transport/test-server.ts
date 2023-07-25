@@ -17,7 +17,7 @@ async function handler(w: HttpResponseWriter, r: HttpRequest): Promise<void> {
       url: r.URL.String(),
       query,
       method: r.Method,
-      header: r.Header.AsObject(),
+      header: r.Header.AsRecordStringStringArray(),
       body: await stream2string(r.Body),
     })
   );

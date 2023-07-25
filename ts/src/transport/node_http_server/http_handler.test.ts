@@ -59,7 +59,7 @@ describe("HTTPHandler", () => {
         JSON.stringify({
           url: r.URL.String(),
           query: query,
-          header: r.Header.AsObject(),
+          header: r.Header.AsRecordStringStringArray(),
           body: await stream2string(r.Body),
         })
       );

@@ -64,7 +64,7 @@ class AzureResponseWriter implements HttpResponseWriter {
   asResponse(): HttpResponseInit {
     return {
       status: this._statusCode,
-      headers: this._header.AsObject(),
+      headers: this._header.AsRecordStringStringArray(),
       body: streamAsyncIterable(this._body),
     };
   }

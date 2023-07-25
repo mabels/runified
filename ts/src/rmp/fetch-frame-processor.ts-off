@@ -1,0 +1,70 @@
+// import { ReadableStream } from "@edge-runtime/ponyfill";
+// import { ReadableStreamController } from "./pony-types.js";
+// import { Frame, FrameProcessor } from "./frame-processor.js";
+
+// interface StreamController {
+//   readonly stream: ReadableStream<Uint8Array>;
+//   readonly controller: ReadableStreamController<Uint8Array>;
+// }
+
+// function NewStreamController(): Promise<StreamController> {
+//   return new Promise((rs, rj) => {
+//     const stream = new ReadableStream<Uint8Array>({
+//       start(controller) {
+//         rs({ stream, controller });
+//       },
+//     });
+//   });
+// }
+
+// export type ReceiveFrameFn = (frame: Frame) => void;
+
+// export class FetchFrameHandler {
+//   toResolveStreamController: ((sc: StreamController) => void)[] = [];
+//   awaitStreamController?: Promise<StreamController>;
+//   gotStreamController?: StreamController = undefined;
+
+//   readonly receiveFrameFns: ReceiveFrameFn[] = []
+
+//   start(inputStream: ReadableStream<Uint8Array>): Promise<number> {
+//     return new Promise((rs, rj) => {
+//       FrameProcessor.match(inputStream, (frame) => {
+//         this.receiveFrameFns.forEach(rf => rf(frame));
+//       }).then((frames) => {
+//         this.getStreamController().then(sc => sc.controller.close());
+//         rs(frames)
+//       });
+//     });
+//   }
+
+//   getStreamController(): Promise<StreamController> {
+//     // this should not wait for the stream controller to be resolved
+//     if (!this.awaitStreamController) {
+//       this.awaitStreamController = NewStreamController();
+//       return new Promise((rs, _rj) => {
+//         this.awaitStreamController!.then((sc) => {
+//           rs(sc);
+//           this.gotStreamController = sc
+//           const myResolves = this.toResolveStreamController;
+//           this.toResolveStreamController.splice(0, this.toResolveStreamController.length);
+//           myResolves.forEach((rsFn) => rsFn(this.gotStreamController!));
+//         });
+//       });
+//     }
+//     return new Promise((rs, _rj) => {
+//       if (this.gotStreamController) {
+//         rs(this.gotStreamController);
+//       }
+//       this.toResolveStreamController.push(rs);
+//     })
+//   }
+
+//   send(payload: Uint8Array): void {
+//     this.getStreamController().then(sc => sc.controller.enqueue(FrameProcessor.build(payload)));
+//   }
+//   onFrame(rf: ReceiveFrameFn): void {
+//     this.receiveFrameFns.push(rf);
+//   }
+
+// }
+

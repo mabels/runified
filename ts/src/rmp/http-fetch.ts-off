@@ -1,0 +1,29 @@
+import userLevelStream from "./edge-handler/user-level-stream";
+import userLevelString from "./edge-handler/user-level-string";
+import { fromHeadersInit } from "./network/abstract-headers.ts-off";
+import { Env, ExecutionContext, EdgeHandler } from "./pony-types";
+
+export const httpFetchHandler: EdgeHandler = {
+  async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const parsedURL = new URL(req.url);
+    console.log("httpFetchHandler >>>>>", parsedURL.pathname)
+    switch (parsedURL.pathname) {
+      case "/simple":
+        return new Response(req.body, {
+          status: 200,
+          statusText: "OK",
+          headers: fromHeadersInit(req.headers).append("X-Test", "Test"),
+        });
+      case "/stream":
+        return userLevelStream.fetch(req, env, ctx);
+      case "/string":
+        return userLevelString.fetch(req, env, ctx);
+      default:
+        return new Response("/simple|/stream|/string", {
+          status: 404,
+          statusText: "NotFound",
+          headers: fromHeadersInit(req.headers).append("X-Test", "Test"),
+        });
+    }
+  },
+};

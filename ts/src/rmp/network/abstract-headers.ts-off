@@ -1,0 +1,77 @@
+
+export class AbstractHeaders extends Headers {
+  readonly headers = new Map<string, string[]>();
+
+  [Symbol.iterator](): IterableIterator<[string, string]> {
+    return this.entries();
+  }
+
+   entries(): IterableIterator<[string, string]> {
+    return this.asStringString().entries();
+  }
+  keys(): IterableIterator<string> {
+    return this.asStringString().keys();
+  }
+  values(): IterableIterator<string> {
+    return this.asStringString().values();
+  }
+
+
+  private asStringString(): Map<string, string> {
+    const ret = new Map<string, string>();
+    for (const [key, values] of this.headers) {
+      ret.set(key, values.join(", "));
+    }
+    return ret;
+  }
+
+
+  append(key: string, value: string | string[] | undefined) {
+    const values = this.headers.get(key) || [];
+    if (typeof value === "undefined") {
+      value = "";
+    }
+    if (Array.isArray(value)) {
+      this.headers.set(key, [...values, ...value]);
+    } else {
+      this.headers.set(key, [...values, value]);
+    }
+    return this;
+  }
+}
+
+export function fromHeadersInit(init: HeadersInit | Record<string, string[]>): AbstractHeaders {
+  const headers = new AbstractHeaders();
+  if (Array.isArray(init)) {
+    for (const [key, value] of init) {
+      headers.append(key, value);
+    }
+  } else if (typeof init.entries === "function") {
+    for (const [key, value] of init.entries()) {
+      headers.append(key, value);
+    }
+  } else if (typeof init === "object") {
+    for (const [key, value] of Object.entries(init)) {
+      headers.append(key, value);
+    }
+  } else {
+    throw new Error("HeadersInit is not an array or object");
+  }
+  return headers;
+}
+
+export function toHeadersStringString(headers: Headers): Record<string, string> {
+  const ret: Record<string, string> = {};
+  for (const [key, value] of headers.entries()) {
+    ret[key] = value;
+  }
+  return ret;
+}
+
+export function toHeadersStringStringArray(headers: AbstractHeaders): Record<string, string[]> {
+  const ret: Record<string, string[]> = {};
+  for (const [key, value] of headers.headers.entries()) {
+    ret[key] = value;
+  }
+  return ret;
+}

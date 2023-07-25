@@ -1,0 +1,92 @@
+import http from "node:http";
+import { EnvelopeHandler, } from "./envelope-handler";
+import { FrameProcessor } from "./frame-processor";
+// import { nodejsTransform, NodeJSTransformer } from "./network/nodejs-transformer";
+
+import { RMProtocol } from "./rmp-protocol";
+import { NodeJSWSTransformer } from "./network/nodejs-ws-transformer";
+// import { HttpTransactionProtocol } from "./http-frame-processor.ts-off";
+
+// import { fetch } from "@edge-runtime/ponyfill";
+// import { nodejsTransform } from "./network/nodejs-transformer";
+// import framedEdgeHandler from "./frame-edge-handler";
+// import { FrameProcessor } from "./frame-processor";
+// import { EnvelopeProcessor } from "./envelope-processor";
+// import { ConnectionProcessor } from "./connection-processor";
+// import { ConsoleProcessor } from "./console-processor";
+// import { HttpTransactionProcessor } from "./http-transaction-processor";
+
+// async function processResponse(console: Console, res: Response) {
+//   // console.log("status", res.status);
+//   // console.log("statusText", res.statusText);
+//   // console.log("headers", res.headers);
+//   if (res.body && typeof res.body.getReader === "function") {
+//     await FrameProcessor.match(res.body, (frame) => {
+//       EnvelopeProcessor.match(frame.Payload, (envelope) => {
+//         ConnectionProcessor.match(envelope, (connection) => {
+//           ConsoleProcessor.match(connection, (cns) => {
+//             console.log(JSON.stringify(cns));
+//           }) || HttpResponseProcessor.match(connection, {
+//             header: (http) => { console.log(JSON.stringify(http)); },
+//             part: (http) => { console.log(JSON.stringify({...http, Part: new TextDecoder().decode(http.Content)})); },
+//             end: (http) => { console.log(JSON.stringify(http)); },
+//           }) ||
+//           console.log("body:", frame.MacFrame.Length, envelope.Payload.Type, connection.Type);
+//         }) || console.error("response unmatched:", frame.MacFrame.Length, envelope.Payload.Type);
+//       }) || console.error("envelope unmatched:", frame.MacFrame.Length);
+//     })
+//   }
+// }
+
+async function testRun() {
+  const port = 4711;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  await Promise.all([startServer(port), clientConnect(port)]).then(async ([server, client]) => {
+    console.log('testRun-1');
+    await fetchClient();
+    console.log('testRun-2');
+    // server.close();
+    console.log('testRun-3');
+  });
+}
+
+async function fetchClient() {
+  const fp = new FrameProcessor();
+  const eh = new EnvelopeHandler(fp);
+  const htp  = new HttpTransactionProtocol()
+  htp.start(eh);
+  console.log(`fetchClient:start`);
+  const res = await htp.fetch("http://localhost:4711/", {
+    headers: {
+      "Content-Type": "text/plain",
+    },
+  });
+  console.log("fetchClient:res", res, await res.text());
+  return;
+}
+
+async function startServer(port: number, url = "/rmp") {
+  // const realConsole = console;
+  const rmp = new RMProtocol();
+  // const htp = new HttpTransactionProtocol();
+  // htp.start(rmp.eh);
+  // htp.onFetch(httpFetchHandler);
+  return NodeJSWSTransformer.serve(http.createServer().listen(port), rmp, url)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function clientConnect(port: number) {
+  // const realConsole = console;
+  // const rmp = new RMProtocol();
+  // const htp = new HttpTransactionProtocol();
+  // htp.start(rmp.eh);
+  // htp.onFetch(httpFetchHandler);
+  // return NodeJSWSTransformer.connect(`ws://localhost:${port}/rmp`, rmp);
+}
+
+
+testRun()
+  .then(() => {})
+  .catch((err) => process.stderr.write("" + err));
+
+export {};

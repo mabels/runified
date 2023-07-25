@@ -22,7 +22,7 @@ hp.RegisterHandler("/", async (w, r) => {
     JSON.stringify({
       url: r.URL.String(),
       query,
-      header: r.Header.AsObject(),
+      header: r.Header.AsRecordStringStringArray(),
       body: await stream2string(r.Body),
     })
   );

@@ -1,0 +1,1180 @@
+import { IonTypes, Reader, Writer } from "ion-js";
+import { EdgeHandler, ExecutionContext, UnregFn } from "./pony-types";
+import {
+  ensureReader,
+  ensureWriter,
+  readBlobTuple,
+  readBoolTuple,
+  readHeaderTuple,
+  readNumberTuple,
+  readStringTuple,
+  writeObject,
+} from "./ion-utils";
+import { AsBlob, } from "./connection-processor.ts-off";
+import { OnMatchHandler, UnknownFn, quickId } from "./utils";
+import { fromHeadersInit, toHeadersStringStringArray } from "./network/abstract-headers.ts-off";
+import { Envelope, Payload } from "./envelope-processor";
+import { EnvelopeHandler, MatchState } from "./envelope-handler";
+import { RMProtocolCtx } from "./rmp-protocol";
+
+export interface HttpResponseFrame {
+  readonly Id: string;
+  readonly Msg: number;
+  readonly Type: "header" | "part" | "end";
+}
+
+export interface ParamHttpResponse {
+  readonly Id: string;
+  readonly Msg: number;
+}
+
+export abstract class HttpResponseEncoder implements HttpResponseFrame, AsBlob {
+  readonly Id: string;
+  readonly Msg: number;
+  readonly Type: "header" | "part" | "end";
+  constructor(param: HttpResponseFrame) {
+    this.Id = param.Id;
+    this.Msg = param.Msg;
+    this.Type = param.Type;
+  }
+
+  static match(reader: Reader, fn: (frame: HttpResponseFrame) => void): boolean {
+    const Id = readStringTuple(reader, "Id");
+    const Msg = readNumberTuple(reader, "Msg");
+    const type = readStringTuple(reader, "Type");
+    let Type: "header" | "part" | "end";
+    switch (type) {
+      case "header":
+        Type = "header";
+        break;
+      case "part":
+        Type = "part";
+        break;
+      case "end":
+        Type = "end";
+        break;
+      default:
+        return false;
+      // throw new Error(`Unknown type ${type}`);
+    }
+    fn({ Id, Msg, Type });
+    return true;
+  }
+
+  abstract asBlogType(writer: Writer): void;
+  asBlob(): Uint8Array {
+    return ensureWriter(undefined, (writer) => {
+      writer.stepIn(IonTypes.STRUCT);
+      writer.writeFieldName("Id");
+      writer.writeString(this.Id);
+      writer.writeFieldName("Msg");
+      writer.writeInt(this.Msg);
+      writer.writeFieldName("Type");
+      writer.writeString(this.Type);
+      this.asBlogType(writer);
+      writer.stepOut();
+    }).getBytes();
+  }
+}
+
+export interface HttpResponseHeaderFrame {
+  readonly Status: number;
+  readonly StatusText: string;
+  readonly Headers: Record<string, string[]>;
+}
+
+export interface ParamHttpResponseHeaderFrame {
+  readonly Status: number;
+  readonly StatusText?: string;
+  readonly Headers: Record<string, string[]>;
+}
+
+export interface SendHttpResponseHeader extends Partial<ParamHttpResponse> {
+  readonly Status: number;
+  readonly StatusText: string;
+  readonly Headers: Record<string, string[]>;
+}
+
+// export class HttpResponseHeaderEncoder extends HttpResponseEncoder implements HttpResponseHeader {
+//   asBlogType(writer: Writer): void {
+//     writer.writeFieldName("Status");
+//     writer.writeInt(this.Status);
+//     writer.writeFieldName("StatusText");
+//     writer.writeString(this.StatusText);
+//     writer.writeFieldName("Headers");
+//     writeObject(writer, this.Headers);
+//   }
+//   static readonly Type = "header";
+//   readonly Headers: Record<string, string[]> = {};
+//   readonly Status: number;
+//   readonly StatusText: string;
+//   constructor(params: ParamHttpResponseHeaderFrame) {
+//     super({
+//       ...params,
+//       Type: HttpResponseHeaderEncoder.Type,
+//     });
+//     this.Status = params.Status;
+//     this.StatusText = params.StatusText || "HttpResponseHeader";
+//     this.Headers = {
+//       ...params.Headers,
+//     };
+//   }
+// }
+
+// export function HttpResponseHeaderMatch(reader: Reader, frame: HttpResponseFrame, fn: (hrh: HttpResponseHeader) => void): boolean {
+//   if (frame.Type !== "header") {
+//     return false;
+//   }
+//   // const Id = readStringTuple(reader, "Id")
+//   // const Msg = readNumberTuple(reader, "Msg")
+//   const Status = readNumberTuple(reader, "Status");
+//   const StatusText = readStringTuple(reader, "StatusText");
+//   const Headers = readHeaderTuple(reader, "Headers");
+//   fn({
+//     ...frame,
+//     Status,
+//     StatusText,
+//     Headers,
+//   });
+//   return true;
+// }
+
+export interface HttpResponsePart extends HttpResponseFrame {
+  readonly Part: number;
+  readonly Content: Uint8Array;
+}
+
+export interface ParamHttpResponsePart extends ParamHttpResponse {
+  readonly Part: number;
+  readonly Content: Uint8Array;
+}
+
+export interface SendHttpResponsePart extends Partial<ParamHttpResponse> {
+  readonly Part?: number;
+  readonly Content: Uint8Array;
+}
+
+export class HttpResponsePartEncoder extends HttpResponseEncoder implements HttpResponsePart {
+  static readonly Type = "part";
+  readonly Content: Uint8Array;
+  readonly Part: number;
+  constructor(params: ParamHttpResponsePart) {
+    super({
+      ...params,
+      Type: HttpResponsePartEncoder.Type,
+    });
+    this.Part = params.Part;
+    this.Content = params.Content;
+  }
+  asBlogType(writer: Writer): void {
+    writer.writeFieldName("Part");
+    writer.writeInt(this.Part);
+    writer.writeFieldName("Content");
+    writer.writeBlob(this.Content);
+  }
+}
+
+export function HttpResponsePartMatch(reader: Reader, frame: HttpResponseFrame, fn: (hrp: HttpResponsePart) => void): boolean {
+  if (frame.Type !== "part") {
+    return false;
+  }
+  // const Id = readStringTuple(reader, "Id")
+  // const Msg = readNumberTuple(reader, "Msg")
+  // const type =  readStringTuple(reader, "Type")
+  const Part = readNumberTuple(reader, "Part");
+  const Content = readBlobTuple(reader, "Content");
+  fn({ ...frame, Content, Part });
+  return true;
+}
+
+export interface HttpResponseEnd extends HttpResponseFrame {
+  readonly Msgs: number;
+  readonly ContentLength: number;
+}
+
+export interface ParamHttpResponseEnd extends ParamHttpResponse {
+  readonly Msgs: number;
+  readonly ContentLength: number;
+}
+
+export interface SendHttpResponseEnd extends Partial<ParamHttpResponse> {
+  readonly Msgs?: number;
+  readonly ContentLength?: number;
+}
+
+export class HttpResponseEndEncoder extends HttpResponseEncoder implements HttpResponseEnd {
+  static readonly Type = "end";
+  readonly Msgs: number = 0;
+  readonly ContentLength: number = 0;
+  constructor(params: ParamHttpResponseEnd) {
+    super({
+      ...params,
+      Type: HttpResponseEndEncoder.Type,
+    });
+    this.Msgs = params.Msgs || params.Msg || 0;
+    this.ContentLength = params.ContentLength || 0;
+  }
+  asBlogType(writer: Writer): void {
+    writer.writeFieldName("Msgs");
+    writer.writeInt(this.Msgs);
+    writer.writeFieldName("ContentLength");
+    writer.writeInt(this.ContentLength);
+  }
+}
+
+export function HttpResponseEndMatch(reader: Reader, frame: HttpResponseFrame, fn: (hre: HttpResponseEnd) => void): boolean {
+  if (frame.Type !== "end") {
+    return false;
+  }
+  const Msgs = readNumberTuple(reader, "Msgs");
+  const ContentLength = readNumberTuple(reader, "ContentLength");
+  fn({ ...frame, Msgs, ContentLength });
+  return true;
+}
+
+export interface HttpEndFrame {
+  readonly Len: number;
+  readonly Parts: number;
+  readonly Aborted: boolean;
+}
+
+export interface HttpResponseHeader {
+  readonly Status: number;
+  readonly StatusText: string;
+  readonly Headers: Record<string, string[]>;
+}
+
+export interface HttpRequestHeaderFrame {
+  readonly Method: string;
+  readonly Path: string;
+  readonly Headers: Record<string, string[]>;
+}
+
+export interface ParamHttpRequestHeaderFrame {
+  readonly Method?: string;
+  readonly Path?: string;
+  readonly Headers?: Record<string, string[]>;
+}
+
+// export function HttpRequestHeaderEncoder(): Payload {
+//   ensureWriter(undefined, (writer) => {
+//     writer.stepIn(IonTypes.STRUCT);
+//     writer.writeFieldName("Id");
+//     writer.writeString(this.Id);
+//     writer.writeFieldName("Msg");
+//     writer.writeInt(this.Msg);
+//     writer.writeFieldName("Type");
+//     writer.writeString(this.Type);
+//     this.asBlogType(writer);
+//     writer.stepOut();
+//   }).getBytes();
+
+// }
+//   asBlogType(writer: Writer, ): void {
+//     writer.writeFieldName("Status");
+//     writer.writeInt(this.Status);
+//     writer.writeFieldName("StatusText");
+//     writer.writeString(this.StatusText);
+//     writer.writeFieldName("Headers");
+//     writeObject(writer, this.Headers);
+//   }
+//   static readonly Type = "header";
+//   readonly Headers: Record<string, string[]> = {};
+//   readonly Status: number;
+//   readonly StatusText: string;
+//   constructor(params: ParamHttpResponseHeader) {
+//     super({
+//       ...params,
+//       Type: HttpResponseHeaderEncoder.Type,
+//     });
+//     this.Status = params.Status;
+//     this.StatusText = params.StatusText || "HttpResponseHeader";
+//     this.Headers = {
+//       ...params.Headers,
+//     };
+//   }
+// }
+
+export interface HttpPartFrame {
+  readonly Part: number;
+  readonly Content: Uint8Array;
+}
+
+export interface ParamHttpPartFrame {
+  readonly Part?: number;
+  readonly Content: Uint8Array;
+}
+
+export interface ParamHttpPartEnd {
+  readonly Parts?: number;
+  readonly Len?: number;
+  readonly Aborted?: boolean;
+}
+
+export interface HttpHandler {
+  request: {
+    header(header: HttpRequestHeaderFrame, ctx: HttpTransactionContext): void;
+    part(part: HttpPartFrame, ctx: HttpTransactionContext): void;
+    end(end: HttpEndFrame, ctx: HttpTransactionContext): void;
+  };
+  response: {
+    header(header: HttpResponseHeader, ctx: HttpTransactionContext): void;
+    part(part: HttpPartFrame, ctx: HttpTransactionContext): void;
+    end(end: HttpEndFrame, ctx: HttpTransactionContext): void;
+  };
+}
+
+export interface HttpPart {
+  len: number;
+  parts: number;
+}
+
+export const HttpEnd = {
+    send() {}
+}
+
+export interface HttpTransactionContext {
+  readonly Transaction: HttpTransaction;
+  readonly Frame: HttpTransactionFrame;
+}
+
+export interface ParmHttpTransactionFrame {
+  readonly Id?: string;
+  readonly Action: Actions;
+  readonly AbortTime?: number;
+}
+
+export interface ParamHttpTransactionRequestFrame {
+  readonly Id?: string;
+  readonly Action?: Actions;
+  readonly AbortTime?: number;
+}
+
+export type Actions = "request" | "response" | "request.part" | "response.part" | "request.end" | "response.end";
+export interface HttpTransactionFrame {
+  readonly Id: string;
+  readonly Action: Actions;
+  readonly AbortTime: number; // time in ms -1 never abort, 0 abort never,  > 0 abort after time
+}
+
+export interface ParamHttpTransaction {
+  readonly Id?: string;
+  readonly AbortTime?: number;
+  readonly EnvelopeHandler: EnvelopeHandler;
+}
+
+function SanizeAction(action: string): Actions {
+  switch (action) {
+    case "request":
+    case "response":
+    case "request.part":
+    case "response.part":
+    case "request.end":
+    case "response.end":
+      return action;
+    default:
+      throw new Error(`Invalid action:${action}`);
+  }
+}
+
+export type EnvelopeCtx = RMProtocolCtx & { Envelope: Envelope };
+export type HttpTransactionCtx = EnvelopeCtx & { HttpTransaction: HttpTransactionFrame };
+export type OnFn<T> = (frame: T, ctx: HttpTransactionCtx) => MatchState;
+
+export class HttpTransaction {
+  readonly Id: string;
+  readonly reqPart: HttpPart = { len: 0, parts: 0 };
+  readonly resPart: HttpPart = { len: 0, parts: 0 };
+  // readonly handler?: HttpHandler
+  readonly removeFn?: (id: string) => void;
+  runningTimeout?: number;
+  readonly abortTime: number;
+  readonly envelopeHandler: EnvelopeHandler;
+  constructor(param: ParamHttpTransaction) {
+    this.Id = param.Id || quickId();
+    this.abortTime = param.AbortTime || 10000;
+    this.envelopeHandler = param.EnvelopeHandler;
+  }
+  // constructor(id: string, handler: HttpHandler, remove: (id: string) => void) {
+  //   this.Id = id;
+  //   this.handler = handler
+  //   this.removeFn = remove;
+  // }
+
+
+  send(trans: ParmHttpTransactionFrame, next: (writer: Writer) => void, writer?: Writer): Payload {
+    return {
+      Type: "HttpTransaction",
+      Data: ensureWriter(writer, (writer) => {
+        writer.stepIn(IonTypes.STRUCT);
+        writer.writeFieldName("Id");
+        writer.writeString(trans.Id || this.Id);
+        writer.writeFieldName("Action");
+        writer.writeString(trans.Action);
+        writer.writeFieldName("AbortTime");
+        writer.writeInt(trans.AbortTime || this.abortTime);
+        writer.stepOut();
+        next(writer);
+      }).getBytes(),
+    };
+  }
+
+  readonly onRequestFns = new OnMatchHandler<OnFn<HttpRequestHeaderFrame>>()
+  onRequest(fn: OnFn<HttpRequestHeaderFrame>) {
+    return this.onRequestFns.add(fn);
+  }
+  readonly onResponseFns= new OnMatchHandler<OnFn<HttpResponseHeaderFrame>>()
+  onResponse(fn: OnFn<HttpResponseHeaderFrame>) {
+    return this.onResponseFns.add(fn);
+  }
+  readonly onRequestEndFns= new OnMatchHandler<OnFn<HttpEndFrame>>()
+  onRequestEnd(fn: OnFn<HttpEndFrame>) {
+    return this.onRequestEndFns.add(fn);
+  }
+  readonly onResponseEndFns= new OnMatchHandler<OnFn<HttpEndFrame>>()
+  onResponseEnd(fn: OnFn<HttpEndFrame>) {
+    return this.onResponseEndFns.add(fn);
+  }
+  readonly onRequestPartFns= new OnMatchHandler<OnFn<HttpPartFrame>>()
+  onRequestPart(fn: OnFn<HttpPartFrame>) {
+    return this.onResponsePartFns.add(fn);
+  }
+  readonly onResponsePartFns= new OnMatchHandler<OnFn<HttpPartFrame>>()
+  onResponsePart(fn: OnFn<HttpPartFrame>) {
+    return this.onResponsePartFns.add(fn);
+  }
+
+  fireAction<T>(tos: OnMatchHandler<OnFn<T>>, data: T, ctx: HttpTransactionCtx) {
+    for (const to of tos.handlers.values()) {
+      switch (to(data, ctx)) {
+        case MatchState.Abort:
+        case MatchState.Matched:
+          return true;
+        default:
+      }
+    }
+    return true;
+  }
+
+  callAction(reader: Reader, trans: HttpTransactionFrame, ctx: HttpTransactionCtx): boolean {
+    switch (trans.Action) {
+      case "request":
+        return this.matchRequest(reader, this.onRequestFns, ctx);
+      case "response":
+        return this.matchResponse(reader, this.onResponseFns, ctx);
+      case "request.end":
+        return this.matchEnd(reader, this.onRequestEndFns, ctx);
+      case "response.end":
+        return this.matchEnd(reader, this.onResponseEndFns, ctx);
+      case "request.part":
+        return this.matchPart(reader, this.onRequestPartFns, ctx);
+      case "response.part":
+        return this.matchPart(reader, this.onResponsePartFns, ctx);
+      default:
+        throw new Error(`unknown action:${trans.Action}`);
+    }
+  }
+
+  match = (envelope: Envelope, ctx: RMProtocolCtx) => {
+    if (envelope.Payload.Type === "HttpTransaction" && envelope.Payload.Data.length) {
+      ensureReader(envelope.Payload.Data, (reader) => {
+        if (reader.next() != IonTypes.STRUCT) {
+          throw new Error("Invalid HttpTransaction");
+        }
+        reader.stepIn();
+        const id = readStringTuple(reader, "Id");
+        const action = SanizeAction(readStringTuple(reader, "Action"));
+        const abortTimer = readNumberTuple(reader, "AbortTime");
+        const trans: HttpTransactionFrame = {
+          Id: id,
+          Action: action,
+          AbortTime: abortTimer,
+        };
+        reader.stepOut();
+        // reader.next();
+        console.log(`HttpTransactionProtocol match ${envelope.Payload.Type}:${JSON.stringify(trans)}`);
+        this.callAction(reader, trans, { ...ctx, Envelope: envelope, HttpTransaction: trans });
+      });
+      return true;
+    }
+    return false;
+  };
+
+  matchRequest(reader: Reader, fns: OnMatchHandler<OnFn<HttpRequestHeaderFrame>>, ctx: HttpTransactionCtx) {
+    const typ = reader.next();
+    if (typ != IonTypes.STRUCT) {
+      throw new Error(`Invalid HttpTransaction.request:${typ}`);
+    }
+    reader.stepIn();
+    const method = readStringTuple(reader, "Method");
+    const path = readStringTuple(reader, "Path");
+    const headers = readHeaderTuple(reader, "Headers");
+    reader.stepOut();
+    reader.next();
+    this.fireAction<HttpRequestHeaderFrame>(
+      fns,
+      {
+        Method: method,
+        Path: path,
+        Headers: toHeadersStringStringArray(headers),
+      },
+      ctx
+    );
+    return false;
+  }
+
+  sendRequest(req: ParamHttpRequestHeaderFrame, trans?: ParamHttpTransactionRequestFrame, writer?: Writer): Payload {
+    return this.send(
+      { ...trans, Action: "request" },
+      (writer) => {
+        writer.stepIn(IonTypes.STRUCT);
+        writer.writeFieldName("Method");
+        writer.writeString(req.Method || "GET");
+        writer.writeFieldName("Path");
+        writer.writeString(req.Path || "/");
+        writer.writeFieldName("Headers");
+        writeObject(writer, req.Headers || {});
+        writer.stepOut();
+      },
+      writer
+    );
+  }
+
+  matchResponse(reader: Reader, fns: OnMatchHandler<OnFn<HttpResponseHeaderFrame>>, ctx: HttpTransactionCtx) {
+    if (reader.next() != IonTypes.STRUCT) {
+      throw new Error("Invalid HttpTransaction.request");
+    }
+    reader.stepIn();
+    const status = readNumberTuple(reader, "Status");
+    const statusText = readStringTuple(reader, "StatusText");
+    const headers = readHeaderTuple(reader, "Headers");
+    reader.stepOut();
+    reader.next();
+    this.fireAction<HttpResponseHeaderFrame>(
+      fns,
+      {
+        Status: status,
+        StatusText: statusText,
+        Headers: toHeadersStringStringArray(headers),
+      },
+      ctx
+    );
+    return false;
+  }
+
+  sendResponse(req: ParamHttpResponseHeaderFrame, trans?: ParamHttpTransactionRequestFrame, writer?: Writer): Payload {
+    return this.send(
+      { ...trans, Action: "response" },
+      (writer) => {
+        writer.stepIn(IonTypes.STRUCT);
+        writer.writeFieldName("Status");
+        writer.writeInt(req.Status || 502);
+        writer.writeFieldName("StatusText");
+        writer.writeString(req.StatusText || `RMP ${trans?.Id}`);
+        writer.writeFieldName("Headers");
+        writeObject(writer, req.Headers || {});
+        writer.stepOut();
+      },
+      writer
+    );
+  }
+
+  matchPart(reader: Reader, fns: OnMatchHandler<OnFn<HttpPartFrame>>, ctx: HttpTransactionCtx) {
+    if (reader.next() != IonTypes.STRUCT) {
+      throw new Error("Invalid HttpTransaction.part");
+    }
+    reader.stepIn();
+    const part = readNumberTuple(reader, "Part");
+    const content = readBlobTuple(reader, "Content");
+    reader.stepOut();
+    reader.next();
+    this.fireAction<HttpPartFrame>(
+      fns,
+      {
+        Part: part,
+        Content: content,
+      },
+      ctx
+    );
+    return false;
+  }
+
+  sendPart(part: ParamHttpPartFrame, trans: ParmHttpTransactionFrame, writer?: Writer): Payload {
+    return this.send(trans,
+      (writer) => {
+        writer.stepIn(IonTypes.STRUCT);
+        writer.writeFieldName("Part");
+        writer.writeInt(part.Part || this.reqPart.parts++);
+        writer.writeFieldName("Content");
+        writer.writeBlob(part.Content);
+        writer.stepOut();
+      },
+      writer
+    );
+  }
+
+  sendRequestPart(part: ParamHttpPartFrame, trans?: ParamHttpTransactionRequestFrame, writer?: Writer): Payload {
+    return this.sendPart(part, { ...trans, Action: "request.part"}, writer);
+  }
+
+  sendResponsePart(part: ParamHttpPartFrame, trans?: ParamHttpTransactionRequestFrame, writer?: Writer): Payload {
+    return this.sendPart(part, {...trans, Action: "response.part"}, writer);
+  }
+
+  matchEnd(reader: Reader, fns: OnMatchHandler<OnFn<HttpEndFrame>>, ctx: HttpTransactionCtx) {
+    if (reader.next() != IonTypes.STRUCT) {
+      throw new Error("Invalid HttpTransaction.end");
+    }
+    reader.stepIn();
+    const parts = readNumberTuple(reader, "Parts");
+    const len = readNumberTuple(reader, "Len");
+    const aborted = readBoolTuple(reader, "Aborted");
+    reader.stepOut();
+    reader.next();
+    this.fireAction<HttpEndFrame>(
+      fns,
+      {
+        Parts: parts,
+        Len: len,
+        Aborted: aborted,
+      },
+      ctx
+    );
+    return false;
+  }
+
+  sendEnd(end: ParamHttpPartEnd, trans: ParmHttpTransactionFrame, writer?: Writer): Payload {
+    return this.send(trans, (writer) => {
+        writer.stepIn(IonTypes.STRUCT);
+        writer.writeFieldName("Parts");
+        writer.writeInt(end.Parts || this.reqPart.parts);
+        writer.writeFieldName("Len");
+        writer.writeInt(end.Len || this.reqPart.len);
+        writer.writeFieldName("Aborted");
+        writer.writeBoolean(end.Aborted || false);
+        writer.stepOut();
+      },
+      writer
+    );
+  }
+
+  sendRequestEnd(end: ParamHttpPartEnd, trans?: ParamHttpTransactionRequestFrame, writer?: Writer): Payload {
+    return this.sendEnd(end, { ...trans, Action: "request.end" }, writer);
+  }
+
+  sendResponseEnd(end: ParamHttpPartEnd, trans?: ParamHttpTransactionRequestFrame, writer?: Writer): Payload {
+    return this.sendEnd(end, {...trans, Action: "response.end" }, writer);
+  }
+}
+
+// updateAbortTime(abortTime: number) {
+//   if (this.runningTimeout) {
+//     clearTimeout(this.runningTimeout);
+//   }
+//   if (abortTime < 0) {
+//     return
+//   }
+//   this.runningTimeout = setTimeout(() => {
+//     // TODO: send REQ and RES End aborted
+//     this.removeFn(this.Id);
+//   }, abortTime) as unknown as number;
+// }
+
+// static readPart(reader: Reader): HttpPartFrame {
+//   const part = readNumberTuple(reader, "Part");
+//   const blob = readBlobTuple(reader, "Content");
+//   return {
+//     Part: part,
+//     Content: blob
+//   }
+// }
+// matchReqPart(reader: Reader, frame: HttpTransactionFrame) {
+//   this.handler.request.part(HttpTransaction.readPart(reader), {
+//     Transaction: this,
+//     Frame: frame,
+//   });
+// }
+// static readEnd(reader: Reader): HttpEndFrame {
+//   const len = readNumberTuple(reader, "ContentLength");
+//   const parts = readNumberTuple(reader, "Parts");
+//   const aborted = readBoolTuple(reader, "Aborted");
+//   return {
+//     Len: len,
+//     Parts: parts,
+//     Aborted: aborted
+//   }
+// }
+// matchReqEnd(reader: Reader, frame: HttpTransactionFrame) {
+//   this.handler.request.end(HttpTransaction.readEnd(reader), {
+//     Transaction: this,
+//     Frame: frame,
+//   });
+// }
+// matchResHeader(reader: Reader, frame: HttpTransactionFrame) {
+//   const status = readNumberTuple(reader, "Status");
+//   const statusText = readStringTuple(reader, "StatusText");
+//   const headers = readHeaderTuple(reader, "Headers");
+//   this.handler.response.header({
+//     Status: status,
+//     StatusText: statusText,
+//     Headers: toHeadersStringStringArray(headers)
+//   }, {
+//     Transaction: this,
+//     Frame: frame,
+//   });
+// }
+// matchResPart(reader: Reader, frame: HttpTransactionFrame) {
+//   this.handler.response.part(HttpTransaction.readPart(reader), {
+//     Transaction: this,
+//     Frame: frame,
+//   });
+// }
+// matchResEnd(reader: Reader, frame: HttpTransactionFrame) {
+//   this.handler.response.end(HttpTransaction.readEnd(reader), {
+//     Transaction: this,
+//     Frame: frame,
+//   });
+// }
+
+// }
+
+// export enum HttpTransactionState {
+//   None = "none",
+//   ReqHeader = "ReqHeader",
+//   ReqPart = "ReqPart",
+//   ReqEnd = "ReqEnd",
+
+//   ResHeader = "ResHeader",
+//   ResPart = "ResPart",
+//   ResEnd = "ResEnd",
+// }
+
+// export namespace HttpTransactionId {
+//   export function match(bytes: Uint8Array, fn: (reader: Reader, frame: HttpTransactionFrame) => void): void {
+//     ensureReader(bytes, (reader) => {
+//       const id = readStringTuple(reader, "Id");
+//       const rState = readStringTuple(reader, "State");
+//       let abortTime = readNumberTuple(reader, "AbortTime");
+//       if (abortTime < 0) {
+//         abortTime = 30000;
+//       }
+//       let state = HttpTransactionState.None;
+//       switch (rState) {
+//         case "ReqHeader":
+//           state = HttpTransactionState.ReqHeader;
+//           break;
+//         case "ReqPart":
+//           state = HttpTransactionState.ReqPart;
+//           break;
+//         case "ReqEnd":
+//           state = HttpTransactionState.ReqEnd;
+//           break;
+//         case "ResHeader":
+//           state = HttpTransactionState.ResHeader;
+//           break;
+//         case "ResPart":
+//           state = HttpTransactionState.ResPart;
+//           break;
+//         case "ResEnd":
+//           state = HttpTransactionState.ResEnd;
+//           break;
+//         default:
+//           throw new Error(`HttpTransactionId unknown state ${rState}`);
+//       }
+//       fn(reader, { Id: id, State: state, AbortTime: abortTime });
+//     });
+//   }
+// }
+
+// export class HttpResponseProcessor {
+//   readonly transactions: Map<string, HttpTransaction> = new Map();
+
+//   constructor() {}
+
+//   removeTransaction = (id: string) => {
+//     this.transactions.delete(id);
+//   };
+
+//   match(connection: ConnectionFrame, handler: HttpHandler) {
+//     if (connection.Type === "HttpTransaction" && connection.Data) {
+//       HttpTransactionId.match(connection.Data, (reader, frame) => {
+//         let transaction = this.transactions.get(frame.Id);
+//         if (!transaction) {
+//           transaction = new HttpTransaction(frame.Id, handler, this.removeTransaction);
+//           this.transactions.set(frame.Id, transaction);
+//         }
+//         transaction.updateAbortTime(frame.AbortTime);
+//         switch (frame.State) {
+//           case HttpTransactionState.ReqHeader:
+//             transaction.matchReqHeader(reader, frame);
+//             break;
+//           case HttpTransactionState.ReqPart:
+//             transaction.matchReqPart(reader, frame);
+//             break;
+//           case HttpTransactionState.ReqEnd:
+//             transaction.matchReqEnd(reader, frame);
+//             break;
+//           case HttpTransactionState.ResHeader:
+//             transaction.matchResHeader(reader, frame);
+//             break;
+//           case HttpTransactionState.ResPart:
+//             transaction.matchResPart(reader, frame);
+//             break;
+//           case HttpTransactionState.ResEnd:
+//             transaction.matchResEnd(reader, frame);
+//             break;
+//         }
+//       });
+//       return true;
+//     }
+//     return false;
+//   }
+// }
+
+//   static match(
+//     res: ConnectionFrame,
+//     packets: HttpTransactionProcessor
+//   ): boolean {
+//     if (res.Type === "HttpResponse" && res.Data) {
+//       ensureReader(res.Data, (reader) => {
+//         reader.next();
+//         reader.stepIn();
+//         HttpResponseEncoder.match(reader, (frame) => {
+//           HttpResponseHeaderMatch(reader, frame, (header) => {
+//             packets.header(header);
+//           }) ||
+//             HttpResponsePartMatch(reader, frame, (part) => {
+//               packets.part(part);
+//             }) ||
+//             HttpResponseEndMatch(reader, frame, (end) => {
+//               packets.end(end);
+//             });
+//         });
+//         reader.stepOut();
+//       });
+//       // const header = new HttpResponseHeaderEncoder({
+//       //   Id: "",
+//       //   Msg: 0,
+//       //   Status: 0,
+//       //   StatusText: "",
+//       //   Headers: {},
+//       //   Type: "header",
+//       // });
+//       // header.load(res.Data);
+//       // fn(header);
+//       return true;
+//     }
+//     return false;
+//   }
+//   sendHeader(param: SendHttpResponseHeader) {
+//     this.framer.send(
+//       this.framer.create({
+//         Type: "HttpResponse",
+//         Data: new HttpResponseHeaderEncoder({
+//           ...param,
+//           Id: this.id,
+//           Msg: this.msg++,
+//           Headers: param.Headers || {},
+//         }).asBlob(),
+//       })
+//     );
+//   }
+
+//   sendPart(param: SendHttpResponsePart) {
+//     this.framer.send(
+//       this.framer.create({
+//         Type: "HttpResponse",
+//         Data: new HttpResponsePartEncoder({
+//           Part: this.parts++,
+//           ...param,
+//           Id: this.id,
+//           Msg: this.msg++,
+//         }).asBlob(),
+//       })
+//     );
+//     this.len += param.Content.length;
+//   }
+
+//   sendEnd(param: SendHttpResponseEnd) {
+//     this.framer.send(
+//       this.framer.create({
+//         Type: "HttpResponse",
+//         Data: new HttpResponseEndEncoder({
+//           ...param,
+//           Id: this.id,
+//           Msg: this.msg++, // odd thing with msgs -:)
+//           Msgs: this.msg,
+//           ContentLength: this.len,
+//         }).asBlob(),
+//       })
+//     );
+//   }
+// }
+
+// export interface HttpResponeBodyPart extends HttpResponseEncoder {
+//   readonly Type: 'body';
+//   readonly Part: number;
+//   readonly Data: Uint8Array;
+// }
+
+// export interface HttpResponeEndPart extends HttpResponseFrame {
+//   readonly Type: 'end';
+//   readonly Parts: number;
+//   readonly Bytes: number;
+// }
+
+export interface ActiveRequestTransaction {
+  readonly Id: string;
+  readonly Request: Request;
+  readonly RequestController?: ReadableStreamController<Uint8Array>;
+  Response?: Response;
+  ResponseController?: ReadableStreamController<Uint8Array>;
+}
+
+export interface ActiveResponseTransaction {
+  readonly Id: string;
+  Request?: Request;
+  RequestController?: ReadableStreamController<Uint8Array>;
+  Response?: Response;
+  ResponseController?: ReadableStreamController<Uint8Array>;
+}
+
+export type MatchResponseFn = (res: HttpResponseHeaderFrame, ctx: HttpTransactionCtx) => void;
+export type MatchPartFn = (res: HttpPartFrame, ctx: HttpTransactionCtx) => void;
+export type MatchEndFn = (res: HttpEndFrame, ctx: HttpTransactionCtx) => void;
+
+export type MyRequestInit = RequestInit & { afterSend?: (eh: EnvelopeHandler) => void };
+
+export class HttpTransactionProtocol {
+  // private readonly rmp: RMPHandler;
+  readonly onFetchs: EdgeHandler[] = [];
+  readonly requestTransactions = new Map<string, ActiveRequestTransaction>();
+  readonly responseTransactions = new Map<string, ActiveResponseTransaction>();
+  httpTransaction?: HttpTransaction;
+
+  start(eh: EnvelopeHandler) {
+    console.log(`HttpTransactionProtocol.start`);
+    eh.onEnvelope((envelope: Envelope, ctx) => {
+      console.log(`HttpTransactionProtocol envelope ${envelope.Payload.Type}`);
+      return this.httpTransaction!.match(envelope, ctx) ? MatchState.Matched : MatchState.Pass;
+    });
+    this.httpTransaction = new HttpTransaction({ EnvelopeHandler: eh, });
+    this.httpTransaction!.onRequestEnd((req, ctx) => {
+      console.log(`onRequestEnd ${ctx.HttpTransaction.Id}`);
+      const trans = this.requestTransactions.get(ctx.HttpTransaction.Id);
+      if (!trans) {
+        console.warn("no transaction found");
+        return MatchState.Pass;
+      }
+      if (trans.RequestController) {
+        trans.RequestController.close();
+      }
+      return MatchState.Matched;
+    });
+    this.httpTransaction!.onRequestPart((req, ctx) => {
+      console.log(`onRequestPart ${ctx.HttpTransaction.Id}`);
+      const trans = this.requestTransactions.get(ctx.HttpTransaction.Id);
+      if (!trans) {
+        console.warn("no transaction found");
+        return MatchState.Pass;
+      }
+      // add order check
+      if (trans.RequestController) {
+        trans.RequestController.enqueue(req.Content);
+      }
+      return MatchState.Matched;
+    });
+    this.httpTransaction!.onRequest((req: HttpRequestHeaderFrame, ctx: HttpTransactionCtx) => {
+      this.handleRequest(eh, req, ctx);
+      return MatchState.Matched;
+    });
+
+    this.httpTransaction!.onResponse((res, ctx) => {
+      console.log(`onResponse ${ctx.HttpTransaction.Id}`);
+      return this.invoke(this.matchResponseFns, res, ctx);
+    })
+    this.httpTransaction!.onResponsePart((res, ctx) => {
+      console.log(`onResponsePart ${ctx.HttpTransaction.Id}`);
+      return this.invoke(this.matchResponsePartFns, res, ctx);
+    })
+    this.httpTransaction!.onResponseEnd((res, ctx) => {
+      console.log(`onResponseReq ${ctx.HttpTransaction.Id}`);
+      return this.invoke(this.matchResponseEndFns, res, ctx);
+    })
+  }
+
+  invoke<T extends MatchEndFn|MatchPartFn|MatchResponseFn, R>(fns: OnMatchHandler<T>, req: R, ctx: HttpTransactionCtx) {
+    return fns.invoke(ctx.HttpTransaction.Id, req, ctx)? MatchState.Matched : MatchState.Pass;
+  }
+
+  handleRequest(eh: EnvelopeHandler, req: HttpRequestHeaderFrame, ctx: HttpTransactionCtx) {
+    console.log(`onRequest-1 ${ctx.HttpTransaction.Id}`);
+    const reqBody: { body?: ReadableStream<Uint8Array> } = {};
+    let reqController: ReadableStreamController<Uint8Array> | undefined = undefined;
+    const withoutBody = req.Method == "GET" || req.Method == "HEAD";
+    if (!withoutBody) {
+      reqBody.body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          reqController = controller;
+        },
+      });
+    }
+    const fetchReq = new Request(req.Path, {
+      method: req.Method,
+      headers: fromHeadersInit(req.Headers),
+      ...reqBody,
+    });
+    if (!withoutBody && !reqController) {
+      throw new Error("no controller");
+    }
+    const trans: ActiveRequestTransaction = {
+      Id: ctx.HttpTransaction.Id,
+      Request: fetchReq,
+      RequestController: reqController,
+    };
+    this.requestTransactions.set(trans.Id, trans);
+    console.log(`onRequest-2 ${ctx.HttpTransaction.Id}`);
+    const fetchRes = this.onFetchs[0].fetch(fetchReq, {}, ctx as ExecutionContext);
+    console.log(`onRequest-3 ${ctx.HttpTransaction.Id}`);
+    fetchRes.then(async (res) => {
+      console.log(`onRequest-4 ${ctx.HttpTransaction.Id}`);
+      eh.send({
+        Payload: this.httpTransaction!.sendResponse({
+          Status: res.status,
+          StatusText: res.statusText,
+          Headers: toHeadersStringStringArray(fromHeadersInit(res.headers)),
+        })
+      })
+      console.log(`onRequest-5 ${ctx.HttpTransaction.Id}`);
+      if (res.body) {
+        const reader = res.body!.getReader();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+          if (value) {
+            eh.send({
+              Payload: this.httpTransaction!.sendResponsePart({ Content: value })
+            })
+          }
+        }
+      }
+      console.log(`onRequest-6 ${ctx.HttpTransaction.Id}`);
+      eh.send({
+        Payload: this.httpTransaction!.sendResponseEnd({})
+      });
+      this.requestTransactions.delete(ctx.HttpTransaction.Id)
+      console.log(`onRequest-7 ${ctx.HttpTransaction.Id}`);
+    });
+  }
+
+  // registerCtx(fp: FrameProcessor, eh: EnvelopeHandler) {
+  //   this.httpTransaction = new HttpTransaction({ EnvelopeHandler: eh });
+  //   this.registerRequestHttpProcessor(eh);
+  //   return MatchState.Matched;
+  // }
+
+  onFetch(fetch: EdgeHandler) {
+    if (this.onFetchs.length > 1) {
+      throw new Error("only one fetch handler is allowed");
+    }
+    this.onFetchs.push(fetch);
+  }
+
+  readonly matchResponseFns = new OnMatchHandler<MatchResponseFn>();
+  matchResponse(transId: string, fn: MatchResponseFn) {
+    return this.matchResponseFns.addId(transId, fn);
+  }
+  readonly matchResponsePartFns = new OnMatchHandler<MatchPartFn>();
+  matchResponsePart(transId: string, fn: MatchPartFn) {
+    return this.matchResponsePartFns.addId(transId, fn);
+  }
+
+  readonly matchResponseEndFns = new OnMatchHandler<MatchEndFn>();
+  matchResponseEnd(transId: string, fn: MatchEndFn) {
+    return this.matchResponseEndFns.addId(transId, fn);
+  }
+
+  async fetch(url: string, init: MyRequestInit = {}): Promise<Response> {
+    const id = quickId();
+    const eh = this.httpTransaction!.envelopeHandler
+
+    const unregFn: UnregFn[] = []
+    unregFn.push(this.matchResponse(id, (header, ctx) => {
+      console.log(`fetch-response:header`)
+      // const res = new Response(stream, {
+      //   status: header.Status,
+      //   statusText: header.StatusText,
+      //   headers: toHeadersStringString(fromHeadersInit(header.Headers)),
+      // });
+      // resolve(new Response(stream, res))
+      return MatchState.Matched
+    }));
+    unregFn.push(this.matchResponsePart(id, (header, ctx) => {
+      console.log(`fetch-response:part`)
+      // controller.enqueue(header.Content);
+      return MatchState.Matched
+    }));
+    unregFn.push(this.matchResponseEnd(id, (header, ctx) => {
+      console.log(`fetch-response:end`)
+      // controller.close();
+      unregFn.forEach(fn => fn())
+      return MatchState.Matched
+    }));
+    console.log('fetch-send', url, init)
+    eh.send({
+      Dst: id,
+      Payload: this.httpTransaction!.sendRequest({
+        Method: init.method || "GET",
+        Path: url,
+        Headers: toHeadersStringStringArray(fromHeadersInit(init.headers || {})),
+      }, {
+        Id: id,
+      }),
+    });
+    if (init.body && (init.body as ReadableStream).getReader) {
+      const reader = (init.body as ReadableStream).getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+        if (value) {
+          eh.send({
+            Dst: id,
+            Payload: this.httpTransaction!.sendRequestPart({
+              Content: value,
+            }),
+          });
+        }
+      }
+      eh.send({
+        Dst: id,
+        Payload: this.httpTransaction!.sendRequestEnd({}),
+      });
+    }
+    if (typeof init.afterSend === 'function') {
+      init.afterSend(eh)
+    }
+    console.log('fetch-post', url, init)
+    return new Promise<Response>((resolve, reject) => {
+      const stream = new ReadableStream<Uint8Array>({
+        start: (controller) => {
+          console.log(`fetch-response:`)
+
+        },
+      })
+    })
+  }
+
+
+  // return {
+  //   registerCtx(fp: FrameProcessor, eh: EnvelopeHandler) {
+  //
+  //   }
+  //   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  //     return await fetch(request, env, ctx);
+  //   }
+  // }
+}

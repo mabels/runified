@@ -1,0 +1,64 @@
+// import { EnvelopeProcessor } from "./envelope-processor";
+// import { FrameProcessor } from "./frame-processor";
+// import { ConnectionProcessor } from "./connection-processor";
+// import { ReadableStream } from "@edge-runtime/ponyfill";
+// import { ParamHttpResponsePart, SendHttpResponsePart } from "./http-frame-processor";
+
+it("http-frame", () => {
+  // const fp = new FrameProcessor();
+  // const partsContent: {Content: Uint8Array, Part: number}[] = [];
+  // const stream = new ReadableStream<Uint8Array>({
+  //   start(controller) {
+  //     // const rframe = new ConnectionFrameProcessor(controller);
+  //     // const hframe = new HttpResponseProcessor(rframe);
+  //     hframe.sendHeader({
+  //       Status: 200,
+  //       StatusText: "Status OK",
+  //       Headers: {
+  //         "Content-Type": ["text/plain", "charset=utf-8"],
+  //         "Content-Length": ["12"],
+  //       },
+  //     });
+  //     for (let i = 0; i < 12; i++) {
+  //       const tmp: SendHttpResponsePart = {
+  //         Content: new TextEncoder().encode(`Hello World:${i}`)
+  //       }
+  //       partsContent.push({
+  //         Content: tmp.Content,
+  //         Part: i
+  //       })
+  //       hframe.sendPart(tmp)
+  //     }
+  //     hframe.sendEnd({
+  //       // Msgs: 4711,
+  //       // ContentLength: 4999
+  //     });
+  //     rframe.close();
+  //   },
+  // });
+
+  // let partIdx = 0;
+  // return FrameProcessor.match(stream, (frame) => {
+  //   EnvelopeProcessor.match(frame.Payload, (env) => {
+  //     ConnectionFrameProcessor.match(env, (resp) => {
+  //       HttpResponseProcessor.match(resp, {
+  //         header: (header) => {
+  //           expect(header.Status).toBe(200);
+  //           expect(header.StatusText).toBe("Status OK");
+  //           expect(header.Headers["Content-Type"]).toEqual(["text/plain", "charset=utf-8"]);
+  //           expect(header.Headers["Content-Length"]).toEqual(["12"]);
+  //         },
+  //         part: (part) => {
+  //           expect(part.Part).toEqual(partsContent[partIdx].Part);
+  //           expect((part.Content)).toEqual(partsContent[partIdx].Content);
+  //           partIdx++;
+  //         },
+  //         end: (end) => {
+  //           expect(end.Msgs).toBe(partsContent.length + 2); // header + end
+  //           expect(end.ContentLength).toBe(partsContent.reduce((acc, part) => acc + part.Content.length, 0));
+  //         },
+  //       });
+  //     });
+  //   });
+  // });
+});

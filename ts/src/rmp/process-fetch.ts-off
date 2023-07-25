@@ -1,0 +1,141 @@
+// import { ConsoleProcessor } from "./console-processor.js";
+import { FetchHandler, ExecutionContext, Env } from "./pony-types.js";
+// import { ConnectionProcessor } from "./connection-processor.js";
+// import { HttpResponseEnd, HttpResponseHeader, HttpResponsePart, } from "./http-frame-processor.ts-off";
+import { quickId } from "./utils.js";
+
+// function runProcessResponse(id: string, res: Promise<Response>, framer: HttpResponseProcessor): Promise<void> {
+//   return new Promise((rs, _rj) => {
+//     res
+//       .then((res) => {
+//         // console.log("response >>>>>>>", Array.from(res.headers.entries()));
+//         processResponse(id, res, framer)
+//           .catch((r) => {
+//             console.error(r);
+//           })
+//           .finally(rs);
+//       })
+//       .catch((r) => {
+//         console.error(r);
+//       });
+//   });
+// }
+
+// async function processResponse(id: string, res: Response, framer: HttpResponseProcessor) {
+//   // console.log("o processResponse", Array.from(res.headers.entries()));
+//   // res.headers.forEach((v, k, i) => {
+//   //   console.log("processResponse", id, i, v, k);
+//   // });
+//   // framer.sendHeader({
+//   //   Headers: Array.from(res.headers.entries()).reduce((acc, [k, v]) => {
+//   //     let val = acc[k];
+//   //     if (!val) {
+//   //       val = [];
+//   //       acc[k] = val;
+//   //     }
+//   //     val.push(v);
+//   //     return acc;
+//   //   }, {} as Record<string, string[]>),
+//   //   Status: res.status,
+//   //   StatusText: res.statusText,
+//   // });
+//   const reader = res.body!.getReader();
+//   while (true) {
+//     const { done, value: chunk } = await reader.read();
+//     if (done) {
+//       break;
+//     }
+//     if (chunk) {
+//       console.log("part");
+//       // framer.sendPart({ Content: chunk });
+//     }
+//   }
+//   // framer.sendEnd({});
+// }
+
+interface HttpRequestStream {
+  readonly id: string;
+  stream?: ReadableStream<Uint8Array>;
+  controller?: ReadableStreamDefaultController<Uint8Array>;
+}
+
+export class HttpTransactionHandler {
+  readonly transactions = new Map<string, HttpRequestStream>();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    header(header: HttpResponseHeader): void {
+      const transaction: HttpRequestStream = { id: quickId() };
+      (new Promise<void>((rs) => {
+        transaction.stream = new ReadableStream<Uint8Array>({
+          start(controller) {
+            transaction.controller = controller;
+            rs()
+          },
+        })
+      })).then(() => {
+        this.transactions.set(transaction.id, transaction)
+      })
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    part(part: HttpResponsePart): void {
+      throw new Error("Method not implemented.");
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    end(footer: HttpResponseEnd): void {
+      throw new Error("Method not implemented.");
+    }
+
+    // const eh = edgeHandlers[i];
+    // if (typeof eh.setFramer == "function") {
+    //   console.log("INJECTING:FRAMER", i);
+    //   eh.setFramer(framer);
+    // }
+    // const res = eh.fetch(request, env, ctx);
+    // if (res instanceof Response) {
+    //   runProcessResponse(`${i}`, Promise.resolve(res), httpResponseFramer).finally(waitToClose.done);
+    // } else if (res instanceof Promise) {
+    //   runProcessResponse(`${i}`, res, httpResponseFramer).finally(waitToClose.done);
+    // }
+}
+
+
+// function requestProcessor(cproc: ConnectionProcessor, request: Request, env: Env, context: ExecutionContext) {
+//   if (!request.body) {
+//     return;
+//   }
+//   const httpTransaction = new HttpTransactionHandler()
+//   FrameProcessor.match(request.body, (frame) => {
+//     EnvelopeProcessor.match(frame.Payload, (envelope) => {
+//       cproc.match(envelope, (response) => {
+//         HttpResponseProcessor.match(response, httpTransaction);
+//       });
+//     });
+//   });
+// }
+
+export function processFetchWithController(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  controller: ReadableStreamController<Uint8Array>,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  request: Request,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  env: Env,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ctx: ExecutionContext,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  edgeHandlers: FetchHandler
+) {
+  // console.log(`processFetchWithController`, request.url);
+  // const framer = new ConnectionProcessor(controller);
+  // const httpResponseFramer = new HttpResponseProcessor(framer);
+  // const patchedConsole = ConsoleProcessor.patch(framer);
+  // // const waitToClose = new WaitToClose(edgeHandlers.length);
+  // // waitToClose.onClose(() => {
+  // //   patchedConsole.unpatch();
+  // //   framer.close();
+  // // });
+  // // if (typeof ctx !== "object") {
+  // //   ctx = {};
+  // // }
+  // requestProcessor(framer, request, env, ctx);
+
+}

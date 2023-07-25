@@ -1,0 +1,21 @@
+import { ReadableStreamController } from './pony-types';
+import {EnvelopeProcessor, ParamEnvelope} from './envelope'
+import { FrameProcessor } from './frame-processor';
+
+export class EnvelopeFrameProcessor {
+    readonly output: ReadableStreamController<Uint8Array>;
+
+    constructor(output: ReadableStreamController<Uint8Array>) {
+        this.output = output;
+    }
+
+    send(send: ParamEnvelope): void {
+        this.output.enqueue(
+            FrameProcessor.build(EnvelopeProcessor.create(send).asIon())
+        )
+    }
+
+    close(): void {
+        this.output.close();
+    }
+}

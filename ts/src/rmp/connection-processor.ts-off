@@ -1,0 +1,117 @@
+import { Envelope, EnvelopeEncoder, ParamEnvelope, ParamEnvelopeWithoutPayload } from "./envelope-processor";
+import { FrameProcessor } from "./frame-processor";
+import { quickId } from "./utils";
+import { IonTypes, Writer } from "ion-js";
+import { ensureReader, ensureWriter, readBlobTuple, readStringTuple } from "./ion-utils";
+
+export interface AsBlob {
+  asBlob(): Uint8Array;
+}
+
+export interface FromBlob<T> {
+  fromBlob(data: Uint8Array): T;
+}
+
+export interface ConnectionFrame {
+  readonly StreamId: string;
+  readonly Type: string;
+  readonly Data: Uint8Array;
+}
+
+export interface ParamResponse {
+  readonly StreamId?: string;
+  readonly Type: string;
+  readonly Data: Uint8Array;
+}
+
+export class ConnectionEncoder implements ConnectionFrame {
+  readonly StreamId: string;
+  readonly Type: string;
+  readonly Data: Uint8Array;
+  constructor(resp: ConnectionFrame) {
+    this.StreamId = resp.StreamId;
+    this.Type = resp.Type;
+    this.Data = resp.Data;
+  }
+  writeIon = (writer: Writer) => {
+    writer.stepIn(IonTypes.STRUCT);
+    writer.writeFieldName("StreamId");
+    writer.writeString(this.StreamId);
+    writer.writeFieldName("Type");
+    writer.writeString(this.Type);
+    writer.writeFieldName("Data");
+    writer.writeBlob(this.Data);
+    writer.stepOut();
+  };
+  asIon(writer?: Writer): Uint8Array {
+    return ensureWriter(writer, this.writeIon).getBytes();
+  }
+}
+
+export class ConnectionProcessor {
+  static readonly Type = "Connection";
+  readonly output: ReadableStreamController<Uint8Array>;
+  readonly streamId: string = quickId();
+
+  constructor(output: ReadableStreamController<Uint8Array>) {
+    this.output = output;
+  }
+
+  static decode(data: Uint8Array): ConnectionFrame {
+    return ensureReader(data, (reader) => {
+      if (reader.next() !== IonTypes.STRUCT) {
+        throw "no struct for envelope";
+      }
+      reader.stepIn();
+      const ret: ConnectionFrame = {
+        StreamId: readStringTuple(reader, "StreamId"),
+        Type: readStringTuple(reader, "Type"),
+        Data: readBlobTuple(reader, "Data"),
+      };
+      reader.stepOut();
+      return ret;
+    });
+  }
+
+  static match(env: Envelope, fn: (resp: ConnectionFrame) => void): boolean {
+    if (env.Payload.Type !== ConnectionProcessor.Type) {
+      return false;
+    }
+    fn(ConnectionProcessor.decode(env.Payload.Data));
+    return true;
+  }
+
+  match(env: Envelope, fn: (resp: ConnectionFrame) => void): boolean {
+    if (env.Payload.Type !== ConnectionProcessor.Type) {
+      return false;
+    }
+    const data = ConnectionProcessor.decode(env.Payload.Data);
+    fn({
+      ...data,
+      StreamId: data.StreamId,
+    });
+    return true;
+  }
+
+  create(param: ParamResponse): ConnectionEncoder {
+    return new ConnectionEncoder({
+      StreamId: this.streamId,
+      ...param,
+    });
+  }
+
+  send(r: ConnectionEncoder, env?: ParamEnvelopeWithoutPayload): void {
+    const send: ParamEnvelope = {
+      ...env,
+      Payload: {
+        Type: ConnectionProcessor.Type,
+        Data: r.asIon(),
+      },
+    };
+    this.output.enqueue(FrameProcessor.build(new EnvelopeEncoder(send, sys).asIon()));
+  }
+
+  close(): void {
+    this.output.close();
+  }
+}

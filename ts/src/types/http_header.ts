@@ -1,7 +1,43 @@
+export class HeadersImpl extends Headers {
+  readonly _headers: Map<string, string>;
+
+  constructor(init: Map<string, string>) {
+    super();
+    this._headers = init;
+  }
+
+  [Symbol.iterator](): IterableIterator<[string, string]> {
+    return this.entries();
+  }
+
+  entries(): IterableIterator<[string, string]> {
+    return this._headers.entries();
+  }
+  keys(): IterableIterator<string> {
+    return this._headers.keys();
+  }
+  values(): IterableIterator<string> {
+    return this._headers.values();
+  }
+
+  append(key: string, value: string | string[] | undefined): HeadersImpl {
+    const values = this._headers.get(key);
+    if (typeof value === "undefined") {
+      value = "";
+    }
+    if (Array.isArray(value)) {
+      this._headers.set(key, [values, ...value].filter((i) => i).join(", "));
+    } else {
+      this._headers.set(key, [values, value].filter((i) => i).join(", "));
+    }
+    return this;
+  }
+}
+
 export class HttpHeader {
   readonly _headers: Map<string, string[]> = new Map<string, string[]>();
 
-  static from(headers?: HeadersInit | NodeJS.Dict<string | string[]>): HttpHeader {
+  static from(headers?: HeadersInit | NodeJS.Dict<string | string[]> | Headers): HttpHeader {
     const h = new HttpHeader();
     if (headers) {
       if (Array.isArray(headers)) {
@@ -31,6 +67,14 @@ export class HttpHeader {
     return h;
   }
 
+  _asStringString(): Map<string, string> {
+    const ret = new Map<string, string>();
+    for (const [key, values] of this._headers) {
+      ret.set(key, values.join(", "));
+    }
+    return ret;
+  }
+
   _key(key: string): string {
     return key.toLowerCase();
   }
@@ -45,11 +89,15 @@ export class HttpHeader {
     }
     return values[0];
   }
-  Set(key: string, valueOr: string | string[]): void {
+  Set(key: string, valueOr: string | string[]) {
     const value = Array.isArray(valueOr) ? valueOr : [valueOr];
     this._headers.set(this._key(key), value);
+    return this;
   }
-  Add(key: string, value: string | string[]): void {
+  Add(key: string, value: string | string[] | undefined) {
+    if (typeof value === "undefined") {
+      return this;
+    }
     const vs = Array.isArray(value) ? value : [value];
     const values = this._headers.get(this._key(key));
     if (values === undefined) {
@@ -57,9 +105,11 @@ export class HttpHeader {
     } else {
       values.push(...vs);
     }
+    return this;
   }
-  Del(ey: string): void {
+  Del(ey: string) {
     this._headers.delete(this._key(ey));
+    return this;
   }
   Items(): [string, string[]][] {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -75,10 +125,17 @@ export class HttpHeader {
     }
     return clone;
   }
-  AsObject(): Record<string, string[]> {
+  AsRecordStringStringArray(): Record<string, string[]> {
     const obj: Record<string, string[]> = {};
     for (const [key, values] of this._headers.entries()) {
       obj[key] = [...values];
+    }
+    return obj;
+  }
+  AsRecordStringString(): Record<string, string> {
+    const obj: Record<string, string> = {};
+    for (const [key, values] of this._headers.entries()) {
+      obj[key] = values.join(", ");
     }
     return obj;
   }
@@ -88,6 +145,9 @@ export class HttpHeader {
       obj[key] = values[0];
     }
     return obj;
+  }
+  AsHeaders(): Headers {
+    return new HeadersImpl(this._asStringString());
   }
   Merge(other?: HttpHeader): HttpHeader {
     const ret = this.Clone();

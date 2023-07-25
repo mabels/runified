@@ -79,4 +79,20 @@ describe("HttpHeader", () => {
       ["content-type", ["application/json", "application/xml"]],
     ]);
   });
+
+  it("AbstractHeaders", () => {
+    const ah = new HttpHeader().AsHeaders();
+    ah.append("a", "b");
+    expect(Array.from(ah.keys())).toEqual(["a"]);
+    expect(Array.from(ah.entries())).toEqual([["a", "b"]]);
+    ah.append("a", "c");
+    expect(Array.from(ah.keys())).toEqual(["a"]);
+    expect(Array.from(ah.entries())).toEqual([["a", "b, c"]]);
+    ah.append("a", "d, e");
+    expect(Array.from(ah.keys())).toEqual(["a"]);
+    expect(Array.from(ah.entries())).toEqual([["a", "b, c, d, e"]]);
+    ah.append("v", "w");
+    expect(Array.from(ah.keys())).toEqual(["a", "v"]);
+    expect(Array.from(ah.values())).toEqual(["b, c, d, e", "w"]);
+  });
 });

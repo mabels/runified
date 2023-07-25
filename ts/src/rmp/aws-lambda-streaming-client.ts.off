@@ -1,0 +1,166 @@
+import {
+  LambdaClient,
+  InvokeWithResponseStreamCommand,
+  InvokeWithResponseStreamCommandInput,
+  InvokeCommand,
+  InvokeCommandInput,
+} from "@aws-sdk/client-lambda";
+import { Command } from "@aws-sdk/smithy-client";
+import { MatchState } from "./envelope-handler";
+import { RMProtocol } from "./rmp-protocol";
+import { Request, ReadableStream } from "@edge-runtime/ponyfill";
+import { base64DecToArr, streamToUint8Array } from "./utils";
+import { HttpTransaction, HttpTransactionProtocol } from "./http-frame-processor";
+
+// class Doit extends Command<InvokeWithResponseStreamCommandInput, InvokeWithResponseStreamCommandOutput, LambdaClientResolvedConfig> {
+//     readonly input: any;
+//     constructor() {
+//         super();
+//     }
+//     /**
+//      * @internal
+//      */
+//     // resolveMiddleware(clientStack: MiddlewareStack<ServiceInputTypes, ServiceOutputTypes>, configuration: LambdaClientResolvedConfig, options?: __HttpHandlerOptions): Handler<InvokeWithResponseStreamCommandInput, InvokeWithResponseStreamCommandOutput> {
+//     resolveMiddleware(clientStack: any, configuration: LambdaClientResolvedConfig, options?: any): any {
+//       console.log('resolveMiddleware', this.input, clientStack, configuration, options);
+//       return (...args: any[]) => {
+//         console.log('resolveMiddleware:handler', args);
+//         return Promise.resolve({} as any);
+//       }
+//     }
+//     // private serialize;
+//     // private deserialize;
+// }
+
+async function invokeLambda(rmp: RMProtocol, body: ReadableStream<Uint8Array>) {
+  const REGION = "eu-west-1";
+  const lambda = new LambdaClient({ region: REGION });
+  const params: InvokeCommandInput = {
+    FunctionName: "script-handlerhandler-85e3e4d",
+    InvocationType: "RequestResponse",
+    Payload: new TextEncoder().encode(
+      JSON.stringify({
+        headers: { },
+        method: "POST",
+        path: "/",
+        body: await streamToUint8Array(body),
+      })
+    ),
+  };
+  try {
+    const response = await lambda.send(new InvokeCommand(params));
+    console.log("response", JSON.parse(new TextDecoder().decode(response.Payload)));
+    const body = base64DecToArr(JSON.parse(new TextDecoder().decode(response.Payload)).body);
+    rmp.fetch(new Request("http://localhost:8080", {
+      method: "POST",
+      body: body
+    }), {}, {});
+  } catch (err) {
+    console.log("Error", err);
+  }
+}
+
+async function lambdaReflection() {
+  const rmp = new RMProtocol();
+  rmp.onConnect((fp, eh) => {
+    const decoder = new TextDecoder()
+    eh.onEnvelope((envelope) => {
+      // console.log("onEnvelope", envelope);
+      console.log("onEnvelope", decoder.decode(envelope.Payload.Data));
+      return MatchState.Pass;
+    });
+    const htp = new HttpTransactionProtocol()
+    htp.start(eh)
+    htp.fetch('http://localhost:8080', {
+      method: 'GET',
+      headers: { 'Bla': 'bli' },
+      afterSend: (eh) => {
+        fp.getStreamController().then((sc) => {
+          console.log('xxxxx')
+          eh.close()
+          invokeLambda(rmp, sc.stream)
+        })
+      }
+    }).then((tx) => {
+      console.log('tx', tx)
+    });
+  });
+
+
+}
+
+async function streamReflection() {
+  const rmp = new RMProtocol();
+  rmp.onConnect((fp, eh) => {
+    const decoder = new TextDecoder()
+    eh.onEnvelope((envelope) => {
+      console.log("onEnvelope", decoder.decode(envelope.Payload.Data));
+      return MatchState.Pass;
+    });
+  });
+  const REGION = "eu-west-1";
+  const lambda = new LambdaClient({ region: REGION });
+  const params: InvokeWithResponseStreamCommandInput = {
+    // FunctionName: "arn:aws:lambda:eu-west-1:147553070075:function:script-handlerstreamHandler-e5f5ae9",
+    FunctionName: "script-handlerstreamHandler-e5f5ae9",
+    InvocationType: "RequestResponse",
+    // LogType: "Tail",
+    Payload: new TextEncoder().encode(
+      JSON.stringify({
+        headers: {
+          Bla: "bli",
+        },
+        method: "POST",
+        path: "/doof",
+        body: "ccccc",
+      })
+    ),
+  };
+  try {
+    // Call the InvokeWithResponseStream API
+    const response = await lambda.send(new InvokeWithResponseStreamCommand(params));
+    // console.log('response', new TextDecoder().decode(response.Payload));
+    // The response should contain an EventStream Async Iterator
+
+    const requestStream = new ReadableStream({
+      async start(ctr) {
+        const events = response.EventStream!;
+        for await (const event of events) {
+          if (event.PayloadChunk) {
+            // console.log(`Received event: ${event.PayloadChunk.Payload}`);
+            ctr.enqueue(event.PayloadChunk.Payload);
+          }
+          if (event.InvokeComplete) {
+            if (event.InvokeComplete.ErrorCode) {
+              console.log("Error Code:", event.InvokeComplete.ErrorCode);
+              console.log("Details:", event.InvokeComplete.ErrorDetails);
+            }
+            if (event.InvokeComplete.LogResult) {
+              const buff = Buffer.from(event.InvokeComplete.LogResult, "base64");
+              console.log("Logs:", buff.toString("utf-8"));
+            }
+            console.log("Request complete");
+            // ctr.close();
+          }
+        }
+      },
+    });
+    rmp.fetch(
+      new Request("http://localhost:8080", {
+        method: "POST",
+        body: requestStream,
+      }),
+      {},
+      {}
+    );
+  } catch (err) {
+    console.log("Error", err);
+  }
+}
+
+// streamReflection()
+lambdaReflection()
+  .then(() => {})
+  .catch((err) => process.stderr.write("" + err));
+
+// Preview region is in EU-WEST-1

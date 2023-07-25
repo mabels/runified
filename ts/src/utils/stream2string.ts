@@ -1,4 +1,4 @@
-export async function stream2string(stream?: ReadableStream<Uint8Array>): Promise<string> {
+export async function stream2string(stream?: ReadableStream<Uint8Array>|null): Promise<string> {
   if (!stream) {
     return Promise.resolve("");
   }
@@ -21,7 +21,7 @@ export async function stream2string(stream?: ReadableStream<Uint8Array>): Promis
   return Promise.resolve(res);
 }
 
-export async function stream2uint8array(stream?: ReadableStream<Uint8Array>): Promise<Uint8Array> {
+export async function stream2uint8array(stream?: ReadableStream<Uint8Array>|null): Promise<Uint8Array> {
   if (!stream) {
     return Promise.resolve(new Uint8Array());
   }
