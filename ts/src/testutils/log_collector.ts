@@ -70,9 +70,9 @@ export class LogCollector implements WritableStream<Uint8Array> {
         })(this._writer._bufferArr)
       )
     );
-    const splitStr = jsonNlStr.split("\n")
-    const filterStr = splitStr.filter((a) => a.length)
-    const mapStr = filterStr.map((a) => JSON.parse(a))
+    const splitStr = jsonNlStr.split("\n");
+    const filterStr = splitStr.filter((a) => a.length);
+    const mapStr = filterStr.map((a) => JSON.parse(a));
     return mapStr;
   }
 }

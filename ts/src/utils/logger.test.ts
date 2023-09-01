@@ -20,13 +20,13 @@ describe("TestLogger", () => {
     it("should set the level attribute to error", async () => {
       logger.Error().Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ level: "error"}]);
+      expect(logCollector.Logs()).toEqual([{ level: "error" }]);
     });
 
     it("should set the error message", async () => {
       logger.Err(new Error("test")).Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ error: "test"}]);
+      expect(logCollector.Logs()).toEqual([{ error: "test" }]);
     });
   });
 
@@ -149,10 +149,8 @@ describe("TestLogger", () => {
     const log = logger;
     log.Warn().Msg();
     await log.Flush();
-    expect(logCollector.Logs()).toEqual([
-      { level: "warn" },
-    ]);
-  })
+    expect(logCollector.Logs()).toEqual([{ level: "warn" }]);
+  });
 
   it("check log level", async () => {
     const log = logger.With().Module("test").Logger().With().Logger();
@@ -165,29 +163,25 @@ describe("TestLogger", () => {
     await log.Flush();
     const expected = [
       { msg: "Warn", level: "warn", module: "test" },
-      { msg: "Info" , level: "info", module: "test" },
+      { msg: "Info", level: "info", module: "test" },
       { msg: "Error", level: "error", module: "test" },
       { msg: "Log", module: "test" },
       { msg: "WithLevel", level: "error", module: "test" },
-    ]
+    ];
     expect(logCollector.Logs()).toEqual(expected);
     logCollector.Logs().splice(0, logCollector.Logs().length);
     logger.With().Logger().SetDebug("test");
     log.Debug().Msg("Debug1");
     await log.Flush();
-    expect(logCollector.Logs()).toEqual([
-      ...expected,
-      { msg: "Debug1", level: "debug", module: "test" },
-     ])
-  })
+    expect(logCollector.Logs()).toEqual([...expected, { msg: "Debug1", level: "debug", module: "test" }]);
+  });
 
   it("should flush all logs", async () => {
     const log = new LoggerImpl();
     log.Info().Msg("1");
     log.Info().Msg("2");
-    await log.Flush()
+    await log.Flush();
     log.Info().Msg("DONE");
-    return log.Flush()
-
+    return log.Flush();
   });
 });

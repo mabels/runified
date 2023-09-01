@@ -1,4 +1,3 @@
-
 export enum Level {
   WARN = "warn",
   DEBUG = "debug",

@@ -6,8 +6,6 @@ const encoder = new TextEncoder();
 
 type JsonRecord = Record<string, string | number | boolean | unknown>;
 
-
-
 export class LogWriter {
   readonly _out: WritableStream<Uint8Array>;
   readonly _toFlush: Array<() => Promise<void>> = [];
@@ -30,7 +28,7 @@ export class LogWriter {
         console.error("Chunk error:", err);
       }
       // console.log("<<<My:", val)
-    }
+    };
     this._toFlush.push(my);
     this._flush();
   }
@@ -58,8 +56,6 @@ export class LogWriter {
       return;
     }
 
-
-
     // console.log(">>>Msg:", this._toFlush.length)
     const my = this._toFlush.shift()!;
     my().finally(() => {
@@ -67,10 +63,7 @@ export class LogWriter {
       this._flush(this._toFlush);
     });
   }
-
 }
-
-
 
 export interface LoggerImplParams {
   readonly out?: WritableStream<Uint8Array>;
@@ -149,7 +142,7 @@ export class LoggerImpl implements Logger {
     return this;
   }
   WithLevel(l: Level): Logger {
-    this._attributes["level"] = l
+    this._attributes["level"] = l;
     return this;
   }
 
@@ -189,7 +182,7 @@ export class LoggerImpl implements Logger {
 
   Msg(...args: string[]): void {
     if (this._attributes["level"] === Level.DEBUG) {
-      if (typeof this._attributes["module"] !== 'string') {
+      if (typeof this._attributes["module"] !== "string") {
         return;
       }
       if (!this._logWriter.modules.has(this._attributes["module"])) {
@@ -197,7 +190,7 @@ export class LoggerImpl implements Logger {
       }
     }
     this._attributes["msg"] = args.join(" ");
-    if (typeof this._attributes["msg"] === 'string' && !this._attributes["msg"].trim().length) {
+    if (typeof this._attributes["msg"] === "string" && !this._attributes["msg"].trim().length) {
       delete this._attributes["msg"];
     }
     if (this._attributes["ts"] === "ETERNITY") {
