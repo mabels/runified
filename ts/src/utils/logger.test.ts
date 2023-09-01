@@ -1,7 +1,7 @@
 import { LoggerImpl } from "./logger";
 import { LogCollector } from "../testutils";
 
-import { Logger, TimeMode } from "../types";
+import { Logger, TimeMode, Level } from "../types";
 import { SystemAbstractionImpl, TimeFactory } from "./system_abstraction";
 
 describe("TestLogger", () => {
@@ -20,13 +20,13 @@ describe("TestLogger", () => {
     it("should set the level attribute to error", async () => {
       logger.Error().Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ level: "error", msg: "" }]);
+      expect(logCollector.Logs()).toEqual([{ level: "error"}]);
     });
 
     it("should set the error message", async () => {
       logger.Err(new Error("test")).Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ error: "test", msg: "" }]);
+      expect(logCollector.Logs()).toEqual([{ error: "test"}]);
     });
   });
 
@@ -34,7 +34,7 @@ describe("TestLogger", () => {
     it("should set the level attribute to info", async () => {
       logger.Info().Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ level: "info", msg: "" }]);
+      expect(logCollector.Logs()).toEqual([{ level: "info" }]);
     });
   });
 
@@ -42,7 +42,7 @@ describe("TestLogger", () => {
     it("should set the Any attribute", async () => {
       logger.Any("key", "value").Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ key: "value", msg: "" }]);
+      expect(logCollector.Logs()).toEqual([{ key: "value" }]);
     });
   });
 
@@ -50,21 +50,21 @@ describe("TestLogger", () => {
     it("should set the Dur attribute", async () => {
       logger.Dur("key", 123).Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ key: 123, msg: "" }]);
+      expect(logCollector.Logs()).toEqual([{ key: 123 }]);
     });
   });
   describe("Uint64()", () => {
     it("should set the Uint64 / number attribute", async () => {
       logger.Uint64("Hey", 123).Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ Hey: 123, msg: "" }]);
+      expect(logCollector.Logs()).toEqual([{ Hey: 123 }]);
     });
   });
   describe("Str()", () => {
     it("should set the String attribute", async () => {
       logger.Str("key", "value").Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ key: "value", msg: "" }]);
+      expect(logCollector.Logs()).toEqual([{ key: "value" }]);
     });
   });
 
@@ -143,5 +143,51 @@ describe("TestLogger", () => {
         },
       ]);
     });
+  });
+
+  it("remove empty msg", async () => {
+    const log = logger;
+    log.Warn().Msg();
+    await log.Flush();
+    expect(logCollector.Logs()).toEqual([
+      { level: "warn" },
+    ]);
+  })
+
+  it("check log level", async () => {
+    const log = logger.With().Module("test").Logger().With().Logger();
+    log.Warn().Msg("Warn");
+    log.Info().Msg("Info");
+    log.Error().Msg("Error");
+    log.Log().Msg("Log");
+    log.WithLevel(Level.ERROR).Msg("WithLevel");
+    log.Debug().Msg("Debug");
+    await log.Flush();
+    const expected = [
+      { msg: "Warn", level: "warn", module: "test" },
+      { msg: "Info" , level: "info", module: "test" },
+      { msg: "Error", level: "error", module: "test" },
+      { msg: "Log", module: "test" },
+      { msg: "WithLevel", level: "error", module: "test" },
+    ]
+    expect(logCollector.Logs()).toEqual(expected);
+    logCollector.Logs().splice(0, logCollector.Logs().length);
+    logger.With().Logger().SetDebug("test");
+    log.Debug().Msg("Debug1");
+    await log.Flush();
+    expect(logCollector.Logs()).toEqual([
+      ...expected,
+      { msg: "Debug1", level: "debug", module: "test" },
+     ])
+  })
+
+  it("should flush all logs", async () => {
+    const log = new LoggerImpl();
+    log.Info().Msg("1");
+    log.Info().Msg("2");
+    await log.Flush()
+    log.Info().Msg("DONE");
+    return log.Flush()
+
   });
 });

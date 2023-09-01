@@ -1,22 +1,88 @@
-import { v4 } from "uuid";
-import { Logger, SysAbstraction, WithLogger } from "../types";
+// import { v4 } from "uuid";
+import { Level, Logger, SysAbstraction, WithLogger } from "../types";
 import { SystemAbstractionImpl } from "./system_abstraction";
 
 const encoder = new TextEncoder();
 
 type JsonRecord = Record<string, string | number | boolean | unknown>;
 
+
+
+export class LogWriter {
+  readonly _out: WritableStream<Uint8Array>;
+  readonly _toFlush: Array<() => Promise<void>> = [];
+  readonly modules: Set<string> = new Set();
+
+  constructor(out: WritableStream<Uint8Array>) {
+    this._out = out;
+  }
+
+  write(encoded: Uint8Array) {
+    const my = async () => {
+      // const val = Math.random();
+      // console.log(">>>My:", val)
+      try {
+        const writer = this._out.getWriter();
+        await writer.ready;
+        await writer.write(encoded);
+        await writer.releaseLock();
+      } catch (err) {
+        console.error("Chunk error:", err);
+      }
+      // console.log("<<<My:", val)
+    }
+    this._toFlush.push(my);
+    this._flush();
+  }
+
+  _flushIsRunning = false;
+  _flushDoneFns = Array<() => void>();
+  _flush(toFlush: Array<() => Promise<void>> | undefined = undefined, done?: () => void): void {
+    if (done) {
+      this._flushDoneFns.push(done);
+    }
+
+    if (this._toFlush.length == 0) {
+      // console.log("Flush is stopped", this._toFlush.length)
+      this._flushIsRunning = false;
+      this._flushDoneFns.forEach((fn) => fn());
+      this._flushDoneFns = [];
+      return;
+    }
+
+    if (!toFlush && this._toFlush.length == 1 && !this._flushIsRunning) {
+      this._flushIsRunning = true;
+      // console.log("Flush is started", this._toFlush.length)
+    } else if (!toFlush) {
+      // console.log("flush queue check but is running", this._toFlush.length)
+      return;
+    }
+
+
+
+    // console.log(">>>Msg:", this._toFlush.length)
+    const my = this._toFlush.shift()!;
+    my().finally(() => {
+      // console.log("<<<Msg:", this._toFlush.length)
+      this._flush(this._toFlush);
+    });
+  }
+
+}
+
+
+
 export interface LoggerImplParams {
   readonly out?: WritableStream<Uint8Array>;
+  readonly logWriter?: LogWriter;
   readonly sys?: SysAbstraction;
   readonly withAttributes?: JsonRecord;
 }
 export class LoggerImpl implements Logger {
-  readonly _out: WritableStream<Uint8Array>;
   readonly _sys: SysAbstraction;
   readonly _attributes: JsonRecord = {};
   readonly _withAttributes: JsonRecord;
-  readonly _toFlush: Map<string, Promise<void>> = new Map();
+  readonly _logWriter: LogWriter;
 
   constructor(params?: LoggerImplParams) {
     if (!params) {
@@ -27,10 +93,14 @@ export class LoggerImpl implements Logger {
     } else {
       this._sys = params.sys;
     }
-    if (!params.out) {
-      this._out = this._sys.Stdout();
+    if (params.logWriter) {
+      this._logWriter = params.logWriter;
     } else {
-      this._out = params.out;
+      if (!params.out) {
+        this._logWriter = new LogWriter(this._sys.Stdout());
+      } else {
+        this._logWriter = new LogWriter(params.out);
+      }
     }
     if (!params.withAttributes) {
       this._withAttributes = {};
@@ -39,26 +109,55 @@ export class LoggerImpl implements Logger {
     }
     this._attributes = { ...this._withAttributes };
   }
+
+  Module(key: string): Logger {
+    this._attributes["module"] = key;
+    return this;
+  }
+  SetDebug(...modules: string[]): Logger {
+    for (const m of modules) {
+      this._logWriter.modules.add(m);
+    }
+    return this;
+  }
+
   Timestamp(): Logger {
     this._attributes["ts"] = this._sys.Time().Now().toISOString();
     return this;
   }
+  Warn(): Logger {
+    this._attributes["level"] = Level.WARN;
+    return this;
+  }
+  Log(): Logger {
+    return this;
+  }
+  Debug(): Logger {
+    this._attributes["level"] = Level.DEBUG;
+    return this;
+  }
   Error(): Logger {
-    this._attributes["level"] = "error";
+    this._attributes["level"] = Level.ERROR;
+    return this;
+  }
+  Info(): Logger {
+    this._attributes["level"] = Level.INFO;
     return this;
   }
   Err(err: Error): Logger {
     this._attributes["error"] = err.message;
     return this;
   }
+  WithLevel(l: Level): Logger {
+    this._attributes["level"] = l
+    return this;
+  }
+
   Str(key: string, value: string): Logger {
     this._attributes[key] = value;
     return this;
   }
-  Info(): Logger {
-    this._attributes["level"] = "info";
-    return this;
-  }
+
   Any(key: string, value: string | number | boolean | JsonRecord): Logger {
     this._attributes[key] = value;
     return this;
@@ -73,14 +172,15 @@ export class LoggerImpl implements Logger {
   }
 
   async Flush(): Promise<void> {
-    await Promise.all(this._toFlush.values());
-    return Promise.resolve();
+    return new Promise((resolve) => {
+      this._logWriter._flush(undefined, resolve);
+    });
   }
 
   With(): WithLogger {
     return new WithLoggerBuilder(
       new LoggerImpl({
-        out: this._out,
+        logWriter: this._logWriter,
         sys: this._sys,
         withAttributes: { ...this._withAttributes },
       })
@@ -88,8 +188,18 @@ export class LoggerImpl implements Logger {
   }
 
   Msg(...args: string[]): void {
+    if (this._attributes["level"] === Level.DEBUG) {
+      if (typeof this._attributes["module"] !== 'string') {
+        return;
+      }
+      if (!this._logWriter.modules.has(this._attributes["module"])) {
+        return;
+      }
+    }
     this._attributes["msg"] = args.join(" ");
-    const writer = this._out.getWriter();
+    if (typeof this._attributes["msg"] === 'string' && !this._attributes["msg"].trim().length) {
+      delete this._attributes["msg"];
+    }
     if (this._attributes["ts"] === "ETERNITY") {
       this.Timestamp();
     }
@@ -98,19 +208,8 @@ export class LoggerImpl implements Logger {
       delete this._attributes[key];
     });
     Object.assign(this._attributes, this._withAttributes);
-    //this._attributes = { ...this._withAttributes };
-    writer.ready
-      .then(() => {
-        const my = writer.write(encoded);
-        const myId = v4();
-        this._toFlush.set(myId, my);
-        my.finally(() => {
-          this._toFlush.delete(myId);
-        });
-      })
-      .catch((err) => {
-        console.log("Chunk error:", err);
-      });
+
+    this._logWriter.write(encoded);
   }
 }
 
@@ -123,13 +222,41 @@ class WithLoggerBuilder implements WithLogger {
     Object.assign(this._li._withAttributes, this._li._attributes);
     return this._li;
   }
+
+  Module(key: string): WithLogger {
+    this._li.Module(key);
+    return this;
+  }
+  SetDebug(...modules: string[]): WithLogger {
+    this._li.SetDebug(...modules);
+    return this;
+  }
+
   Str(key: string, value: string): WithLogger {
     this._li.Str(key, value);
     return this;
   }
 
+  Log(): WithLogger {
+    this._li.Log();
+    return this;
+  }
+
+  WithLevel(level: Level): WithLogger {
+    this._li.WithLevel(level);
+    return this;
+  }
+
   Error(): WithLogger {
     this._li.Error();
+    return this;
+  }
+  Warn(): WithLogger {
+    this._li.Error();
+    return this;
+  }
+  Debug(): WithLogger {
+    this._li.Debug();
     return this;
   }
   Err(err: Error): WithLogger {

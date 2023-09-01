@@ -1,6 +1,22 @@
+
+export enum Level {
+  WARN = "warn",
+  DEBUG = "debug",
+  INFO = "info",
+  ERROR = "error",
+}
+
 export interface LoggerInterface<R> {
+  Module(key: string): R;
+  SetDebug(...modules: string[]): R;
+
   Str(key: string, value: string): R;
   Error(): R;
+  Warn(): R;
+  Debug(): R;
+  Log(): R;
+  WithLevel(level: Level): R;
+
   Err(err: Error): R;
   Info(): R;
   Timestamp(): R;

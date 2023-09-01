@@ -52,7 +52,8 @@ export class SystemAbstractionImpl implements SysAbstraction {
   static readonly _stdout = new WritableStream({
     write(chunk) {
       return new Promise((resolve) => {
-        console.log(decoder.decode(chunk));
+        const decoded = decoder.decode(chunk);
+        console.log(decoded.trimEnd());
         resolve();
       });
     },
