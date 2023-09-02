@@ -180,29 +180,33 @@ export class LoggerImpl implements Logger {
     );
   }
 
-  Msg(...args: string[]): void {
-    if (this._attributes["level"] === Level.DEBUG) {
-      if (typeof this._attributes["module"] !== "string") {
-        return;
-      }
-      if (!this._logWriter.modules.has(this._attributes["module"])) {
-        return;
-      }
-    }
-    this._attributes["msg"] = args.join(" ");
-    if (typeof this._attributes["msg"] === "string" && !this._attributes["msg"].trim().length) {
-      delete this._attributes["msg"];
-    }
-    if (this._attributes["ts"] === "ETERNITY") {
-      this.Timestamp();
-    }
-    const encoded = encoder.encode(JSON.stringify(this._attributes) + "\n");
+  _resetAttributes(fn: () => void): void {
+    fn();
     Object.keys(this._attributes).forEach((key) => {
       delete this._attributes[key];
     });
     Object.assign(this._attributes, this._withAttributes);
-
-    this._logWriter.write(encoded);
+  }
+  Msg(...args: string[]): void {
+    this._resetAttributes(() => {
+      if (this._attributes["level"] === Level.DEBUG) {
+        if (typeof this._attributes["module"] !== "string") {
+          return;
+        }
+        if (!this._logWriter.modules.has(this._attributes["module"])) {
+          return;
+        }
+      }
+      this._attributes["msg"] = args.join(" ");
+      if (typeof this._attributes["msg"] === "string" && !this._attributes["msg"].trim().length) {
+        delete this._attributes["msg"];
+      }
+      if (this._attributes["ts"] === "ETERNITY") {
+        this.Timestamp();
+      }
+      const encoded = encoder.encode(JSON.stringify(this._attributes) + "\n");
+      this._logWriter.write(encoded);
+    });
   }
 }
 

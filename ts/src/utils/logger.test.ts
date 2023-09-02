@@ -159,7 +159,8 @@ describe("TestLogger", () => {
     log.Error().Msg("Error");
     log.Log().Msg("Log");
     log.WithLevel(Level.ERROR).Msg("WithLevel");
-    log.Debug().Msg("Debug");
+    log.Debug().Str("should", "reset").Msg("Debug");
+    log.Info().Str("what", "the").Msg("Simple");
     await log.Flush();
     const expected = [
       { msg: "Warn", level: "warn", module: "test" },
@@ -167,6 +168,7 @@ describe("TestLogger", () => {
       { msg: "Error", level: "error", module: "test" },
       { msg: "Log", module: "test" },
       { msg: "WithLevel", level: "error", module: "test" },
+      { level: "info", module: "test", msg: "Simple", what: "the" },
     ];
     expect(logCollector.Logs()).toEqual(expected);
     logCollector.Logs().splice(0, logCollector.Logs().length);
