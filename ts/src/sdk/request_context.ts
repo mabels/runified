@@ -48,7 +48,12 @@ export class RequestContext<QQ, SS> {
   readonly _resFac: WuestenFactory<SS, SS, SS>;
   readonly _resSerDe: SerDe<SS>;
 
-  constructor(c: SDKClient, reqFac: WuestenFactory<QQ, QQ, QQ>, resFac: WuestenFactory<SS, SS, SS>, params?: { RequestID: string }) {
+  constructor(
+    c: SDKClient,
+    reqFac: WuestenFactory<QQ, QQ, QQ>,
+    resFac: WuestenFactory<SS, SS, SS>,
+    params?: { RequestID: string }
+  ) {
     this.Request = {
       Stats: { Start: c.Sys.Time().Now() },
     };
