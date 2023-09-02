@@ -9,8 +9,8 @@ export interface SerDe<T> {
 export class JsonSerDe<TTT> implements SerDe<TTT> {
   static readonly _encoder = new TextEncoder();
   static readonly _decoder = new TextDecoder();
-  readonly _factory: WuestenFactory<TTT>;
-  constructor(factory: WuestenFactory<TTT>) {
+  readonly _factory: WuestenFactory<TTT, TTT, TTT>;
+  constructor(factory: WuestenFactory<TTT, TTT, TTT>) {
     this._factory = factory;
   }
   Marshal(t: TTT): Result<Uint8Array> {

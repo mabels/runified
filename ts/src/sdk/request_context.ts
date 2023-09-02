@@ -42,13 +42,13 @@ export class RequestContext<QQ, SS> {
 
   readonly _sdkClient: SDKClient;
 
-  readonly _reqFac: WuestenFactory<QQ>;
+  readonly _reqFac: WuestenFactory<QQ, QQ, QQ>;
   readonly _reqSerDe: SerDe<QQ>;
 
-  readonly _resFac: WuestenFactory<SS>;
+  readonly _resFac: WuestenFactory<SS, SS, SS>;
   readonly _resSerDe: SerDe<SS>;
 
-  constructor(c: SDKClient, reqFac: WuestenFactory<QQ>, resFac: WuestenFactory<SS>, params?: { RequestID: string }) {
+  constructor(c: SDKClient, reqFac: WuestenFactory<QQ, QQ, QQ>, resFac: WuestenFactory<SS, SS, SS>, params?: { RequestID: string }) {
     this.Request = {
       Stats: { Start: c.Sys.Time().Now() },
     };
@@ -185,8 +185,8 @@ export class RequestContext<QQ, SS> {
 export async function postWithRequestContext<Q, S>(
   c: SDKClient,
   url: string,
-  reqFactory: WuestenFactory<Q>,
-  resFactory: WuestenFactory<S>,
+  reqFactory: WuestenFactory<Q, Q, Q>,
+  resFactory: WuestenFactory<S, S, S>,
   reqData: Q,
   // fn: ctxFunction<QQ, QQQ, SS, SSS>
   params?: { RequestID: string }

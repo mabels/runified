@@ -12,7 +12,7 @@ export function WrapUntypedApi<Q, S>(apihandler: ApiHandlerTyped<Q, S>): ApiHand
   };
 }
 
-export function WrapApiHandler<Q, S>(api: Api, handlers: ApiHandlerUnTyped[], rtf: WuestenFactory<Q>): HttpHandlerFunc {
+export function WrapApiHandler<Q, S>(api: Api, handlers: ApiHandlerUnTyped[], rtf: WuestenFactory<Q, Q, Q>): HttpHandlerFunc {
   return BindAppToHandler(api.App(), async (reqApp: AppHandler) => {
     const r = MapBrowserMethod(reqApp.Request());
     const w = reqApp.Response();
@@ -52,7 +52,7 @@ export function WrapApiHandler<Q, S>(api: Api, handlers: ApiHandlerUnTyped[], rt
 export interface ApiHandlerParams<Q, S> {
   readonly api: Api;
   readonly logRef: Logger;
-  readonly requestTypeFactory: WuestenFactory<Q>;
+  readonly requestTypeFactory: WuestenFactory<Q, Q, Q>;
   readonly requestId: string;
   readonly httpRequest: HttpRequest;
   readonly httpResponse: HttpResponseWriter;
