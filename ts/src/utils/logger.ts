@@ -156,7 +156,8 @@ export class LoggerImpl implements Logger {
     return this;
   }
   Dur(key: string, nsec: number): Logger {
-    this._attributes[key] = nsec;
+    this._attributes[key] = `${nsec}ms`;
+    // new Intl.DurationFormat("en", { style: "narrow" }).format(nsec);
     return this;
   }
   Uint64(key: string, value: number): Logger {

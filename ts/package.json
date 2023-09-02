@@ -39,11 +39,13 @@
     "smoke": "cd smoke; npm init -y -f ; npm install -f ../pubdir/adviser-runified-*.tgz; npx ts-node smoke.ts"
   },
   "devDependencies": {
+    "@aws-sdk/protocol-http": "^3.374.0",
     "@azure/functions": "^4.0.0-alpha.9",
     "@babel/preset-typescript": "^7.21.5",
     "@cloudflare/workers-types": "^4.20230518.0",
     "@fnproject/fdk": "^0.0.56",
     "@google-cloud/functions-framework": "^3.3.0",
+    "@jest/globals": "^29.6.4",
     "@types/aws-lambda": "^8.10.119",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.4.4",
@@ -62,7 +64,6 @@
     "typescript": "^5.2.0"
   },
   "dependencies": {
-    "@aws-sdk/protocol-http": "^3.374.0",
     "ion-js": "^5.1.0",
     "uuid": "^9.0.0",
     "ws": "^8.13.0",

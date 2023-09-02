@@ -50,7 +50,7 @@ describe("TestLogger", () => {
     it("should set the Dur attribute", async () => {
       logger.Dur("key", 123).Msg("");
       await logger.Flush();
-      expect(logCollector.Logs()).toEqual([{ key: 123 }]);
+      expect(logCollector.Logs()).toEqual([{ key: "123ms" }]);
     });
   });
   describe("Uint64()", () => {
