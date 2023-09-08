@@ -1,4 +1,5 @@
 export * from "./counter";
+export * from "./stats";
 export * from "./http_client";
 export * from "./logger";
 export * from "./stream2string";

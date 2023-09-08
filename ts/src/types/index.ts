@@ -11,6 +11,7 @@ export * from "./key_value";
 export * from "./logger";
 export * from "./sdk";
 export * from "./serde";
+export * from "./stats";
 export * from "./sys_abstraction";
 export * from "./time";
 export * from "../generated/error";
