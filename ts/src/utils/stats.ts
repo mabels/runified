@@ -2,7 +2,6 @@ import { SysAbstraction } from "../types";
 import { ActionItem, DateTuple, ValueType } from "../types/stats";
 import { SystemAbstractionImpl } from "./system_abstraction";
 
-
 export class DateRange implements ActionItem {
   readonly _range: DateTuple;
   constructor(start: Date, end: Date) {
@@ -50,9 +49,11 @@ export class ValueAvg extends Value {
     if (items.length === 0) {
       return 0;
     }
-    return items.reduce((acc, item) => {
-      return acc + (item.Value() as number);
-    }, 0) / items.length;
+    return (
+      items.reduce((acc, item) => {
+        return acc + (item.Value() as number);
+      }, 0) / items.length
+    );
   }
 }
 
@@ -61,7 +62,7 @@ export class Stats {
   readonly _stats: Record<string, ActionItem[]> = {};
   readonly _lastStats: Record<string, ActionItem> = {};
   readonly _children: Stats[] = [];
-  readonly _sys: SysAbstraction = undefined as unknown as SysAbstraction
+  readonly _sys: SysAbstraction = undefined as unknown as SysAbstraction;
   constructor(feature?: string, stats?: Stats, sys?: SysAbstraction) {
     if (feature) {
       if (stats) {
@@ -74,7 +75,7 @@ export class Stats {
       this._sys = stats._sys;
     }
     if (sys) {
-      this._sys = sys
+      this._sys = sys;
     }
     if (!this._sys) {
       this._sys = new SystemAbstractionImpl();
@@ -83,14 +84,14 @@ export class Stats {
   Feature(name: string): Stats {
     const stats = new Stats(name, this);
     this._children.push(stats);
-    return stats
+    return stats;
   }
 
   RenderCurrent(): Record<string, ValueType> {
     const ret: Record<string, ValueType> = {};
     for (const key in this._lastStats) {
-      const val = this._lastStats[key]
-      ret[key] = val.Reduce([this._lastStats[key]])
+      const val = this._lastStats[key];
+      ret[key] = val.Reduce([this._lastStats[key]]);
     }
     for (const child of this._children) {
       Object.assign(ret, child.RenderCurrent());
@@ -101,7 +102,7 @@ export class Stats {
   RenderHistory(): Record<string, ValueType[]> {
     const ret: Record<string, ValueType[]> = {};
     for (const key in this._stats) {
-      ret[key] = this._stats[key].map(i => i.Reduce([i]));
+      ret[key] = this._stats[key].map((i) => i.Reduce([i]));
     }
     return ret;
   }
@@ -118,15 +119,14 @@ export class Stats {
     return ret;
   }
 
-
   AddItem(name: string, ai: ActionItem) {
     const key = `${this._feature}#${name}`;
     let item = this._stats[key];
     if (!item) {
-      item = []
-      this._stats[key] = item
+      item = [];
+      this._stats[key] = item;
     }
-    item.push(ai)
+    item.push(ai);
     this._lastStats[key] = ai;
   }
 
