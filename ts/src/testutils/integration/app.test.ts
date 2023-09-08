@@ -66,7 +66,7 @@ describe("App", () => {
     expect(logs[0]["rid"]).toBe(hq.Header.Get("X-Request-ID")!);
     expect(logs[0]["path"]).toBe("/test");
     expect(logs[0]["level"]).toBe("info");
-    expect(logs[0]["duration"]).toBe(1 * TimeUnits.Second);
+    expect(logs[0]["duration"]).toBe(`${1 * TimeUnits.Second}ms`);
     const body = await stream2string(res.Body);
     expect(body).toBe("Ho");
 
