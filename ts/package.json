@@ -30,13 +30,13 @@
     "update:aws": "aws lambda update-function-code --function-name my-function --zip-file fileb://lambda.zip",
     "invoke:aws": "aws lambda invoke --cli-binary-format raw-in-base64-out --payload file://payload.json --function-name my-function /dev/stdout | tee",
     "build:oci": "mkdir -p dist/oci ; npx esbuild --bundle --platform=node --sourcemap --format=cjs dist/transport/oci-function/oci.js > dist/oci/func.js",
-    "deploy:oci": "npm run build; fn deploy --app runified",
+    "deploy:oci": "pnpm run build; fn deploy --app runified",
     "build:gcp": "mkdir -p dist/gcp ; npx esbuild --bundle --platform=node  --format=cjs dist/transport/gcp-functions/index.js > dist/gcp/index.js",
     "start:gcp": "npx functions-framework --target=runified --signature-type=http --port=8080",
     "generate": "rm -r src/generated ; npx wueste wueste-generator --input-file ../schema/error.schema.json  --input-file ../schema/runified-req.schema.json --input-file ../schema/runified-res.schema.json --output-dir ./src/generated",
-    "pubdir": "npm run build; rm -rf pubdir ; mkdir -p pubdir; cp -pr ../.gitignore .npmignore package.json ../LICENSE ../README.md pubdir/; cd dist ; cp -pr . ../pubdir/",
-    "presmoke": "npm run pubdir ; cd pubdir ; npm pack",
-    "smoke": "cd smoke; npm init -y -f ; npm install -f ../pubdir/adviser-runified-*.tgz; npx ts-node smoke.ts"
+    "pubdir": "pnpm run build; rm -rf pubdir ; mkdir -p pubdir; cp -pr ../.gitignore .npmignore package.json ../LICENSE ../README.md pubdir/; cd dist ; cp -pr . ../pubdir/",
+    "presmoke": "pnpm run pubdir ; cd pubdir ; pnpm pack",
+    "smoke": "cd smoke; rm -f package.json; pnpm init ; pnpm install -f ../pubdir/adviser-runified-*.tgz; pnpm dlx ts-node ./smoke.ts"
   },
   "devDependencies": {
     "@aws-sdk/protocol-http": "^3.374.0",

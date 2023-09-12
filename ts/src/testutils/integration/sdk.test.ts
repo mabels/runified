@@ -10,7 +10,7 @@ import { MockLogger } from "../logger";
 import { ErrorFactory } from "../../generated/error";
 import { globalToLocalBaseUrl } from "../global-to-local-base-url";
 import { HttpHeader } from "../../types/http_header";
-import { AppImpl } from "./app";
+import { AppImpl } from "./appimpl";
 
 async function startApp(sys: SysAbstraction, fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>) {
   const { logger: log } = MockLogger();

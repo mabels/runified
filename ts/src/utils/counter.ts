@@ -56,6 +56,7 @@ export class CountingReadableStream implements ReadableStream<Uint8Array> {
 
 export class CountingResponseWriter implements HttpResponseWriter {
   readonly _params: HttpResponseWriter;
+  StatusCode?: number;
   WrittenBytes = 0;
   constructor(param: HttpResponseWriter) {
     this._params = param;
@@ -70,6 +71,7 @@ export class CountingResponseWriter implements HttpResponseWriter {
     return count;
   }
   WriteHeader(statusCode: number): void {
+    this.StatusCode = statusCode;
     this._params.WriteHeader(statusCode);
   }
   End(): Promise<void> {

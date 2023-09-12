@@ -154,6 +154,7 @@ export class RequestContext<QQ, SS> {
       if (json.is_err()) {
         throw json.unwrap_err();
       }
+      this._sdkClient.Logger.Debug().Any("json", txtDecoder.decode(json.unwrap())).Msg("Request JSON");
       const postReq = DefaultHttpRequest({
         URL: reqUrl,
         Method: "POST",
@@ -178,7 +179,14 @@ export class RequestContext<QQ, SS> {
       const postResponse = await this._sdkClient.Client.Do(postReq);
       this.Response.Http = postResponse;
       if (postResponse.StatusCode != 200) {
-        throw new ErrSdkHttpRequestFailed(postReq, postResponse);
+        const body = txtDecoder.decode(await stream2uint8array(postResponse.Body));
+        const err = new ErrSdkHttpRequestFailed(postReq, postResponse);
+        this._sdkClient.Logger.Error()
+          .Err(err)
+          .Any("req", postReq)
+          .Any("res", { ...postResponse, body })
+          .Msg("Request failed");
+        return Promise.reject(err);
       }
       return Promise.resolve(postResponse);
     } catch (e) {
@@ -186,6 +194,8 @@ export class RequestContext<QQ, SS> {
     }
   }
 }
+
+const txtDecoder = new TextDecoder();
 
 export async function postWithRequestContext<Q, S>(
   c: SDKClient,

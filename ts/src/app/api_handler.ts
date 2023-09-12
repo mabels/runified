@@ -16,7 +16,11 @@ export function WrapApiHandler<Q, S>(api: Api, handlers: ApiHandlerUnTyped[], rt
   return BindAppToHandler(api.App(), async (reqApp: AppHandler) => {
     const r = MapBrowserMethod(reqApp.Request());
     const w = reqApp.Response();
-    const log = reqApp.Log().With().Str("api", r.URL.Path).Logger();
+    const log = reqApp
+      .Log()
+      .With()
+      .Module("api-" + r.URL.Path)
+      .Logger();
     const hdl = new ApiHandler<Q, S>({
       api: api,
       logRef: log,
@@ -127,6 +131,7 @@ export class ApiHandler<Q, S> implements APIMsg<Q, S> {
     const body = await stream2string(this.Request().Body);
 
     const reqBuilder = this._params.requestTypeFactory.Builder();
+    this._params.logRef.Debug().Any("body", body).Msg("RequestMsg");
     const resReq = reqBuilder.Coerce(JSON.parse(body));
     if (resReq.is_err()) {
       throw resReq.unwrap_err();

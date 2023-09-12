@@ -5,14 +5,7 @@ name: Build - runified
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
-    #tags:
-    #  - 'dev'
-    #  - 'prod'
-    branches: [main]
-
   pull_request:
-    branches: ["**"]
 
 jobs:
   build:
@@ -30,22 +23,52 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          run_install: false
+          version: 8
+
+
       - name: Patch Version ${{ env.GITHUB_REF }}
         run: |
           cd ts ; node ../.github/workflows/patch-package.json.js "origin/head/0.0.0-smoke"
           git diff
 
+      - name: Patch Version ${{ env.GITHUB_REF }}
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          cd ts ; node ../.github/workflows/patch-package.json.js "$GITHUB_REF"
+          git diff
+
       - name: Build JS runified
         run: |
           cd ts
-          npm install
-          npm run generate
-          npm run prettier -- --check
-          npm run lint
-          npm run build
-          npm run test
+          pnpm install
+          pnpm run generate
+          pnpm run prettier -- --check
+          pnpm run lint
+          pnpm run build
+          pnpm run test
+          pnpm run smoke
 
-      - name: Smoke JS runified
+      - uses: mabels/neckless@main
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          version: v0.1.16
+
+      - name: Publish runified NPM
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          NECKLESS_PRIVKEY: ${{ secrets.NECKLESS_PRIVKEY }}
         run: |
-          cd ts
-          npm run smoke
+          eval $(neckless kv ls --shKeyValue --ghAddMask NPM_PASS  NPM_USER "NPM_TOTP@Totp()")
+          # env | sort | grep NPM
+          token=$(curl -H "npm-otp: $NPM_TOTP" \
+               -X PUT \
+               -H 'content-type: application/json' \
+               -d "{\"name\":\"$NPM_USER\", \"password\": \"$NPM_PASS\"}" \
+               https://registry.npmjs.org/-/user/org.couchdb.user:$NPM_USER | jq -r .token)
+          echo "//registry.npmjs.org/:_authToken=$token" > $HOME/.npmrc
+          cd pubdir
+          pnpm publish --otp=$(neckless kv ls --onlyValue "NPM_TOTP@Totp()") --access public

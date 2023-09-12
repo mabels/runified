@@ -1,5 +1,5 @@
 import { SysAbstraction } from "../types";
-import { ActionItem, DateTuple, ValueType } from "../types/stats";
+import { ActionItem, DateTuple, DurationUnit, ResultType, ValueType, ValueWithCount } from "../types/stats";
 import { SystemAbstractionImpl } from "./system_abstraction";
 
 export class DateRange implements ActionItem {
@@ -10,15 +10,25 @@ export class DateRange implements ActionItem {
   Value(): DateTuple {
     return this._range;
   }
-  Reduce(items: ActionItem[]): ValueType {
-    if (items.length === 0) {
-      return 0;
-    }
-    let sum = 0;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Avg(val: ValueType, cnt: number): ValueType {
+    return val;
+  }
+  Sum(items: ActionItem[], preset?: ValueType): ValueType {
+    let sum = preset ? ~~(preset as DurationUnit).val : 0;
     for (const item of items) {
       sum += (item.Value() as DateTuple).end.getTime() - (item.Value() as DateTuple).start.getTime();
     }
-    return { val: sum / items.length, unit: "ms" };
+    return { val: sum, unit: "ms" };
+  }
+}
+
+export class DateRangeAvg extends DateRange {
+  Avg(val: ValueType, cnt: number): ValueType {
+    if (cnt === 0) {
+      return val;
+    }
+    return { val: (val as DurationUnit).val / cnt, unit: "ms" };
   }
 }
 
@@ -28,7 +38,11 @@ abstract class Value implements ActionItem {
     this._value = value;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Reduce(items: ActionItem[]): ValueType {
+  Avg(val: ValueType, cnt: number): ValueType {
+    return val;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Sum(items: ActionItem[]): ValueType {
     throw new Error("Method not implemented.");
   }
   Value(): number {
@@ -37,61 +51,118 @@ abstract class Value implements ActionItem {
 }
 
 export class ValueSum extends Value {
-  Reduce(items: ActionItem[]): ValueType {
-    return items.reduce((acc, item) => {
-      return acc + (item.Value() as number);
-    }, 0);
+  Sum(items: ActionItem[], preset?: ValueType): ValueType {
+    return items.reduce(
+      (acc, item) => {
+        return acc + (item.Value() as number);
+      },
+      preset ? (preset as number) : 0
+    );
   }
 }
 
-export class ValueAvg extends Value {
-  Reduce(items: ActionItem[]): ValueType {
-    if (items.length === 0) {
-      return 0;
+export class ValueAvg extends ValueSum {
+  Avg(val: ValueType, cnt: number): ValueType {
+    if (cnt === 0) {
+      return val;
     }
-    return (
-      items.reduce((acc, item) => {
-        return acc + (item.Value() as number);
-      }, 0) / items.length
-    );
+    return (val as number) / cnt;
   }
+}
+
+// export class ValueAvg extends Value {
+//   Reduce(items: ActionItem[]): ValueType {
+//     if (items.length === 0) {
+//       return 0;
+//     }
+//     return (
+//       items.reduce((acc, item) => {
+//         return acc + (item.Value() as number);
+//       }, 0) / items.length
+//     );
+//   }
+// }
+
+type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+export interface StatsParam {
+  readonly feature?: string;
+  readonly parent?: Stats;
+  readonly sys?: SysAbstraction;
+  readonly stats?: Record<string, ActionItem[]>;
+  readonly totalStats?: Record<string, Writeable<ValueWithCount>>;
 }
 
 export class Stats {
   readonly _feature: string = "";
   readonly _stats: Record<string, ActionItem[]> = {};
-  readonly _lastStats: Record<string, ActionItem> = {};
+  readonly _totalStats: Record<string, Writeable<ValueWithCount>> = {};
   readonly _children: Stats[] = [];
   readonly _sys: SysAbstraction = undefined as unknown as SysAbstraction;
-  constructor(feature?: string, stats?: Stats, sys?: SysAbstraction) {
-    if (feature) {
-      if (stats) {
-        feature = `${stats._feature}/${feature}`;
+  constructor(sp?: StatsParam | string) {
+    if (typeof sp === "string") {
+      sp = {
+        feature: sp,
+      };
+    } else if (!sp) {
+      sp = {};
+    }
+    if (sp.feature) {
+      let feature = sp.feature;
+      if (sp.parent) {
+        feature = `${sp.parent._feature}/${feature}`;
       }
       this._feature = feature;
     }
-    if (stats) {
-      this._stats = stats._stats;
-      this._sys = stats._sys;
+    if (sp.stats) {
+      this._stats = sp.stats;
     }
-    if (sys) {
-      this._sys = sys;
+    if (sp.totalStats) {
+      this._totalStats = sp.totalStats;
+    }
+    if (sp.sys) {
+      this._sys = sp.sys;
     }
     if (!this._sys) {
       this._sys = new SystemAbstractionImpl();
     }
   }
+
+  AsStatParam(): StatsParam {
+    return {
+      feature: this._feature,
+      parent: this,
+      stats: this._stats,
+      totalStats: this._totalStats,
+      sys: this._sys,
+    };
+  }
+
+  Reset() {
+    for (const child of this._children) {
+      child.Reset();
+    }
+    this._children.splice(0, this._children.length);
+    for (const key in this._stats) {
+      delete this._stats[key];
+    }
+  }
   Feature(name: string): Stats {
-    const stats = new Stats(name, this);
+    const stats = new Stats({
+      ...this.AsStatParam(),
+      feature: name,
+    });
     this._children.push(stats);
     return stats;
   }
 
   RenderCurrent(): Record<string, ValueType> {
     const ret: Record<string, ValueType> = {};
-    for (const key in this._lastStats) {
-      const val = this._lastStats[key];
-      ret[key] = val.Reduce([this._lastStats[key]]);
+    for (const key in this._stats) {
+      const val = this._stats[key];
+      if (val.length) {
+        ret[key] = val[0].Sum([val[val.length - 1]]);
+      }
     }
     for (const child of this._children) {
       Object.assign(ret, child.RenderCurrent());
@@ -102,20 +173,42 @@ export class Stats {
   RenderHistory(): Record<string, ValueType[]> {
     const ret: Record<string, ValueType[]> = {};
     for (const key in this._stats) {
-      ret[key] = this._stats[key].map((i) => i.Reduce([i]));
+      ret[key] = this._stats[key].map((i) => i.Sum([i]));
     }
     return ret;
   }
 
-  RenderReduced(): Record<string, ValueType> {
-    const ret: Record<string, ValueType> = {};
+  RenderReduced(): Record<string, ResultType> {
+    const ret: Record<string, ResultType> = {};
+
     for (const key in this._stats) {
       const keyItem = this._stats[key][0];
       if (!keyItem) {
         continue;
       }
-      ret[key] = keyItem.Reduce(this._stats[key]);
+      if (!ret[key]) {
+        ret[key] = {
+          current: {} as ValueWithCount,
+          total: {
+            val: {} as ValueType,
+            cnt: 0,
+          },
+        };
+      }
+      ret[key] = {
+        current: {
+          val: keyItem.Avg(keyItem.Sum(this._stats[key]), this._stats[key].length),
+          cnt: this._stats[key].length,
+        },
+        total: {
+          val: keyItem.Avg(this._totalStats[key].val, this._totalStats[key].cnt),
+          cnt: this._totalStats[key].cnt,
+        },
+      };
     }
+    // for (const child of this._children) {
+    //   Object.assign(ret, child.RenderReduced());
+    // }
     return ret;
   }
 
@@ -127,20 +220,31 @@ export class Stats {
       this._stats[key] = item;
     }
     item.push(ai);
-    this._lastStats[key] = ai;
+    if (!this._totalStats[key]) {
+      this._totalStats[key] = {
+        val: undefined as unknown as ValueType,
+        cnt: 0,
+      };
+    }
+    this._totalStats[key].cnt++;
+    this._totalStats[key].val = ai.Sum([ai], this._totalStats[key].val);
   }
 
   async Action<T>(name: string, action: () => Promise<T>): Promise<T> {
     const start = this._sys.Time().Now();
     const result = await action();
     const end = this._sys.Time().Now();
-    this.AddItem(name, new DateRange(start, end));
+    this.AddItem(name, new DateRangeAvg(start, end));
 
     return Promise.resolve(result);
   }
 
-  Value(name: string, val: number): Stats {
+  ValueSum(name: string, val: number): Stats {
     this.AddItem(name, new ValueSum(val));
+    return this;
+  }
+  ValueAvg(name: string, val: number): Stats {
+    this.AddItem(name, new ValueAvg(val));
     return this;
   }
 }

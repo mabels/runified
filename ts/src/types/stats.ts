@@ -1,14 +1,27 @@
 export type ValueType = number | string | DateTuple | DurationUnit;
 
+export interface ValueWithCount {
+  readonly val: ValueType;
+  readonly cnt: number;
+}
+
+export interface ResultType {
+  readonly current: ValueWithCount;
+  readonly total: ValueWithCount;
+}
+
 export interface ActionItem {
   // ToString(): string;
   Value(): ValueType;
-  Reduce(items: ActionItem[]): ValueType;
+  // Reduce(items: ActionItem[]): ValueType;
+  Avg(val: ValueType, cnt: number): ValueType;
+  Sum(items: ActionItem[], val?: ValueType): ValueType;
 }
 
 export interface DurationUnit {
   readonly val: number;
   readonly unit: string;
+  readonly cnt?: number;
 }
 
 export interface DateTuple {

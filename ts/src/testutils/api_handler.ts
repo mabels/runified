@@ -16,7 +16,7 @@ export class MockApiHandler<Q, S> implements APIMsg<Q, S> {
   constructor(cfg: CLIConfig, req: HttpRequest) {
     const app = new MockApp({ CliConfig: cfg });
     this._api = new MockApi({ App: app });
-    this._log = this._api.Log().With().Str("MockApiHandler", "MockApiHandler").Str("requestId", this.RequestId()).Logger();
+    this._log = this._api.Log().With().Module("MockApiHandler").Str("requestId", this.RequestId()).Logger();
     this._res = new MockResponseWriter();
     this._req = req;
   }
@@ -48,6 +48,7 @@ export class MockApiHandler<Q, S> implements APIMsg<Q, S> {
   }
 
   RequestMsg(): Promise<Q> {
+    this._log.Debug().Any("msg", this.RequestData).Msg("RequestMsg");
     if (!this.RequestData) {
       return Promise.reject(new Error("RequestData not set"));
     }

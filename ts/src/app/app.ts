@@ -39,6 +39,7 @@ export function BindAppToHandler(app: App, appHandlerfn: AppHandlerFn): HttpHand
       .Info()
       .Any("headers", headers)
       .Dur("duration", app.Sys().Time().TimeSince(start))
+      .Uint64("statusCode", nw.StatusCode || -1)
       .Uint64("requestLength", requestLength)
       .Uint64("responseLength", nw.WrittenBytes + CalculateHeaderByteLength(nw.Header()))
       .Msg("Request completed");

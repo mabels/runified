@@ -15,7 +15,10 @@ export class AppImpl implements App {
   readonly _sys: SysAbstraction;
 
   constructor(args: AppParam) {
-    this._appParam = args;
+    this._appParam = {
+      ...args,
+      Log: args.Log.With().Timestamp().Module("appimpl").Logger(),
+    };
     this._sys = args.Sys ?? new SystemAbstractionImpl();
     this._httpHandler = new HTTPHandler({
       HttpServer: args.HttpServer ?? new NodeHttpServer(this._appParam.CLIconfig.Listen),
@@ -23,6 +26,7 @@ export class AppImpl implements App {
 
     this._api = new ApiImpl(this);
 
+    this._appParam.Log.Debug().Str("handler", "/runified").Msg("Registering handlers");
     this._httpHandler.RegisterHandler(
       "/runified",
       WrapApiHandler<RunifiedReq, RunifiedRes>(this._api, ApiHandlers(RunifiedHandler), RunifiedReqFactory)

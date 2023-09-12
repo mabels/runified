@@ -1,7 +1,7 @@
 import { App } from "@adviser/runified/types/app";
 import { FromCommandLine } from "@adviser/runified/app";
 import { HttpHeader, Logger } from "@adviser/runified/types";
-import { AppImpl } from "@adviser/runified/testutils/integration/app";
+import { AppImpl } from "@adviser/runified/testutils/integration/appimpl";
 import { globalToLocalBaseUrl } from "@adviser/runified/testutils";
 import { LoggerImpl } from "@adviser/runified/utils";
 import { RunifiedReqFactory, RunifiedReq } from "@adviser/runified/generated/runified_req";
@@ -10,12 +10,15 @@ import { SDKClient, postWithRequestContext } from "@adviser/runified/sdk";
 
 async function startApp(fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>) {
   const log = new LoggerImpl();
+  log.SetDebug("appimpl", "MockApiHandler", "sdk", "api-/runified");
   const cliCFG = FromCommandLine(["", "--listen-port", "0"]);
   const app = new AppImpl({ Log: log, CLIconfig: cliCFG });
   await app.Start();
   const localAdr = app.HTTPHandler().HttpServer().GetListenAddr();
   if (!localAdr) {
     throw new Error("no listen address");
+  } else {
+    log.Info().Any("listen", localAdr).Msg();
   }
   await fn(globalToLocalBaseUrl(localAdr), app, log);
   await app.Stop();
@@ -40,6 +43,7 @@ startApp(async (baseUrl: string, app: App, log: Logger) => {
   const reqVal = RunifiedReqFactory.Builder().Coerce(obj).unwrap();
 
   const sdk = new SDKClient({
+    Logger: log,
     BaseUrl: baseUrl,
     DefaultRequestHeaders: HttpHeader.from({ "X-Connection": "close" }),
   });

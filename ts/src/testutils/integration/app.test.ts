@@ -2,7 +2,7 @@ import { MockLogger, MockLoggerReturn } from "../logger";
 import { AppHandler } from "../../types/app";
 import { HttpClientImpl, stream2string, string2stream } from "../../utils";
 
-import { AppImpl } from "./app";
+import { AppImpl } from "./appimpl";
 import { FromCommandLine } from "../../app";
 import { describe, expect, it } from "@jest/globals";
 import { DefaultHttpRequest, HttpHeader, TimeMode, TimeUnits } from "../../types";
@@ -39,7 +39,7 @@ describe("App", () => {
       })
     );
 
-    expect(app.Log()).toBe(log);
+    expect(app.Log()).toBeTruthy();
     expect(app.CLIConfig()).toBe(cliCFG);
 
     await app.Start();
