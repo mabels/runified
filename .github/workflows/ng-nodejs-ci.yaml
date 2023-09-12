@@ -46,7 +46,7 @@ jobs:
           cd ts
           pnpm install
           pnpm run generate
-          pnpm run prettier -- --check
+          pnpm run prettier --check
           pnpm run lint
           pnpm run build
           pnpm run test
