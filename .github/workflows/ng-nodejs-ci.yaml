@@ -70,5 +70,6 @@ jobs:
                -d "{\"name\":\"$NPM_USER\", \"password\": \"$NPM_PASS\"}" \
                https://registry.npmjs.org/-/user/org.couchdb.user:$NPM_USER | jq -r .token)
           echo "//registry.npmjs.org/:_authToken=$token" > $HOME/.npmrc
+          cd ts
           cd pubdir
           pnpm publish --otp=$(neckless kv ls --onlyValue "NPM_TOTP@Totp()") --access public
