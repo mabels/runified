@@ -72,4 +72,4 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=$token" > $HOME/.npmrc
           cd ts
           cd pubdir
-          pnpm publish --otp=$(neckless kv ls --onlyValue "NPM_TOTP@Totp()") --access public
+          pnpm publish --otp=$(neckless kv ls --onlyValue "NPM_TOTP@Totp()") --access public --no-git-checks
