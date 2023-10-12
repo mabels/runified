@@ -52,7 +52,7 @@ startApp(async (baseUrl: string, app: App, log: Logger) => {
     "/runified",
     RunifiedReqFactory,
     RunifiedResFactory,
-    reqVal
+    reqVal,
   );
   if (rctx.Response.Value.collectionAddress != "collectionAddress") {
     throw new Error("not ready for production");

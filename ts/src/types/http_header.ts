@@ -51,7 +51,7 @@ export class HttpHeader {
           if (v) {
             h.Add(
               k,
-              v.split(",").map((v) => v.trim())
+              v.split(",").map((v) => v.trim()),
             );
           }
         }

@@ -12,7 +12,7 @@ it("stream2string", async () => {
           controller.enqueue(encoder.encode("!"));
           controller.close();
         },
-      })
-    )
+      }),
+    ),
   ).toBe("Hello World!");
 });

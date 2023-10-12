@@ -62,7 +62,7 @@ describe("FrameProcessor", () => {
         inputStream: createStream(bytes, () => 1),
       }).match((frame: Frame) => {
         expect(frame.MacFrame.Length).toBe(0);
-      })
+      }),
     ).toEqual({ received: { Bytes: 0, Frames: 10 }, send: { Bytes: 0, Frames: 0 } });
   });
 

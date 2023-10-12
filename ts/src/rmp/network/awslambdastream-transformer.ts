@@ -96,7 +96,7 @@ function toRequest(req: AWSStreamReadable, ctx: Context): Request {
 function stream2AWSLambdaStreamResponse(
   reader: ReadableStreamDefaultReader<Uint8Array>,
   awslRes: AWSStreamReadable,
-  doneFn: (err: Error | undefined) => void
+  doneFn: (err: Error | undefined) => void,
 ) {
   // console.log("stream2AWSLambdaStreamResponse-enter");
   reader
@@ -188,8 +188,8 @@ export function awslambdastreamTransform(eh: EdgeHandler) {
         {},
         {
           lambda: ctx,
-        }
-      )
+        },
+      ),
     );
   });
 }

@@ -67,8 +67,8 @@ export class LogCollector implements WritableStream<Uint8Array> {
           for (const x of res) {
             yield* x;
           }
-        })(this._writer._bufferArr)
-      )
+        })(this._writer._bufferArr),
+      ),
     );
     const splitStr = jsonNlStr.split("\n");
     const filterStr = splitStr.filter((a) => a.length);

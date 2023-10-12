@@ -24,7 +24,7 @@ hp.RegisterHandler("/", async (w, r) => {
       query,
       header: r.Header.AsRecordStringStringArray(),
       body: await stream2string(r.Body),
-    })
+    }),
   );
   for (let i = 0; i < 1; i++) {
     await w.Write(out);

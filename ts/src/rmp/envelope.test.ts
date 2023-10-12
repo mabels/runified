@@ -21,7 +21,7 @@ describe("Envelope", () => {
           Data: txtEncoder.encode("hello"),
         },
       },
-      fp.sys
+      fp.sys,
     );
 
     const ion = ee.asIon();
@@ -52,7 +52,7 @@ describe("Envelope", () => {
           Data: txtEncoder.encode("hello"),
         },
       },
-      fp.sys
+      fp.sys,
     ).asIon();
     const eh = new EnvelopeHandler(fp);
     eh.onEnvelope((env) => {

@@ -184,7 +184,7 @@ export class LoggerImpl implements Logger {
           module: this._attributes["module"],
           ...this._withAttributes,
         },
-      })
+      }),
     );
   }
 

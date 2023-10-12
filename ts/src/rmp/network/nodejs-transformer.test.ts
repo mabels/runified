@@ -24,7 +24,7 @@ describe("nodejs-transformer", () => {
               headers: HttpHeader.from(req.headers).Set("Connection", "close").Add("X-Test", "Test").AsHeaderInit(),
             });
           },
-        })
+        }),
       ).listen(port, () => {
         const addr = server.address() as AddressInfo;
         port = addr.port;

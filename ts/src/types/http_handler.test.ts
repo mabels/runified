@@ -13,7 +13,7 @@ it("DoubleRegister", () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (w: HttpResponseWriter, r: HttpRequest) => {
       return Promise.resolve();
-    }
+    },
   );
   expect(res.is_ok()).toBeTruthy();
 
@@ -22,7 +22,7 @@ it("DoubleRegister", () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (w: HttpResponseWriter, r: HttpRequest) => {
       return Promise.resolve();
-    }
+    },
   );
   expect(res.is_ok()).toBeFalsy();
 });

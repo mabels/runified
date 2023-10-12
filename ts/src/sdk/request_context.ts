@@ -52,7 +52,7 @@ export class RequestContext<QQ, SS> {
     c: SDKClient,
     reqFac: WuestenFactory<QQ, QQ, QQ>,
     resFac: WuestenFactory<SS, SS, SS>,
-    params?: { RequestID: string }
+    params?: { RequestID: string },
   ) {
     this.Request = {
       Stats: { Start: c.Sys.Time().Now() },
@@ -204,7 +204,7 @@ export async function postWithRequestContext<Q, S>(
   resFactory: WuestenFactory<S, S, S>,
   reqData: Q,
   // fn: ctxFunction<QQ, QQQ, SS, SSS>
-  params?: { RequestID: string }
+  params?: { RequestID: string },
 ): Promise<SDKContext<Q, S>> {
   try {
     const ctx = new RequestContext(c, reqFactory, resFactory, params);

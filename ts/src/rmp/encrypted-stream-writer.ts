@@ -151,7 +151,7 @@ export function connectTcp(urlOrStr: string | URL): Promise<TransformStream<Uint
           throw err;
         }
         client.destroy();
-      }
+      },
     );
   });
 }
@@ -173,8 +173,8 @@ export async function createResponseStream(rsp: ResponseStreamParam): Promise<Re
         streamId: url.searchParams.get("streamId"),
         cipher: deEnCrypter.cipherStr,
         iv: base64EncArr(deEnCrypter.iv),
-      })
-    )
+      }),
+    ),
   );
   fp.send(
     deEnCrypter.encrypt(
@@ -182,8 +182,8 @@ export async function createResponseStream(rsp: ResponseStreamParam): Promise<Re
         status: rsp.response.status,
         statusText: rsp.response.statusText,
         headers: HttpHeader.from(rsp.response.headers).AsRecordStringString(),
-      })
-    )
+      }),
+    ),
   );
   if (rsp.response.body) {
     const reader = rsp.response.body.getReader();

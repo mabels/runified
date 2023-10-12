@@ -5,7 +5,10 @@ export interface CountingRequestReaderParams {
 }
 
 class reader implements ReadableStreamDefaultReader<Uint8Array> {
-  constructor(readonly _reader: ReadableStreamReader<Uint8Array>, readonly _countingReader: CountingReadableStream) {}
+  constructor(
+    readonly _reader: ReadableStreamReader<Uint8Array>,
+    readonly _countingReader: CountingReadableStream,
+  ) {}
 
   async read(x?: never): Promise<ReadableStreamReadResult<Uint8Array>> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

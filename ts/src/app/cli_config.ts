@@ -38,7 +38,7 @@ export function FromCommandLine(args: string[]): CLIConfig {
     },
     {
       argv: args,
-    }
+    },
   );
   return new CLIConfig({
     AppName: appName,

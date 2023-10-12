@@ -76,7 +76,7 @@ export class AWSHttpServer implements HttpServer {
         JSON.stringify({
           statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
           body: JSON.stringify({ error: "No Handler" }),
-        })
+        }),
       );
     }
     let url: URL;

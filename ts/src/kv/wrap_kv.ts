@@ -58,7 +58,7 @@ class wrappedKvStore<T> implements KeyValueStore<T> {
 
 export function WrapKvStore<T>(
   blobStore: KeyValueStoreBlob,
-  serde: SerDe<T>
+  serde: SerDe<T>,
   // factory: (t: any) => Result<T, Error>
 ): KeyValueStore<T> {
   return new wrappedKvStore<T>({

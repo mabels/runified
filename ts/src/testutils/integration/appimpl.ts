@@ -29,7 +29,7 @@ export class AppImpl implements App {
     this._appParam.Log.Debug().Str("handler", "/runified").Msg("Registering handlers");
     this._httpHandler.RegisterHandler(
       "/runified",
-      WrapApiHandler<RunifiedReq, RunifiedRes>(this._api, ApiHandlers(RunifiedHandler), RunifiedReqFactory)
+      WrapApiHandler<RunifiedReq, RunifiedRes>(this._api, ApiHandlers(RunifiedHandler), RunifiedReqFactory),
     );
   }
 

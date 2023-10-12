@@ -36,7 +36,7 @@ describe("App", () => {
         w.Write("Ho");
         w.End();
         return Promise.resolve(true);
-      })
+      }),
     );
 
     expect(app.Log()).toBeTruthy();

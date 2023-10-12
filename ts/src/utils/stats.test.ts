@@ -211,15 +211,18 @@ it("it renders single log action", async () => {
   expect(l1.RenderCurrent()).toEqual(e2);
 
   expect(l1.RenderHistory()).toEqual(
-    [e1, e2].reduce((a, b: Record<string, DurationUnit>) => {
-      for (const key in b) {
-        if (!a[key]) {
-          a[key] = [];
+    [e1, e2].reduce(
+      (a, b: Record<string, DurationUnit>) => {
+        for (const key in b) {
+          if (!a[key]) {
+            a[key] = [];
+          }
+          a[key].push(b[key]);
         }
-        a[key].push(b[key]);
-      }
-      return a;
-    }, {} as Record<string, DurationUnit[]>)
+        return a;
+      },
+      {} as Record<string, DurationUnit[]>,
+    ),
   );
 
   const r1 = l1.RenderReduced();
@@ -370,15 +373,18 @@ it("it renders single time avg action", async () => {
   expect(l1.RenderCurrent()).toEqual(e2);
 
   expect(l1.RenderHistory()).toEqual(
-    [e2].reduce((a, b: Record<string, ValueType>) => {
-      for (const key in b) {
-        if (!a[key]) {
-          a[key] = [];
+    [e2].reduce(
+      (a, b: Record<string, ValueType>) => {
+        for (const key in b) {
+          if (!a[key]) {
+            a[key] = [];
+          }
+          a[key].push(b[key]);
         }
-        a[key].push(b[key]);
-      }
-      return a;
-    }, {} as Record<string, ValueType[]>)
+        return a;
+      },
+      {} as Record<string, ValueType[]>,
+    ),
   );
 
   const r1 = l1.RenderReduced();

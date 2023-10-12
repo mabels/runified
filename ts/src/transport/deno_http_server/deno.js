@@ -354,7 +354,7 @@
           query,
           header: r.Header.AsObject(),
           body: await stream2string(r.Body),
-        })
+        }),
       );
       for (let i = 0; i < 1; i++) {
         await w.Write(out);

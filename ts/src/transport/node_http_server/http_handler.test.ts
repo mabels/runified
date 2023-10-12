@@ -61,7 +61,7 @@ describe("HTTPHandler", () => {
           query: query,
           header: r.Header.AsRecordStringStringArray(),
           body: await stream2string(r.Body),
-        })
+        }),
       );
       return Promise.resolve();
     });

@@ -51,7 +51,7 @@ export function base64EncArr(aBytes: Uint8Array): string {
         uint6ToB64((nUint24 >>> 18) & 63),
         uint6ToB64((nUint24 >>> 12) & 63),
         uint6ToB64((nUint24 >>> 6) & 63),
-        uint6ToB64(nUint24 & 63)
+        uint6ToB64(nUint24 & 63),
       );
       nUint24 = 0;
     }
@@ -103,7 +103,7 @@ export function responseInitFromResponse(response: Response, ri: ResponseInit = 
 export function readerLoop(
   reader: ReadableStreamDefaultReader<Uint8Array>,
   writeFn: (chunk: Uint8Array) => Promise<void>,
-  doneFn: (err: Error | undefined) => void
+  doneFn: (err: Error | undefined) => void,
 ) {
   reader
     .read()
@@ -130,7 +130,7 @@ export function readerLoop(
 function readLoop(
   controller: ReadableStreamController<Uint8Array>,
   reader: ReadableStreamDefaultReader<Uint8Array>,
-  doneFn: (err: Error | undefined, ctr?: ReadableStreamController<Uint8Array>) => void
+  doneFn: (err: Error | undefined, ctr?: ReadableStreamController<Uint8Array>) => void,
 ) {
   reader
     .read()
@@ -149,7 +149,7 @@ function readLoop(
 
 export function PipeWaitToClose(
   src: ReadableStream<Uint8Array>,
-  doneFn: (err: Error | undefined, ctr?: ReadableStreamController<Uint8Array>) => void
+  doneFn: (err: Error | undefined, ctr?: ReadableStreamController<Uint8Array>) => void,
 ): ReadableStream<Uint8Array> {
   return new ReadableStream<Uint8Array>({
     start(controller) {
@@ -187,7 +187,7 @@ export function quickId(len = 12) {
 function streamToUint8ArrayArray(
   reader: ReadableStreamDefaultReader,
   doneFn: (err: Error | undefined, r: Uint8Array[]) => void,
-  result: Uint8Array[] = []
+  result: Uint8Array[] = [],
 ) {
   reader
     .read()
@@ -220,7 +220,7 @@ export function streamToUint8Array(stream: ReadableStream<Uint8Array>) {
           acc.offset += v.length;
           return acc;
         },
-        { result, offset: 0 }
+        { result, offset: 0 },
       );
       resolve(result);
     });

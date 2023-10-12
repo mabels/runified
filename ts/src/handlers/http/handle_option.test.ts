@@ -16,7 +16,7 @@ describe("TestHandleOption", () => {
       FromCommandLine([]),
       MockHttpRequest({
         Method: "OPTIONS",
-      })
+      }),
     );
     expect(await HandleOPTIONS(hdl)).toBeFalsy();
     expect(hdl.Response().Header().Get("Access-Control-Allow-Methods")).toBe("POST,GET,PUT,PATCH,DELETE,OPTIONS");

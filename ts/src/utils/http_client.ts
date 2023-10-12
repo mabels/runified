@@ -38,7 +38,7 @@ export class HttpClientImpl implements HttpClient {
       DefaultHttpRequest({
         Method: "GET",
         URL: HttpURL.parse(url).unwrap(),
-      })
+      }),
     );
   }
   Post(url: string, contentType: string, body: ReadableStream<Uint8Array>): Promise<HttpResponse> {

@@ -56,7 +56,7 @@ export class ValueSum extends Value {
       (acc, item) => {
         return acc + (item.Value() as number);
       },
-      preset ? (preset as number) : 0
+      preset ? (preset as number) : 0,
     );
   }
 }

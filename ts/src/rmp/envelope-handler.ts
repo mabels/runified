@@ -127,7 +127,7 @@ export class EnvelopeHandler {
       {
         ...penv,
       },
-      this.frameProcessor.sys
+      this.frameProcessor.sys,
     );
     this.frameProcessor.send(env.asIon());
   }

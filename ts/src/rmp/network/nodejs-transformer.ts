@@ -45,7 +45,7 @@ function toRequest(req: IncomingMessage): Request {
 function stream2NodeResponse(
   reader: ReadableStreamDefaultReader<Uint8Array>,
   nodeRes: ServerResponse,
-  doneFn: (err: Error | undefined) => void
+  doneFn: (err: Error | undefined) => void,
 ) {
   reader
     .read()
@@ -105,8 +105,8 @@ export function nodejsTransform(eh: EdgeHandler): (req: IncomingMessage, res: Se
             request: nodeReq,
             response: nodeRes,
           },
-        }
-      )
+        },
+      ),
     );
   };
 }

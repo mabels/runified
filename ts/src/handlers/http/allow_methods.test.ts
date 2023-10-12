@@ -16,7 +16,7 @@ describe("TestAllowMethod", () => {
       FromCommandLine([]),
       MockHttpRequest({
         Method: "BRETT",
-      })
+      }),
     );
     expect(await fn(hdl)).toBeFalsy();
     expect((hdl.Response() as MockResponseWriter).StatusCode).toBe(HttpStatusCode.METHOD_NOT_ALLOWED);
@@ -29,7 +29,7 @@ describe("TestAllowMethod", () => {
         FromCommandLine([]),
         MockHttpRequest({
           Method: method,
-        })
+        }),
       );
       expect(await fn(hdl)).toBeTruthy();
       expect((hdl.Response() as MockResponseWriter).StatusCode).toBe(0);

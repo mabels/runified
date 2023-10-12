@@ -83,7 +83,7 @@ it("TestRunified", async () => {
       "/runified",
       RunifiedReqFactory,
       RunifiedResFactory,
-      reqVal
+      reqVal,
     );
     const mySys = new SystemAbstractionImpl({ TimeMode: TimeMode.STEP });
     for (let i = 0; i < 3; i++) {
@@ -95,7 +95,7 @@ it("TestRunified", async () => {
           ...obj,
           createdAt: mySys.Time().Now().toISOString(),
         })
-        .unwrap()
+        .unwrap(),
     );
   });
 });

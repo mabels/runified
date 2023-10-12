@@ -188,7 +188,7 @@ export class FrameProcessor {
 
   static build(
     payloadFrame: Uint8Array,
-    v: Version = { Version: "A", Codec: VersionCodec["-"], Format: VersionFormat.I }
+    v: Version = { Version: "A", Codec: VersionCodec["-"], Format: VersionFormat.I },
   ): Uint8Array {
     /*
       three letter version code

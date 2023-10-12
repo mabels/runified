@@ -15,7 +15,7 @@ describe("test filter", () => {
           controller.enqueue(encoder.encode("!"));
           controller.close();
         },
-      })
+      }),
     );
     const res = await stream2string(rs);
     expect(res).toBe("Hello World!");
