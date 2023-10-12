@@ -1,4 +1,6 @@
 **/node_modules/
+**/.vscode/
+**/smoke/pnpm-lock.yaml
 **/dist/
 **/src/generated/
 **/pubdir/
