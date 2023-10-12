@@ -182,7 +182,7 @@ export class LoggerImpl implements Logger {
         sys: this._sys,
         withAttributes: {
           module: this._attributes["module"],
-          ...this._withAttributes
+          ...this._withAttributes,
         },
       })
     );

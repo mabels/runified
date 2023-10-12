@@ -188,7 +188,7 @@ describe("TestLogger", () => {
   });
 
   it("carry debug", async () => {
-    const log = logger
+    const log = logger;
     log.Module("xxx").SetDebug("xxx");
 
     log.Debug().Msg("Debug1");
@@ -197,7 +197,7 @@ describe("TestLogger", () => {
     const next2 = next1.With().Str("next2", "meno").Logger();
     next2.Debug().Msg("Next2");
 
-    next2.Module("zzz")
+    next2.Module("zzz");
     next2.Debug().Msg("Next3");
 
     log.Debug().Msg("Top");
@@ -207,35 +207,34 @@ describe("TestLogger", () => {
 
     expect(logCollector.Logs()).toEqual([
       {
-        "level": "debug",
-        "module": "xxx",
-        "msg": "Debug1",
+        level: "debug",
+        module: "xxx",
+        msg: "Debug1",
       },
       {
-        "level": "debug",
-        "module": "xxx",
-        "msg": "Next1",
-        "next1": "meno",
+        level: "debug",
+        module: "xxx",
+        msg: "Next1",
+        next1: "meno",
       },
       {
-        "level": "debug",
-        "module": "xxx",
-        "msg": "Next2",
-        "next1": "meno",
-        "next2": "meno",
+        level: "debug",
+        module: "xxx",
+        msg: "Next2",
+        next1: "meno",
+        next2: "meno",
       },
       {
-        "level": "debug",
-        "module": "xxx",
-        "msg": "Top",
+        level: "debug",
+        module: "xxx",
+        msg: "Top",
       },
       {
-        "level": "debug",
-        "module": "xxx",
-        "msg": "Next1",
-        "next1": "meno",
+        level: "debug",
+        module: "xxx",
+        msg: "Next1",
+        next1: "meno",
       },
     ]);
-
-  })
+  });
 });
