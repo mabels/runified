@@ -1,5 +1,5 @@
-import { RunifiedReq } from "../../generated/runified_req";
-import { RunifiedRes, RunifiedResFactory } from "../../generated/runified_res";
+import { RunifiedReq } from "../../generated/runifiedreq";
+import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres";
 import { APIMsg } from "../../types/app";
 
 export async function RunifiedHandler(api: APIMsg<RunifiedReq, RunifiedRes>): Promise<boolean> {

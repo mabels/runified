@@ -1,8 +1,8 @@
 import { ApiHandler, FromCommandLine } from "../../app";
 import { MockApi } from "../api";
 import { MockApp } from "../app";
-import { RunifiedReq, RunifiedReqFactory } from "../../generated/runified_req";
-import { RunifiedRes, RunifiedResFactory } from "../../generated/runified_res";
+import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
+import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres";
 import { MockLogger } from "../logger";
 import { SystemAbstractionImpl, string2stream } from "../../utils";
 import { DefaultHttpRequest, HttpStatusCode, TimeMode } from "../../types";

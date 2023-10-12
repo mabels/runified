@@ -3,8 +3,8 @@ import { HTTPHandler, Logger, SysAbstraction } from "../../types";
 import { SystemAbstractionImpl } from "../../utils";
 import { NodeHttpServer } from "../../transport/node_http_server";
 import { ApiImpl, WrapApiHandler } from "../../app";
-import { RunifiedReq, RunifiedReqFactory } from "../../generated/runified_req";
-import { RunifiedRes } from "../../generated/runified_res";
+import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
+import { RunifiedRes } from "../../generated/runifiedres";
 import { RunifiedHandler } from "./runified_handler";
 import { ApiHandlers } from "../../app/app";
 

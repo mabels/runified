@@ -1,8 +1,8 @@
 import { NewMockHttpClient } from "../testutils";
 import { SDKClient, SdkClientParams } from "./sdk";
 import { postWithRequestContext } from "./request_context";
-import { RunifiedReq, RunifiedReqFactory } from "../generated/runified_req";
-import { RunifiedResFactory } from "../generated/runified_res";
+import { RunifiedReq, RunifiedReqFactory } from "../generated/runifiedreq";
+import { RunifiedResFactory } from "../generated/runifiedres";
 import { ErrSdkHttpRequestFailed, HttpHeader, JsonSerDe, TimeMode, TimeUnits } from "../types";
 import { SystemAbstractionImpl, string2stream, uint8array2stream } from "../utils";
 import { v4 } from "uuid";

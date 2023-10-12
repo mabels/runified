@@ -4,8 +4,8 @@ import { HttpHeader, Logger } from "@adviser/runified/types";
 import { AppImpl } from "@adviser/runified/testutils/integration/appimpl";
 import { globalToLocalBaseUrl } from "@adviser/runified/testutils";
 import { LoggerImpl } from "@adviser/runified/utils";
-import { RunifiedReqFactory, RunifiedReq } from "@adviser/runified/generated/runified_req";
-import { RunifiedResFactory, RunifiedRes } from "@adviser/runified/generated/runified_res";
+import { RunifiedReqFactory, RunifiedReq } from "@adviser/runified/generated/runifiedreq";
+import { RunifiedResFactory, RunifiedRes } from "@adviser/runified/generated/runifiedres";
 import { SDKClient, postWithRequestContext } from "@adviser/runified/sdk";
 
 async function startApp(fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>) {
