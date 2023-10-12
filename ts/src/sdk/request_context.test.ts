@@ -7,21 +7,22 @@ import { ErrSdkHttpRequestFailed, HttpHeader, JsonSerDe, TimeMode, TimeUnits } f
 import { SystemAbstractionImpl, string2stream, uint8array2stream } from "../utils";
 import { v4 } from "uuid";
 
-
-const reqData = RunifiedReqFactory.Builder().Coerce({
-  id: "id",
-  contract: "contract",
-  collectionAddress: "collectionAddress",
-  price: {
-    amount: {
-      raw: 4711.11,
-    }
-  },
-  tokenId: "tokenId",
-  source: {
-    name: "uri",
-  }
-}).unwrap();
+const reqData = RunifiedReqFactory.Builder()
+  .Coerce({
+    id: "id",
+    contract: "contract",
+    collectionAddress: "collectionAddress",
+    price: {
+      amount: {
+        raw: 4711.11,
+      },
+    },
+    tokenId: "tokenId",
+    source: {
+      name: "uri",
+    },
+  })
+  .unwrap();
 
 describe("TestRequestContext", () => {
   it("TestRequestContextErrorStatusCode", async () => {
@@ -33,7 +34,6 @@ describe("TestRequestContext", () => {
     } as SdkClientParams);
 
     try {
-
       const ctx = await postWithRequestContext(sdk, "/test", RunifiedReqFactory, RunifiedResFactory, reqData);
       expect(ctx).toBeNull();
     } catch (e) {
