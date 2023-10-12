@@ -186,4 +186,56 @@ describe("TestLogger", () => {
     log.Info().Msg("DONE");
     return log.Flush();
   });
+
+  it("carry debug", async () => {
+    const log = logger
+    log.Module("xxx").SetDebug("xxx");
+
+    log.Debug().Msg("Debug1");
+    const next1 = log.With().Str("next1", "meno").Logger();
+    next1.Debug().Msg("Next1");
+    const next2 = next1.With().Str("next2", "meno").Logger();
+    next2.Debug().Msg("Next2");
+
+    next2.Module("zzz")
+    next2.Debug().Msg("Next3");
+
+    log.Debug().Msg("Top");
+    next1.Debug().Msg("Next1");
+
+    await log.Flush();
+
+    expect(logCollector.Logs()).toEqual([
+      {
+        "level": "debug",
+        "module": "xxx",
+        "msg": "Debug1",
+      },
+      {
+        "level": "debug",
+        "module": "xxx",
+        "msg": "Next1",
+        "next1": "meno",
+      },
+      {
+        "level": "debug",
+        "module": "xxx",
+        "msg": "Next2",
+        "next1": "meno",
+        "next2": "meno",
+      },
+      {
+        "level": "debug",
+        "module": "xxx",
+        "msg": "Top",
+      },
+      {
+        "level": "debug",
+        "module": "xxx",
+        "msg": "Next1",
+        "next1": "meno",
+      },
+    ]);
+
+  })
 });

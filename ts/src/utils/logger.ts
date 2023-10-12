@@ -76,6 +76,7 @@ export class LoggerImpl implements Logger {
   readonly _attributes: JsonRecord = {};
   readonly _withAttributes: JsonRecord;
   readonly _logWriter: LogWriter;
+  // readonly _id: string = "logger-" + Math.random().toString(36)
 
   constructor(params?: LoggerImplParams) {
     if (!params) {
@@ -101,10 +102,12 @@ export class LoggerImpl implements Logger {
       this._withAttributes = { ...params.withAttributes };
     }
     this._attributes = { ...this._withAttributes };
+    // console.log("LoggerImpl", this._id, this._attributes, this._withAttributes)
   }
 
   Module(key: string): Logger {
     this._attributes["module"] = key;
+    this._withAttributes["module"] = key;
     return this;
   }
   SetDebug(...modules: string[]): Logger {
@@ -172,11 +175,15 @@ export class LoggerImpl implements Logger {
   }
 
   With(): WithLogger {
+    // console.log("WithLoggerBuilder.With", this._id, this._attributes, this._withAttributes);
     return new WithLoggerBuilder(
       new LoggerImpl({
         logWriter: this._logWriter,
         sys: this._sys,
-        withAttributes: { ...this._withAttributes },
+        withAttributes: {
+          module: this._attributes["module"],
+          ...this._withAttributes
+        },
       })
     );
   }
@@ -218,6 +225,7 @@ class WithLoggerBuilder implements WithLogger {
   }
   Logger(): Logger {
     Object.assign(this._li._withAttributes, this._li._attributes);
+    // console.log("WithLoggerBuilder.Logger", this._li._id, this._li._withAttributes);
     return this._li;
   }
 
