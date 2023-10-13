@@ -47,6 +47,7 @@ it("time sleep const", async () => {
 
 it("time sleep step", async () => {
   const sys = new SystemAbstractionImpl({ TimeMode: TimeMode.STEP });
+  const start = sys.Time().Now();
   await sys.Time().Sleep(86400500);
-  expect(sys.Time().Now()).toEqual(new Date("2021-02-01T23:00:01.500Z"));
+  expect(sys.Time().Now().getTime() - start.getTime()).toEqual(86401500);
 });
