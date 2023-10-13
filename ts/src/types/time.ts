@@ -1,5 +1,6 @@
 export abstract class Time {
   abstract Now(): Date;
+  abstract Sleep(duration: Duration): Promise<void>;
   TimeSince(start: Date): Duration {
     const now = this.Now();
     return now.getTime() - start.getTime();

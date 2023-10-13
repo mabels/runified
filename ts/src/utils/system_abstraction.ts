@@ -1,14 +1,26 @@
 import { SysAbstraction, Time, TimeMode } from "../types";
+import crypto from "node:crypto";
 
 class SysTime extends Time {
   Now(): Date {
     return new Date();
+  }
+  Sleep(duration: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, duration);
+    });
   }
 }
 
 export class ConstTime extends Time {
   Now(): Date {
     return new Date(2021, 1, 1, 0, 0, 0, 0);
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Sleep(duration: number): Promise<void> {
+    return Promise.resolve();
   }
 }
 
@@ -25,6 +37,10 @@ export class StepTime extends Time {
     }
     this._step = new Date(this._step.getTime() + 1000);
     return this._step;
+  }
+  Sleep(duration: number): Promise<void> {
+    this._step = new Date(this._step.getTime() + duration);
+    return Promise.resolve();
   }
 }
 
@@ -44,7 +60,34 @@ const decoder = new TextDecoder();
 
 export interface SystemAbstractionImplParams {
   readonly TimeMode?: TimeMode;
+  readonly IdMode?: IDMode;
   readonly Stdout?: WritableStream;
+}
+
+export enum IDMode {
+  UUID = "uuid",
+  CONST = "const",
+  STEP = "step",
+}
+export class IdService {
+  readonly _mode: IDMode;
+  static _step: number = 0;
+  constructor(mode?: IDMode) {
+    if (!mode) {
+      mode = IDMode.UUID;
+    }
+    this._mode = mode;
+  }
+  NextId(): string {
+    switch (this._mode) {
+      case IDMode.UUID:
+        return crypto.randomUUID();
+      case IDMode.CONST:
+        return "VeryUniqueID";
+      case IDMode.STEP:
+        return `STEPId-${IdService._step++}`;
+    }
+  }
 }
 
 export class SystemAbstractionImpl implements SysAbstraction {
@@ -58,9 +101,11 @@ export class SystemAbstractionImpl implements SysAbstraction {
       });
     },
   });
+  static readonly _idService = new IdService();
 
   readonly _time: Time = SystemAbstractionImpl._time;
   readonly _stdout: WritableStream = SystemAbstractionImpl._stdout;
+  readonly _idService: IdService = SystemAbstractionImpl._idService;
   constructor(params?: SystemAbstractionImplParams) {
     if (params) {
       if (params.TimeMode) {
@@ -69,11 +114,17 @@ export class SystemAbstractionImpl implements SysAbstraction {
       if (params.Stdout) {
         this._stdout = params.Stdout;
       }
+      if (params.IdMode) {
+        this._idService = new IdService(params.IdMode);
+      }
     }
   }
 
   Time(): Time {
     return this._time;
+  }
+  NextId(): string {
+    return this._idService.NextId();
   }
   Stdout(): WritableStream {
     return this._stdout;

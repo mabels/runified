@@ -22,4 +22,5 @@ export function String2TimeMode(s?: string): TimeMode {
 export interface SysAbstraction {
   Time(): Time;
   Stdout(): WritableStream<Uint8Array>;
+  NextId(): string;
 }
