@@ -23,11 +23,13 @@ it("IdService const", () => {
 });
 
 it("IdService set", () => {
-  const sys = new SystemAbstractionImpl({ IdMode: IDMode.STEP });
-  const id1 = sys.NextId();
-  const id2 = sys.NextId();
-  expect(id1).toEqual("STEPId-0");
-  expect(id2).toEqual("STEPId-1");
+  for (let i = 0; i < 10; i++) {
+    const sys = new SystemAbstractionImpl({ IdMode: IDMode.STEP });
+    const id1 = sys.NextId();
+    const id2 = sys.NextId();
+    expect(id1).toEqual("STEPId-0");
+    expect(id2).toEqual("STEPId-1");
+  }
 });
 
 it("time sleep", async () => {

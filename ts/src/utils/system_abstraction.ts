@@ -71,7 +71,7 @@ export enum IDMode {
 }
 export class IdService {
   readonly _mode: IDMode;
-  static _step: number = 0;
+  _step: number = 0;
   constructor(mode?: IDMode) {
     if (!mode) {
       mode = IDMode.UUID;
@@ -85,7 +85,7 @@ export class IdService {
       case IDMode.CONST:
         return "VeryUniqueID";
       case IDMode.STEP:
-        return `STEPId-${IdService._step++}`;
+        return `STEPId-${this._step++}`;
     }
   }
 }
