@@ -33,11 +33,11 @@ export interface HttpValueStats<T, S, V> {
   Stats: S;
 }
 
-export interface SDKContext<Q, S> {
+export interface SDKContext<QT, ST> {
   // readonly Result: TT;
   readonly RequestId: string;
-  readonly Request: HttpValueStats<HttpRequest, Stats, Q>;
-  readonly Response: HttpValueStats<HttpResponse, Stats, S>;
+  readonly Request: HttpValueStats<HttpRequest, Stats, QT>;
+  readonly Response: HttpValueStats<HttpResponse, Stats, ST>;
   readonly BaseUrl: string;
   Duration(): number;
 }

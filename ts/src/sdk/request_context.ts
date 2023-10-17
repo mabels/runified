@@ -33,25 +33,25 @@ interface BuildHttpValueStats<T, S, V> {
   Stats: S;
 }
 
-export class RequestContext<QQ, SS> {
-  readonly Request: BuildHttpValueStats<HttpRequest, WriteableStatsStartSet, QQ>;
-  readonly Response: BuildHttpValueStats<HttpResponse, WriteableStats, SS>;
+export class RequestContext<QT, QI, QO, ST, SI, SO> {
+  readonly Request: BuildHttpValueStats<HttpRequest, WriteableStatsStartSet, QT>;
+  readonly Response: BuildHttpValueStats<HttpResponse, WriteableStats, ST>;
   readonly RequestId: string;
   _called = false;
   // Duration?: number;
 
   readonly _sdkClient: SDKClient;
 
-  readonly _reqFac: WuestenFactory<QQ, QQ, QQ>;
-  readonly _reqSerDe: SerDe<QQ>;
+  readonly _reqFac: WuestenFactory<QT, QI, QO>;
+  readonly _reqSerDe: SerDe<QT>;
 
-  readonly _resFac: WuestenFactory<SS, SS, SS>;
-  readonly _resSerDe: SerDe<SS>;
+  readonly _resFac: WuestenFactory<ST, SI, SO>;
+  readonly _resSerDe: SerDe<ST>;
 
   constructor(
     c: SDKClient,
-    reqFac: WuestenFactory<QQ, QQ, QQ>,
-    resFac: WuestenFactory<SS, SS, SS>,
+    reqFac: WuestenFactory<QT, QI, QO>,
+    resFac: WuestenFactory<ST, SI, SO>,
     params?: { RequestID: string },
   ) {
     this.Request = {
@@ -72,7 +72,7 @@ export class RequestContext<QQ, SS> {
     this._resSerDe = new JsonSerDe(resFac);
   }
 
-  build(): SDKContext<QQ, SS> {
+  build(): SDKContext<QT, ST> {
     // if (!this.Result) {
     //   throw "Result is undefined";
     // }
@@ -143,7 +143,7 @@ export class RequestContext<QQ, SS> {
     });
   }
 
-  async post(path: string, requestData: QQ): Promise<HttpResponse> {
+  async post(path: string, requestData: QT): Promise<HttpResponse> {
     if (this._called) {
       throw "post was already called";
     }
@@ -197,15 +197,15 @@ export class RequestContext<QQ, SS> {
 
 const txtDecoder = new TextDecoder();
 
-export async function postWithRequestContext<Q, S>(
+export async function postWithRequestContext<QT, QI, QO, ST, SI, SO>(
   c: SDKClient,
   url: string,
-  reqFactory: WuestenFactory<Q, Q, Q>,
-  resFactory: WuestenFactory<S, S, S>,
-  reqData: Q,
+  reqFactory: WuestenFactory<QT, QI, QO>,
+  resFactory: WuestenFactory<ST, SI, SO>,
+  reqData: QT,
   // fn: ctxFunction<QQ, QQQ, SS, SSS>
   params?: { RequestID: string },
-): Promise<SDKContext<Q, S>> {
+): Promise<SDKContext<QT, ST>> {
   try {
     const ctx = new RequestContext(c, reqFactory, resFactory, params);
     const resp = await ctx.post(url, reqData);

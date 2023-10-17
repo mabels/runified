@@ -45,7 +45,7 @@ it("TestRunifiedGetMethod()", async () => {
     const body = await stream2string(res.Body);
     const resObj = ErrorFactory.Builder().Coerce(JSON.parse(body));
     expect(resObj.is_err()).toBe(false);
-    expect(resObj.unwrap().message).toBe("Unexpected token a in JSON at position 0");
+    expect(resObj.unwrap().message).toContain("is not valid JSON");
   });
 });
 
@@ -78,7 +78,7 @@ it("TestRunified", async () => {
       Sys: sys,
       DefaultRequestHeaders: HttpHeader.from({ "X-Connection": "close" }),
     });
-    const rctx = await postWithRequestContext<RunifiedReq, RunifiedRes>(
+    const rctx = await postWithRequestContext<RunifiedReq, unknown, unknown, RunifiedRes, unknown, unknown>(
       sdk,
       "/runified",
       RunifiedReqFactory,

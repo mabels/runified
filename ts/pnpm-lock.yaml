@@ -15,8 +15,8 @@ dependencies:
     specifier: ^8.14.2
     version: 8.14.2
   wueste:
-    specifier: ^1.0.20
-    version: 1.0.20
+    specifier: ^1.0.22
+    version: 1.0.22
 
 devDependencies:
   "@aws-sdk/protocol-http":
@@ -4576,8 +4576,8 @@ packages:
         optional: true
     dev: false
 
-  /wueste@1.0.20:
-    resolution: { integrity: sha512-lwWO1T6OorLyZ2aezSEr5p3LxDZNuy3xgqKWx3DGiPCrqWE8ZBOtnxMh26gsQRUJ7CdylsmQxXojiWsyPid3WA== }
+  /wueste@1.0.22:
+    resolution: { integrity: sha512-DBIxlvqPFOUnSkSfxR+P9OGckZ9IvuCKu/FYnvBJ0XtMkCmWrJhagqJZaHvtNYSGHt9oGTOirDufKCnYYnhj+w== }
     engines: { node: ">=16" }
     hasBin: true
     dependencies:

@@ -6,19 +6,19 @@ export interface SerDe<T> {
   Unmarshal(raw: Uint8Array | string): Result<T, Error>;
 }
 
-export class JsonSerDe<TTT> implements SerDe<TTT> {
+export class JsonSerDe<T, I, O> implements SerDe<T> {
   static readonly _encoder = new TextEncoder();
   static readonly _decoder = new TextDecoder();
-  readonly _factory: WuestenFactory<TTT, TTT, TTT>;
-  constructor(factory: WuestenFactory<TTT, TTT, TTT>) {
+  readonly _factory: WuestenFactory<T, I, O>;
+  constructor(factory: WuestenFactory<T, I, O>) {
     this._factory = factory;
   }
-  Marshal(t: TTT): Result<Uint8Array> {
+  Marshal(t: T): Result<Uint8Array> {
     const map = this._factory.ToObject(t);
     return Result.Ok(JsonSerDe._encoder.encode(JSON.stringify(map)));
   }
 
-  Unmarshal(raw: Uint8Array | string): Result<TTT> {
+  Unmarshal(raw: Uint8Array | string): Result<T> {
     try {
       if (typeof raw !== "string") {
         raw = JsonSerDe._decoder.decode(raw);

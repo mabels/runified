@@ -55,7 +55,7 @@ describe("TestRequestContext", () => {
       expect(ctx).toBeNull();
     } catch (e) {
       const res = e as Error;
-      expect(res.message).toContain("Unexpected number in JSON at position 1");
+      expect(res.message).toContain("position 1");
     }
   });
 
