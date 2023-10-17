@@ -7,7 +7,7 @@ export enum Level {
 
 export interface LoggerInterface<R> {
   Module(key: string): R;
-  SetDebug(...modules: string[]): R;
+  SetDebug(...modules: (string | string[])[]): R;
 
   Str(key: string, value: string): R;
   Error(): R;

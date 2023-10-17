@@ -189,7 +189,7 @@ describe("TestLogger", () => {
 
   it("carry debug", async () => {
     const log = logger;
-    log.Module("xxx").SetDebug("xxx");
+    log.Module("xxx").SetDebug("yyy", ["i   ,   xxx"]);
 
     log.Debug().Msg("Debug1");
     const next1 = log.With().Str("next1", "meno").Logger();

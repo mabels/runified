@@ -110,9 +110,15 @@ export class LoggerImpl implements Logger {
     this._withAttributes["module"] = key;
     return this;
   }
-  SetDebug(...modules: string[]): Logger {
-    for (const m of modules) {
-      this._logWriter.modules.add(m);
+  SetDebug(...modules: (string | string[])[]): Logger {
+    for (const m of modules.flat()) {
+      const parts = m
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+      for (const p of parts) {
+        this._logWriter.modules.add(p);
+      }
     }
     return this;
   }
@@ -233,7 +239,7 @@ class WithLoggerBuilder implements WithLogger {
     this._li.Module(key);
     return this;
   }
-  SetDebug(...modules: string[]): WithLogger {
+  SetDebug(...modules: (string | string[])[]): WithLogger {
     this._li.SetDebug(...modules);
     return this;
   }
