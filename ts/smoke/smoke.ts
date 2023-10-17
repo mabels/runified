@@ -47,7 +47,7 @@ startApp(async (baseUrl: string, app: App, log: Logger) => {
     BaseUrl: baseUrl,
     DefaultRequestHeaders: HttpHeader.from({ "X-Connection": "close" }),
   });
-  const rctx = await postWithRequestContext<RunifiedReq, RunifiedRes>(
+  const rctx = await postWithRequestContext<RunifiedReq, unknown, unknown, RunifiedRes, unknown, unknown>(
     sdk,
     "/runified",
     RunifiedReqFactory,
