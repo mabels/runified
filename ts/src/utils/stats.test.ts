@@ -1,6 +1,6 @@
 import { TimeMode } from "../types";
 import { DurationUnit, ValueType } from "../types/stats";
-import { DateRange, DateRangeAvg, Stats } from "./stats";
+import { DateRange, DateRangeAvg, Stats, renderUnitForMs } from "./stats";
 import { SystemAbstractionImpl } from "./system_abstraction";
 
 it("stats empty", () => {
@@ -565,4 +565,13 @@ it("it renders total and resets", async () => {
       },
     },
   });
+});
+
+it("renderUnitForMs", () => {
+  expect(renderUnitForMs(0)).toEqual({ unit: "ns", val: 0 });
+  expect(renderUnitForMs(100)).toEqual({ unit: "ms", val: 100 });
+  expect(renderUnitForMs(0.01)).toEqual({ unit: "us", val: 10 });
+  expect(renderUnitForMs(0.00001)).toEqual({ unit: "ns", val: 10 });
+  expect(renderUnitForMs(10000)).toEqual({ unit: "s", val: 10 });
+  expect(renderUnitForMs(24 * 60 * 60 * 3 * 1000)).toEqual({ unit: "s", val: 259200 });
 });

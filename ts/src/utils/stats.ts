@@ -2,6 +2,22 @@ import { SysAbstraction } from "../types";
 import { ActionItem, DateTuple, DurationUnit, ResultType, ValueType, ValueWithCount } from "../types/stats";
 import { SystemAbstractionImpl } from "./system_abstraction";
 
+export function renderUnitForMs(val: number): ValueType {
+  if (val < 1) {
+    const us = val * 1000;
+    if (1 <= us && us < 1000) {
+      return { val: ~~us, unit: "us" };
+    }
+    const ns = val * 1000 * 1000;
+    return { val: ~~ns, unit: "ns" };
+  }
+  val = ~~val;
+  if (1 <= val && val < 1000) {
+    return { val, unit: "ms" };
+  }
+  return { val: ~~(val / 1000), unit: "s" };
+}
+
 export class DateRange implements ActionItem {
   readonly _range: DateTuple;
   constructor(start: Date, end: Date) {
@@ -19,7 +35,7 @@ export class DateRange implements ActionItem {
     for (const item of items) {
       sum += (item.Value() as DateTuple).end.getTime() - (item.Value() as DateTuple).start.getTime();
     }
-    return { val: sum, unit: "ms" };
+    return renderUnitForMs(sum);
   }
 }
 
@@ -28,7 +44,7 @@ export class DateRangeAvg extends DateRange {
     if (cnt === 0) {
       return val;
     }
-    return { val: (val as DurationUnit).val / cnt, unit: "ms" };
+    return renderUnitForMs((val as DurationUnit).val / cnt);
   }
 }
 

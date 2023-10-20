@@ -58,10 +58,36 @@ export function TimeFactory(timeMode: TimeMode): Time {
 
 const decoder = new TextDecoder();
 
+export enum RandomMode {
+  CONST = "const",
+  STEP = "step",
+  RANDOM = "random",
+}
+
+export class RandomService {
+  readonly _mode: RandomMode;
+  _step: number = 0;
+  constructor(mode: RandomMode) {
+    this._mode = mode;
+  }
+  Random0ToValue(value: number): number {
+    switch (this._mode) {
+      case RandomMode.CONST:
+        return 0.5 * value;
+      case RandomMode.STEP:
+        this._step += 0.0001;
+        return this._step * value;
+      case RandomMode.RANDOM:
+        return Math.random() * value;
+    }
+  }
+}
+
 export interface SystemAbstractionImplParams {
   readonly TimeMode?: TimeMode;
   readonly IdMode?: IDMode;
   readonly Stdout?: WritableStream;
+  readonly RandomMode?: RandomMode;
 }
 
 export enum IDMode {
@@ -102,10 +128,12 @@ export class SystemAbstractionImpl implements SysAbstraction {
     },
   });
   static readonly _idService = new IdService();
+  static readonly _randomService = new RandomService(RandomMode.RANDOM);
 
   readonly _time: Time = SystemAbstractionImpl._time;
   readonly _stdout: WritableStream = SystemAbstractionImpl._stdout;
   readonly _idService: IdService = SystemAbstractionImpl._idService;
+  readonly _randomService: RandomService = SystemAbstractionImpl._randomService;
   constructor(params?: SystemAbstractionImplParams) {
     if (params) {
       if (params.TimeMode) {
@@ -117,6 +145,9 @@ export class SystemAbstractionImpl implements SysAbstraction {
       if (params.IdMode) {
         this._idService = new IdService(params.IdMode);
       }
+      if (params.RandomMode) {
+        this._randomService = new RandomService(params.RandomMode);
+      }
     }
   }
 
@@ -125,6 +156,9 @@ export class SystemAbstractionImpl implements SysAbstraction {
   }
   NextId(): string {
     return this._idService.NextId();
+  }
+  Random0ToValue(value: number): number {
+    return this._randomService.Random0ToValue(value);
   }
   Stdout(): WritableStream {
     return this._stdout;
