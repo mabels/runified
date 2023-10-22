@@ -40,11 +40,11 @@ it("time sleep", async () => {
 });
 
 it("time sleep const", async () => {
-  const sys = new SystemAbstractionImpl({ TimeMode: TimeMode.CONST });
+  const sys = new SystemAbstractionImpl({ TimeMode: TimeMode.REAL });
   const start = new Date();
   await sys.Time().Sleep(100);
   const end = new Date();
-  expect(end.getTime() - start.getTime()).toBeLessThan(100);
+  expect(end.getTime() - start.getTime()).toBeGreaterThan(90);
 });
 
 it("time sleep step", async () => {

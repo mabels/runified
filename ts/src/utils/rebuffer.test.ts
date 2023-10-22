@@ -1,4 +1,5 @@
 import { rebufferArray } from "./rebuffer";
+
 it("rechunk empty", async () => {
   const chunks = await rebufferArray([], 10);
   expect(chunks.length).toEqual(0);

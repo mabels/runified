@@ -1,32 +1,12 @@
+import { array2stream, stream2array } from "./stream_map";
+
 interface ReChunkResult {
   readonly rest: Uint8Array;
   readonly chunk: Uint8Array;
 }
 
-export function array2stream(a: Uint8Array[]): ReadableStream<Uint8Array> {
-  return new ReadableStream<Uint8Array>({
-    start(controller) {
-      for (let i = 0; i < a.length; i++) {
-        controller.enqueue(a[i]);
-      }
-      controller.close();
-    },
-  });
-}
-
 export async function rebufferArray(a: Uint8Array[], chunkSize: number): Promise<Uint8Array[]> {
-  const rs = rebuffer(array2stream(a), chunkSize);
-  const res: Uint8Array[] = [];
-  const reader = rs.getReader();
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      break;
-    }
-    res.push(value);
-  }
-  return res;
+  return stream2array(rebuffer(array2stream(a), chunkSize));
 }
 
 function reChunk(cs: Uint8Array[], chunkSize: number): ReChunkResult {
