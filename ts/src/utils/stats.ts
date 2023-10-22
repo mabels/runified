@@ -1,25 +1,28 @@
 import { SysAbstraction } from "../types";
-import { ActionItem, DateTuple, DurationUnit, ResultType, ValueType, ValueWithCount } from "../types/stats";
+import { ActionItem, DateTuple, DurationUnit, ResultType, UnitValue, ValueType, ValueWithCount, ValueWithUnit } from "../types/stats";
 import { SystemAbstractionImpl } from "./system_abstraction";
 
-export function renderUnitForMs(val: number): ValueType {
-  if (val < 1) {
-    const us = val * 1000;
+
+
+export function renderUnitForMs(valMS: number): UnitValue {
+  if (valMS < 1) {
+    const us = valMS * 1000;
     if (1 <= us && us < 1000) {
-      return { val: ~~us, unit: "us" };
+      return { val: Math.round(us), unit: "us" };
     }
-    const ns = val * 1000 * 1000;
-    return { val: ~~ns, unit: "ns" };
+    const ns = valMS * 1000 * 1000;
+    return { val: Math.round(ns), unit: "ns" };
   }
-  val = ~~val;
-  if (1 <= val && val < 1000) {
-    return { val, unit: "ms" };
+  valMS = Math.round(valMS);
+  if (1 <= valMS && valMS < 1000) {
+    return { val: valMS, unit: "ms" };
   }
-  return { val: ~~(val / 1000), unit: "s" };
+  return { val: Math.round(valMS / 1000), unit: "s" };
 }
 
 export class DateRange implements ActionItem {
   readonly _range: DateTuple;
+  _cnt: number = 1;
   constructor(start: Date, end: Date) {
     this._range = { start, end };
   }
@@ -28,6 +31,7 @@ export class DateRange implements ActionItem {
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Avg(val: ValueType, cnt: number): ValueType {
+    this._cnt = cnt;
     return val;
   }
   Sum(items: ActionItem[], preset?: ValueType): ValueType {
@@ -35,26 +39,43 @@ export class DateRange implements ActionItem {
     for (const item of items) {
       sum += (item.Value() as DateTuple).end.getTime() - (item.Value() as DateTuple).start.getTime();
     }
-    return renderUnitForMs(sum);
+    return { val: sum, unit: "ms" }
+  }
+  Render(v: ValueType): ValueWithCount {
+    const du = v as DurationUnit;
+    if (typeof du.val != 'number') {
+      throw new Error("invalid value");
+    }
+    return { ...renderUnitForMs(du.val), cnt: this._cnt };
   }
 }
 
 export class DateRangeAvg extends DateRange {
   Avg(val: ValueType, cnt: number): ValueType {
     if (cnt === 0) {
+      this._cnt = 1
       return val;
     }
-    return renderUnitForMs((val as DurationUnit).val / cnt);
+    this._cnt = cnt
+    return { val: (val as DurationUnit).val / cnt, unit: "ms" }
   }
+  // Render(v: ValueType): ValueWithCount {
+  //   if (!(v instanceof DateRangeAvg)) {
+  //     throw new Error("invalid value: DateRangeAvg");
+  //   }
+  //   return { ...renderUnitForMs(du.val), cnt: this._cnt };
+  // }
 }
 
 abstract class Value implements ActionItem {
   readonly _value: number;
+  _cnt: number = 1;
   constructor(value: number) {
     this._value = value;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Avg(val: ValueType, cnt: number): ValueType {
+    this._cnt = cnt;
     return val;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -63,6 +84,15 @@ abstract class Value implements ActionItem {
   }
   Value(): number {
     return this._value;
+  }
+  Render(v: ValueType): ValueWithCount {
+    if (typeof v != 'number') {
+      throw new Error("invalid value");
+    }
+    if (this._cnt <= 1) {
+      return v
+    }
+    return { val: v, cnt: this._cnt };
   }
 }
 
@@ -80,8 +110,10 @@ export class ValueSum extends Value {
 export class ValueAvg extends ValueSum {
   Avg(val: ValueType, cnt: number): ValueType {
     if (cnt === 0) {
+      this._cnt = 1;
       return val;
     }
+    this._cnt = cnt;
     return (val as number) / cnt;
   }
 }
@@ -106,13 +138,13 @@ export interface StatsParam {
   readonly parent?: Stats;
   readonly sys?: SysAbstraction;
   readonly stats?: Record<string, ActionItem[]>;
-  readonly totalStats?: Record<string, Writeable<ValueWithCount>>;
+  readonly totalStats?: Record<string, Writeable<ValueWithUnit>>;
 }
 
 export class Stats {
   readonly _feature: string = "";
   readonly _stats: Record<string, ActionItem[]> = {};
-  readonly _totalStats: Record<string, Writeable<ValueWithCount>> = {};
+  readonly _totalStats: Record<string, Writeable<ValueWithUnit>> = {};
   readonly _children: Stats[] = [];
   readonly _sys: SysAbstraction = undefined as unknown as SysAbstraction;
   constructor(sp?: StatsParam | string) {
@@ -172,12 +204,12 @@ export class Stats {
     return stats;
   }
 
-  RenderCurrent(): Record<string, ValueType> {
-    const ret: Record<string, ValueType> = {};
+  RenderCurrent(): Record<string, ValueWithCount> {
+    const ret: Record<string, ValueWithCount> = {};
     for (const key in this._stats) {
       const val = this._stats[key];
       if (val.length) {
-        ret[key] = val[0].Sum([val[val.length - 1]]);
+        ret[key] = val[0].Render(val[0].Sum([val[val.length - 1]]));
       }
     }
     for (const child of this._children) {
@@ -186,10 +218,10 @@ export class Stats {
     return ret;
   }
 
-  RenderHistory(): Record<string, ValueType[]> {
-    const ret: Record<string, ValueType[]> = {};
+  RenderHistory(): Record<string, ValueWithCount[]> {
+    const ret: Record<string, ValueWithCount[]> = {};
     for (const key in this._stats) {
-      ret[key] = this._stats[key].map((i) => i.Sum([i]));
+      ret[key] = this._stats[key].map((i) => i.Render(i.Sum([i])));
     }
     return ret;
   }
@@ -211,15 +243,10 @@ export class Stats {
           },
         };
       }
+      const ts = this._totalStats[key]
       ret[key] = {
-        current: {
-          val: keyItem.Avg(keyItem.Sum(this._stats[key]), this._stats[key].length),
-          cnt: this._stats[key].length,
-        },
-        total: {
-          val: keyItem.Avg(this._totalStats[key].val, this._totalStats[key].cnt),
-          cnt: this._totalStats[key].cnt,
-        },
+        current: keyItem.Render(keyItem.Avg(keyItem.Sum(this._stats[key]), this._stats[key].length)),
+        total: keyItem.Render(keyItem.Avg(ts.val, ts.cnt || 1)),
       };
     }
     // for (const child of this._children) {
@@ -242,8 +269,15 @@ export class Stats {
         cnt: 0,
       };
     }
-    this._totalStats[key].cnt++;
-    this._totalStats[key].val = ai.Sum([ai], this._totalStats[key].val);
+    // if (typeof this._totalStats[key] === 'number') {
+    //   this._totalStats[key] = {
+    //     val: this._totalStats[key] as number,
+    //     cnt: 1,
+    //   };
+    // }
+    const ts = this._totalStats[key] as Writeable<ValueWithUnit>;
+    ts.cnt = (ts.cnt || 0) + 1;
+    ts.val = ai.Sum([ai], ts.val);
   }
 
   async Action<T>(name: string, action: () => Promise<T>): Promise<T> {

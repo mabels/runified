@@ -1,5 +1,5 @@
 import { TimeMode } from "../types";
-import { DurationUnit, ValueType } from "../types/stats";
+import { DurationUnit, ValueType, ValueWithUnit } from "../types/stats";
 import { DateRange, DateRangeAvg, Stats, renderUnitForMs } from "./stats";
 import { SystemAbstractionImpl } from "./system_abstraction";
 
@@ -28,6 +28,7 @@ it("set value", () => {
   expect(stats._stats).toEqual({
     "/feature#value": [
       {
+        _cnt: 1,
         _value: 1,
       },
     ],
@@ -51,6 +52,7 @@ it("set action", async () => {
   expect(stats._stats).toEqual({
     "/feature#value": [
       {
+        _cnt: 1,
         _range: {
           start: myT.Time().Now(),
           end: myT.Time().Now(),
@@ -164,20 +166,24 @@ it("it renders single log action", async () => {
 
   const e1 = {
     "/l1#v1": {
-      unit: "ms",
-      val: 1000,
+      cnt: 1,
+      unit: "s",
+      val: 1,
     },
     "/l1#v2": {
-      unit: "ms",
-      val: 1000,
+      cnt: 1,
+      unit: "s",
+      val: 1,
     },
     "/l1/l2#x1": {
-      unit: "ms",
-      val: 1000,
+      cnt: 1,
+      unit: "s",
+      val: 1,
     },
     "/l1/l2#x2": {
-      unit: "ms",
-      val: 1000,
+      cnt: 1,
+      unit: "s",
+      val: 1,
     },
   };
 
@@ -192,38 +198,48 @@ it("it renders single log action", async () => {
   l2.AddItem("x2", new DateRange(myT.Time().Now(), double()));
   const e2 = {
     "/l1#v1": {
-      unit: "ms",
-      val: 2000,
+      cnt: 1,
+      unit: "s",
+      val: 2,
     },
     "/l1#v2": {
-      unit: "ms",
-      val: 2000,
+      cnt: 1,
+      unit: "s",
+      val: 2,
     },
     "/l1/l2#x1": {
-      unit: "ms",
-      val: 2000,
+      cnt: 1,
+      unit: "s",
+      val: 2,
     },
     "/l1/l2#x2": {
-      unit: "ms",
-      val: 2000,
+      cnt: 1,
+      unit: "s",
+      val: 2,
     },
   };
   expect(l1.RenderCurrent()).toEqual(e2);
 
-  expect(l1.RenderHistory()).toEqual(
-    [e1, e2].reduce(
-      (a, b: Record<string, DurationUnit>) => {
-        for (const key in b) {
-          if (!a[key]) {
-            a[key] = [];
-          }
-          a[key].push(b[key]);
+  const tmp = [e1, e2].reduce(
+    (a, b: Record<string, DurationUnit>) => {
+      for (const key in b) {
+        if (!a[key]) {
+          a[key] = [];
         }
-        return a;
-      },
-      {} as Record<string, DurationUnit[]>,
-    ),
-  );
+        a[key].push(b[key]);
+      }
+      return a;
+    },
+    {} as Record<string, DurationUnit[]>,
+  )
+  const history: Record<string, ValueWithUnit[]> = {};
+  for (const key in tmp) {
+    history[key] = tmp[key].map((val) => ({
+      ...renderUnitForMs(val.val * 1000/*hack*/),
+      cnt: 1
+    }))
+  }
+  expect(l1.RenderHistory()).toEqual(history)
 
   const r1 = l1.RenderReduced();
 
@@ -231,65 +247,49 @@ it("it renders single log action", async () => {
     "/l1/l2#x1": {
       current: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 3000,
-        },
+        unit: "s",
+        val: 3,
       },
       total: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 3000,
-        },
+        unit: "s",
+        val: 3,
       },
     },
     "/l1/l2#x2": {
       current: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 3000,
-        },
+        unit: "s",
+        val: 3,
       },
       total: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 3000,
-        },
+        unit: "s",
+        val: 3,
       },
     },
     "/l1#v1": {
       current: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 3000,
-        },
+        unit: "s",
+        val: 3,
       },
       total: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 3000,
-        },
+        unit: "s",
+        val: 3,
       },
     },
     "/l1#v2": {
       current: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 3000,
-        },
+        unit: "s",
+        val: 3,
       },
       total: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 3000,
-        },
+        unit: "s",
+        val: 3,
       },
     },
   });
@@ -314,27 +314,6 @@ it("it renders single time avg action", async () => {
   l2.AddItem("x2", new DateRangeAvg(myT.Time().Now(), myT.Time().Now()));
   l2.ValueAvg("w2", 43.2);
 
-  // const e1 = {
-  //   "/l1#v1": {
-  //     unit: "ms",
-  //     val: 1000,
-  //   },
-  //   "/l1#v2": {
-  //     unit: "ms",
-  //     val: 1000,
-  //   },
-  //   "/l1#w1": 42.2,
-  //   "/l1#w2": 43.2,
-  //   "/l1/l2#x1": {
-  //     unit: "ms",
-  //     val: 1000,
-  //   },
-  //   "/l1/l2#x2": {
-  //     unit: "ms",
-  //     val: 1000,
-  //   },
-  // };
-
   l1.Reset();
 
   const double = () => {
@@ -352,22 +331,26 @@ it("it renders single time avg action", async () => {
   l2.ValueAvg("w2", 45.2);
   const e2 = {
     "/l1#v1": {
-      unit: "ms",
-      val: 2000,
+      cnt: 1,
+      unit: "s",
+      val: 2,
     },
     "/l1#v2": {
-      unit: "ms",
-      val: 2000,
+      cnt: 1,
+      unit: "s",
+      val: 2,
     },
     "/l1#w1": 44.2,
     "/l1/l2#w2": 45.2,
     "/l1/l2#x1": {
-      unit: "ms",
-      val: 2000,
+      cnt: 1,
+      unit: "s",
+      val: 2,
     },
     "/l1/l2#x2": {
-      unit: "ms",
-      val: 2000,
+      cnt: 1,
+      unit: "s",
+      val: 2,
     },
   };
   expect(l1.RenderCurrent()).toEqual(e2);
@@ -386,89 +369,66 @@ it("it renders single time avg action", async () => {
       {} as Record<string, ValueType[]>,
     ),
   );
-
   const r1 = l1.RenderReduced();
 
   expect(r1).toEqual({
     "/l1/l2#x1": {
       current: {
         cnt: 1,
-        val: {
-          unit: "ms",
-          val: 2000,
-        },
+        unit: "s",
+        val: 2,
       },
       total: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 1500,
-        },
+        unit: "s",
+        val: 2,
       },
     },
     "/l1/l2#x2": {
       current: {
         cnt: 1,
-        val: {
-          unit: "ms",
-          val: 2000,
-        },
+        unit: "s",
+        val: 2,
       },
       total: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 1500,
-        },
+        unit: "s",
+        val: 2,
       },
     },
     "/l1#v1": {
       current: {
         cnt: 1,
-        val: {
-          unit: "ms",
-          val: 2000,
-        },
+          unit: "s",
+          val: 2,
       },
       total: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 1500,
-        },
+        unit: "s",
+        val: 2,
       },
     },
     "/l1#v2": {
       current: {
         cnt: 1,
-        val: {
-          unit: "ms",
-          val: 2000,
-        },
+        unit: "s",
+        val: 2,
       },
       total: {
         cnt: 2,
-        val: {
-          unit: "ms",
-          val: 1500,
-        },
+        unit: "s",
+        val: 2,
       },
     },
     "/l1#w1": {
-      current: {
-        cnt: 1,
-        val: 44.2,
-      },
+      current: 44.2,
       total: {
         cnt: 2,
         val: 43.2,
       },
     },
     "/l1/l2#w2": {
-      current: {
-        cnt: 1,
-        val: 45.2,
-      },
+      current: 45.2,
       total: {
         cnt: 2,
         val: 44.2,
@@ -506,17 +466,13 @@ it("it renders total and resets", async () => {
   expect(l1.RenderReduced()).toEqual({
     "/l1#t1": {
       current: {
-        val: {
-          unit: "ms",
-          val: 6000,
-        },
+        unit: "s",
+        val: 6,
         cnt: 3,
       },
       total: {
-        val: {
-          val: 12000,
-          unit: "ms",
-        },
+        val: 12,
+        unit: "s",
         cnt: 6,
       },
     },
@@ -540,25 +496,18 @@ it("it renders total and resets", async () => {
   expect(l1.RenderReduced()).toEqual({
     "/l1#t1": {
       current: {
-        val: {
-          unit: "ms",
-          val: 2000,
-        },
+        unit: "s",
+        val: 2,
         cnt: 1,
       },
       total: {
-        val: {
-          val: 14000,
-          unit: "ms",
-        },
+        val: 14,
+        unit: "s",
         cnt: 7,
       },
     },
     "/l1#v1": {
-      current: {
-        val: 47,
-        cnt: 1,
-      },
+      current: 47,
       total: {
         val: 353,
         cnt: 7,
@@ -569,9 +518,10 @@ it("it renders total and resets", async () => {
 
 it("renderUnitForMs", () => {
   expect(renderUnitForMs(0)).toEqual({ unit: "ns", val: 0 });
-  expect(renderUnitForMs(100)).toEqual({ unit: "ms", val: 100 });
-  expect(renderUnitForMs(0.01)).toEqual({ unit: "us", val: 10 });
-  expect(renderUnitForMs(0.00001)).toEqual({ unit: "ns", val: 10 });
-  expect(renderUnitForMs(10000)).toEqual({ unit: "s", val: 10 });
-  expect(renderUnitForMs(24 * 60 * 60 * 3 * 1000)).toEqual({ unit: "s", val: 259200 });
+  expect(renderUnitForMs(12)).toEqual({ unit: "ms", val: 12 });
+  expect(renderUnitForMs(120)).toEqual({ unit: "ms", val: 120 });
+  expect(renderUnitForMs(0.012)).toEqual({ unit: "us", val: 12 });
+  expect(renderUnitForMs(0.000012)).toEqual({ unit: "ns", val: 12 });
+  expect(renderUnitForMs(12000)).toEqual({ unit: "s", val: 12 });
+  expect(renderUnitForMs(24 * 60 * 60 * 3 * 1000 + 63000)).toEqual({ unit: "s", val: 259263 });
 });
