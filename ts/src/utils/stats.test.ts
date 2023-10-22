@@ -231,15 +231,15 @@ it("it renders single log action", async () => {
       return a;
     },
     {} as Record<string, DurationUnit[]>,
-  )
+  );
   const history: Record<string, ValueWithUnit[]> = {};
   for (const key in tmp) {
     history[key] = tmp[key].map((val) => ({
-      ...renderUnitForMs(val.val * 1000/*hack*/),
-      cnt: 1
-    }))
+      ...renderUnitForMs(val.val * 1000 /*hack*/),
+      cnt: 1,
+    }));
   }
-  expect(l1.RenderHistory()).toEqual(history)
+  expect(l1.RenderHistory()).toEqual(history);
 
   const r1 = l1.RenderReduced();
 
@@ -399,8 +399,8 @@ it("it renders single time avg action", async () => {
     "/l1#v1": {
       current: {
         cnt: 1,
-          unit: "s",
-          val: 2,
+        unit: "s",
+        val: 2,
       },
       total: {
         cnt: 2,

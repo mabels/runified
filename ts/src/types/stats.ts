@@ -5,9 +5,9 @@ export interface UnitValue {
   readonly unit?: string;
 }
 
-export type ValueWithUnit = UnitValue & { readonly cnt: number }
+export type ValueWithUnit = UnitValue & { readonly cnt: number };
 
-export type ValueWithCount =  ValueWithUnit  | number;
+export type ValueWithCount = ValueWithUnit | number;
 
 export interface ResultType {
   readonly current: ValueWithCount;

@@ -1,8 +1,15 @@
 import { SysAbstraction } from "../types";
-import { ActionItem, DateTuple, DurationUnit, ResultType, UnitValue, ValueType, ValueWithCount, ValueWithUnit } from "../types/stats";
+import {
+  ActionItem,
+  DateTuple,
+  DurationUnit,
+  ResultType,
+  UnitValue,
+  ValueType,
+  ValueWithCount,
+  ValueWithUnit,
+} from "../types/stats";
 import { SystemAbstractionImpl } from "./system_abstraction";
-
-
 
 export function renderUnitForMs(valMS: number): UnitValue {
   if (valMS < 1) {
@@ -39,11 +46,11 @@ export class DateRange implements ActionItem {
     for (const item of items) {
       sum += (item.Value() as DateTuple).end.getTime() - (item.Value() as DateTuple).start.getTime();
     }
-    return { val: sum, unit: "ms" }
+    return { val: sum, unit: "ms" };
   }
   Render(v: ValueType): ValueWithCount {
     const du = v as DurationUnit;
-    if (typeof du.val != 'number') {
+    if (typeof du.val != "number") {
       throw new Error("invalid value");
     }
     return { ...renderUnitForMs(du.val), cnt: this._cnt };
@@ -53,11 +60,11 @@ export class DateRange implements ActionItem {
 export class DateRangeAvg extends DateRange {
   Avg(val: ValueType, cnt: number): ValueType {
     if (cnt === 0) {
-      this._cnt = 1
+      this._cnt = 1;
       return val;
     }
-    this._cnt = cnt
-    return { val: (val as DurationUnit).val / cnt, unit: "ms" }
+    this._cnt = cnt;
+    return { val: (val as DurationUnit).val / cnt, unit: "ms" };
   }
   // Render(v: ValueType): ValueWithCount {
   //   if (!(v instanceof DateRangeAvg)) {
@@ -86,11 +93,11 @@ abstract class Value implements ActionItem {
     return this._value;
   }
   Render(v: ValueType): ValueWithCount {
-    if (typeof v != 'number') {
+    if (typeof v != "number") {
       throw new Error("invalid value");
     }
     if (this._cnt <= 1) {
-      return v
+      return v;
     }
     return { val: v, cnt: this._cnt };
   }
@@ -243,7 +250,7 @@ export class Stats {
           },
         };
       }
-      const ts = this._totalStats[key]
+      const ts = this._totalStats[key];
       ret[key] = {
         current: keyItem.Render(keyItem.Avg(keyItem.Sum(this._stats[key]), this._stats[key].length)),
         total: keyItem.Render(keyItem.Avg(ts.val, ts.cnt || 1)),
