@@ -1,5 +1,5 @@
-import { TimeMode } from "../types";
-import { IDMode, RandomMode, SystemAbstractionImpl } from "./system_abstraction";
+import { TimeMode, IDMode, RandomMode } from "../types";
+import { SystemAbstractionImpl } from "./system_abstraction";
 
 it("IdService UUID", () => {
   const sys = new SystemAbstractionImpl();

@@ -1,4 +1,4 @@
-import { SysAbstraction, Time, TimeMode } from "../types";
+import { IDMode, RandomMode, SysAbstraction, Time, TimeMode } from "../types";
 import crypto from "node:crypto";
 
 class SysTime extends Time {
@@ -58,12 +58,6 @@ export function TimeFactory(timeMode: TimeMode): Time {
 
 const decoder = new TextDecoder();
 
-export enum RandomMode {
-  CONST = "const",
-  STEP = "step",
-  RANDOM = "random",
-}
-
 export class RandomService {
   readonly _mode: RandomMode;
   _step: number = 0;
@@ -90,11 +84,6 @@ export interface SystemAbstractionImplParams {
   readonly RandomMode?: RandomMode;
 }
 
-export enum IDMode {
-  UUID = "uuid",
-  CONST = "const",
-  STEP = "step",
-}
 export class IdService {
   readonly _mode: IDMode;
   _step: number = 0;
