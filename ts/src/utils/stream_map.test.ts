@@ -11,3 +11,14 @@ it("stream_map", async () => {
   expect(closeFn).toBeCalledTimes(1);
   expect(s).toEqual([12, 23, 34]);
 });
+
+it("map types", async () => {
+  const oo = await stream2array(
+    streamMap(array2stream([1, 2, 3]), {
+      Map: (chunk, idx) => {
+        return "[" + chunk + "/" + idx + "]";
+      },
+    }),
+  );
+  expect(oo).toEqual(["[1/0]", "[2/1]", "[3/2]"]);
+});
