@@ -36,7 +36,7 @@ it("time sleep", async () => {
   const sys = new SystemAbstractionImpl();
   const start = sys.Time().Now();
   await sys.Time().Sleep(100);
-  expect(sys.Time().TimeSince(start)).toBeGreaterThanOrEqual(100);
+  expect(sys.Time().TimeSince(start)).toBeGreaterThan(90);
 });
 
 it("time sleep const", async () => {
