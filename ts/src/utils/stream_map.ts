@@ -2,6 +2,7 @@ interface pumpState<T> {
   readonly reader: ReadableStreamDefaultReader<T>;
   readonly controller: ReadableStreamDefaultController<T>;
   readonly streamMap: StreamMap<T>;
+  idx: number;
 }
 function pump<T>(ps: pumpState<T>): void {
   ps.reader.read().then(({ done, value }) => {
@@ -10,19 +11,19 @@ function pump<T>(ps: pumpState<T>): void {
       ps.controller.close();
       return;
     }
-    ps.controller.enqueue(ps.streamMap.Map(value));
+    ps.controller.enqueue(ps.streamMap.Map(value, ps.idx++));
     pump(ps);
   });
 }
 
 export interface StreamMap<T> {
-  Map(s: T): T;
+  Map(s: T, idx: number): T;
   readonly Close?: () => void;
 }
 export function streamMap<T>(s: ReadableStream<T>, sm: StreamMap<T>): ReadableStream<T> {
   return new ReadableStream<T>({
     start(controller) {
-      pump({ reader: s.getReader(), controller, streamMap: sm });
+      pump({ reader: s.getReader(), controller, streamMap: sm, idx: 0 });
       return;
     },
   });
