@@ -40,12 +40,12 @@ export function array2stream<T>(a: T[]): ReadableStream<T> {
   });
 }
 
-export async function stream2array<T, U>(a: ReadableStream<T>): Promise<U[]> {
-  return new Promise<U[]>((resolve) => {
-    const ret: U[] = [];
+export async function stream2array<T>(a: ReadableStream<T>): Promise<T[]> {
+  return new Promise<T[]>((resolve) => {
+    const ret: T[] = [];
     streamMap(a, {
       Map: (i) => {
-        ret.push(i as unknown as U);
+        ret.push(i);
         return i;
       },
       Close: () => {
