@@ -1,3 +1,4 @@
+import { Result } from "wueste/result";
 import { HttpHeader } from "./http_header";
 import { result } from "wueste";
 
@@ -171,7 +172,7 @@ export class HttpURL {
   }
 
   static parse(url: string | HttpURL | URL | result.Result<HttpURL>, base?: string): result.Result<HttpURL> {
-    if (result.IsResult(url)) {
+    if (Result.Is(url)) {
       url = url.unwrap();
     }
     try {

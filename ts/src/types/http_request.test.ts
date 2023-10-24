@@ -41,3 +41,8 @@ it("test search interaction", () => {
   hurl.SearchParams.Set("x", "9");
   expect(hurl.Href).toBe("http://localhost:8080/abc/def?m=3&n=2&x=9");
 });
+
+it("throws error on invalid url", () => {
+  expect(() => HttpURL.parse("der meister ist doof")).not.toThrowError();
+  expect(HttpURL.parse("der meister ist doof").is_err()).toBeTruthy();
+});
