@@ -31,3 +31,13 @@ it("test setPathname", () => {
   expect(hurl.Path).toBe("//////bla/bli/bl//ub");
   expect(Object.fromEntries(hurl.SearchParams.Entries())).toEqual({ m: "1", n: "2" });
 });
+
+it("test search interaction", () => {
+  const hurl = HttpURL.parse("http://localhost:8080/abc/def").unwrap();
+  hurl.SetSearch("?m=1&n=2");
+  expect(Object.fromEntries(hurl.SearchParams.Entries())).toEqual({ m: "1", n: "2" });
+  expect(hurl.Href).toBe("http://localhost:8080/abc/def?m=1&n=2");
+  hurl.SearchParams.Set("m", "3");
+  hurl.SearchParams.Set("x", "9");
+  expect(hurl.Href).toBe("http://localhost:8080/abc/def?m=3&n=2&x=9");
+});

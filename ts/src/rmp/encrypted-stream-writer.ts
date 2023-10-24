@@ -177,7 +177,7 @@ export async function createResponseStream(rsp: ResponseStreamParam): Promise<Re
   fp.send(
     new TextEncoder().encode(
       JSON.stringify({
-        streamId: url.SearchParams.get("streamId"),
+        streamId: url.SearchParams.Get("streamId"),
         cipher: deEnCrypter.cipherStr,
         iv: base64EncArr(deEnCrypter.iv),
       }),
