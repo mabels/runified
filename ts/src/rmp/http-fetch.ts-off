@@ -5,7 +5,7 @@ import { Env, ExecutionContext, EdgeHandler } from "./pony-types";
 
 export const httpFetchHandler: EdgeHandler = {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const parsedURL = new URL(req.url);
+    const parsedURL = HttpURL.parse(req.url);
     console.log("httpFetchHandler >>>>>", parsedURL.pathname)
     switch (parsedURL.pathname) {
       case "/simple":

@@ -82,20 +82,18 @@ export class AzureHttpServer implements HttpServer {
       });
     }
 
-    let url: URL;
     const headers = HttpHeader.from(Array.from(request.headers.entries()));
     const method = request.method ?? "GET";
     console.log("AzureHandler", request.params);
-    try {
-      url = new URL(request.url ?? "http://localhost");
-    } catch (e) {
-      url = new URL("http://localhost");
+    let url = HttpURL.parse(request.url ?? "http://localhost");
+    if (url.is_err()) {
+      url = HttpURL.parse("http://localhost");
     }
 
     return new Promise((resolve) => {
       const req = DefaultHttpRequest({
         Header: headers,
-        URL: HttpURL.parse(url).unwrap(),
+        URL: url.unwrap(),
         Method: method,
         Body: request.body as ReadableStream<Uint8Array>,
       });

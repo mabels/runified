@@ -4,7 +4,7 @@ import { Context } from "aws-lambda";
 import { EdgeHandler } from "../pony-types";
 import { base64EncArr } from "../utils";
 import { HttpResponse, HttpRequest } from "@aws-sdk/protocol-http";
-import { HttpHeader } from "../../types";
+import { HttpHeader, HttpURL } from "../../types";
 
 const txtEncoder = new TextEncoder();
 const txtDecoder = new TextDecoder();
@@ -26,12 +26,11 @@ function toRequest(req: HttpRequest, ctx: Context): Request {
     });
   }
   let reqUrl = req.path;
-  try {
-    const loc = new URL(req.path || "", "http://localhost");
-    reqUrl = loc.toString();
-  } catch (e) {
+  const loc = HttpURL.parse(req.path || "", "http://localhost");
+  if (loc.is_err()) {
     throw new Error(`Invalid URL: ${req.path}`);
   }
+  reqUrl = loc.Ok().String();
 
   console.log("bla:", req.method, body);
 

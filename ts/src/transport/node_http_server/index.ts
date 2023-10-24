@@ -66,17 +66,15 @@ export class NodeHttpServer implements HttpServer {
       nodeRes.end("No Handler");
       return;
     }
-    let url: URL;
-    try {
-      const host = nodeReq.headers.host ?? "localhost";
-      url = new URL(`http://${host}${nodeReq.url!}`);
-    } catch (e) {
-      url = new URL("http://localhost");
+    const host = nodeReq.headers.host ?? "localhost";
+    let url = HttpURL.parse(`http://${host}${nodeReq.url!}`);
+    if (url.is_err()) {
+      url = HttpURL.parse("http://localhost");
     }
 
     const req: HttpRequest = DefaultHttpRequest({
       Header: HttpHeader.from(nodeReq.headers),
-      URL: HttpURL.parse(url).unwrap(),
+      URL: url.unwrap(),
       Method: nodeReq.method ?? "GET",
       Body: new ReadableStream<Uint8Array>({
         start(controller) {

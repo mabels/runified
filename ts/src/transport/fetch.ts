@@ -86,15 +86,13 @@ export class FetchHttpServer implements HttpServer {
       fetchResInit.status = HttpStatusCode.INTERNAL_SERVER_ERROR;
       return Promise.resolve(new Response("No Handler", fetchResInit));
     }
-    let url: URL;
-    try {
-      url = new URL(fetchReq.url);
-    } catch (e) {
-      url = new URL("http://localhost");
+    let  url = HttpURL.parse(fetchReq.url);
+    if (url.is_err()) {
+      url = HttpURL.parse("http://localhost");
     }
     const req: HttpRequest = DefaultHttpRequest({
       Header: HttpHeader.from(fetchReq.headers),
-      URL: HttpURL.parse(url).unwrap(),
+      URL: url.unwrap(),
       Method: fetchReq.method ?? "GET",
       Body: fetchReq.body ?? undefined,
     });

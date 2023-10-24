@@ -1,7 +1,7 @@
 import { Server } from "node:http";
 import { EdgeHandler } from "../pony-types";
 import { WebSocketServer } from "ws";
-import { URL } from "node:url";
+import { HttpURL } from "../../types";
 // import { RMPHandler } from "../rmp-protocol";
 // import { ReadableStream } from "stream/web";
 
@@ -82,7 +82,7 @@ export class NodeJSWSTransformer {
       server.on("upgrade", (request, socket, head) => {
         let pathname = request.url ? request.url : "/";
         try {
-          pathname = new URL(request.url!).pathname;
+          pathname = HttpURL.parse(request.url!).unwrap().Path;
         } catch (e) {
           reject(e);
         }

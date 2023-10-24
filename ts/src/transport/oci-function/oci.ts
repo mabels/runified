@@ -87,22 +87,20 @@ export class OciHttpServer implements HttpServer {
       });
     }
 
-    let url: URL;
     let headers: HeadersInit = {};
     let method = "GET";
-    try {
-      const req = event._body;
-      headers = (req.headers as { host?: string }) ?? {};
-      method = req.method ?? "GET";
-      const host = headers.host ?? "localhost";
-      url = new URL(`http://${host}${req.url! ?? "/"}`);
-    } catch (e) {
-      url = new URL("http://localhost");
+    const ebody = event._body;
+    headers = (ebody.headers as { host?: string }) ?? {};
+    method = ebody.method ?? "GET";
+    const host = headers.host ?? "localhost";
+    let rurl = HttpURL.parse(`http://${host}${ebody.url! ?? "/"}`);
+    if (rurl.is_err()) {
+      rurl = HttpURL.parse("http://localhost");
     }
 
     const req: HttpRequest = DefaultHttpRequest({
       Header: HttpHeader.from(headers),
-      URL: HttpURL.parse(url).unwrap(),
+      URL: HttpURL.parse(rurl).unwrap(),
       Method: method,
       Body: new ReadableStream<Uint8Array>({
         start(controller) {

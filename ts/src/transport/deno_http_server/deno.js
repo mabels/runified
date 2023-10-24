@@ -148,7 +148,7 @@
         if (url instanceof URL) {
           return Result.Ok(new _HttpURL(url));
         }
-        const my = new URL(url);
+        const my = HttpURL.parse(url);
         return Result.Ok(new _HttpURL(my));
       } catch (e) {
         return Result.Err(e);
@@ -242,9 +242,9 @@
         }
         let url;
         try {
-          url = new URL(fetchReq.url);
+          url = HttpURL.parse(fetchReq.url);
         } catch (e) {
-          url = new URL("http://localhost");
+          url = HttpURL.parse("http://localhost");
         }
         const req = DefaultHttpRequest({
           Header: HttpHeader.fromHeaders(fetchReq.headers),

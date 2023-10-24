@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import { fromNodeJS } from "./nodejs-headers";
 import { EdgeHandler } from "../pony-types";
-import { HttpHeader } from "../../types";
+import { HttpHeader, HttpURL } from "../../types";
 
 function toRequest(req: IncomingMessage): Request {
   let body: ReadableStream<Uint8Array> | undefined = undefined;
@@ -21,12 +21,11 @@ function toRequest(req: IncomingMessage): Request {
     });
   }
   let reqUrl = req.url;
-  try {
-    const loc = new URL(req.url || "", "http://localhost");
-    reqUrl = loc.toString();
-  } catch (e) {
+  const loc = HttpURL.parse(req.url || "", "http://localhost");
+  if (loc.is_err()) {
     throw new Error(`Invalid URL: ${req.url}`);
   }
+  reqUrl = loc.unwrap().String();
 
   const duplex: { duplex?: string } = {};
 

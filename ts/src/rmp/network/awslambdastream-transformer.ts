@@ -1,7 +1,7 @@
 import { EdgeHandler } from "../pony-types";
 import { Context } from "aws-lambda";
 import { base64DecToArr } from "../utils";
-import { HttpHeader } from "../../types";
+import { HttpHeader, HttpURL } from "../../types";
 
 interface AWSStreamReadable {
   write(o: string | Uint8Array | null): void;
@@ -78,12 +78,11 @@ function toRequest(req: AWSStreamReadable, ctx: Context): Request {
     });
   }
   let reqUrl = req.path;
-  try {
-    const loc = new URL(req.url || "", "http://localhost");
-    reqUrl = loc.toString();
-  } catch (e) {
-    throw new Error(`Invalid URL: ${req.url}`);
-  }
+    const loc = HttpURL.parse(req.url || "", "http://localhost");
+    if (loc.is_err()) {
+      throw new Error(`Invalid URL: ${req.url}`);
+    }
+    reqUrl = loc.unwrap().String();
   req.headers = HttpHeader.from({}).AsHeaders();
 
   return new Request(reqUrl, {

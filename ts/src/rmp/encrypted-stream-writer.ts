@@ -2,7 +2,8 @@ import { FrameMetrics, FrameProcessor } from "./frame-processor";
 import net from "node:net";
 import crypto from "node:crypto";
 import { base64EncArr, readerLoop } from "./utils";
-import { HttpHeader } from "../types";
+import { HttpHeader, HttpURL } from "../types";
+import { Result as WuesteResult } from "wueste/result"
 
 export interface CrypterParam {
   readonly key: Uint8Array;
@@ -97,14 +98,13 @@ export class DeCrypter extends CrypterBase {
   // }
 }
 
-export function connectTcp(urlOrStr: string | URL): Promise<TransformStream<Uint8Array, Uint8Array> & { close(): void }> {
+export function connectTcp(urlOrStr: string | HttpURL|WuesteResult<HttpURL>): Promise<TransformStream<Uint8Array, Uint8Array> & { close(): void }> {
   return new Promise((resolve, reject) => {
-    let url: URL;
-    if (typeof urlOrStr === "string") {
-      url = new URL(urlOrStr);
-    } else {
-      url = urlOrStr;
+    const rurl = HttpURL.parse(urlOrStr);
+    if (rurl.is_err()) {
+      throw new Error(`Invalid URL: ${urlOrStr}:${rurl.unwrap_err()}`);
     }
+    const url = rurl.unwrap();
     const receive = new TransformStream<Uint8Array, Uint8Array>();
     const receiveReader = receive.readable.getReader();
     const send = new TransformStream<Uint8Array, Uint8Array>();
@@ -113,11 +113,11 @@ export function connectTcp(urlOrStr: string | URL): Promise<TransformStream<Uint
     client.on("error", (err) => {
       reject(err);
     });
-    const port = parseInt(url.port, 10);
+    const port = parseInt(url.Port, 10);
     if (!(port > 0)) {
-      reject(new Error(`Invalid port number: ${url.port}`));
+      reject(new Error(`Invalid port number: ${url.Port}`));
     }
-    client.connect(port, url.hostname, () => {
+    client.connect(port, url.Hostname, () => {
       return resolve({
         close: () => {
           receive.writable.close();
@@ -158,7 +158,12 @@ export function connectTcp(urlOrStr: string | URL): Promise<TransformStream<Uint
 
 // will resolve after the stream is finished or rejects if an error occurs
 export async function createResponseStream(rsp: ResponseStreamParam): Promise<Result> {
-  const url = new URL(rsp.endpointUrl);
+  const rurl = HttpURL.parse(rsp.endpointUrl);
+  if (rurl.is_err()) {
+    throw new Error(`Invalid URL: ${rsp.endpointUrl}:${rurl.unwrap_err()}`);
+  }
+  const url = rurl.unwrap();
+
   const rw = await connectTcp(url);
   const fp =
     rsp.frameProcessor ||
@@ -170,7 +175,7 @@ export async function createResponseStream(rsp: ResponseStreamParam): Promise<Re
   fp.send(
     new TextEncoder().encode(
       JSON.stringify({
-        streamId: url.searchParams.get("streamId"),
+        streamId: url.SearchParams.get("streamId"),
         cipher: deEnCrypter.cipherStr,
         iv: base64EncArr(deEnCrypter.iv),
       }),
