@@ -81,14 +81,14 @@ export class AWSHttpServer implements HttpServer {
     }
     let headers: HeadersInit = {};
     let method = "GET";
-      const reqHeaders = JSON.parse(event.body) as AWSRequest;
-      headers = (reqHeaders.headers as { host?: string }) ?? {};
-      method = reqHeaders.method ?? "GET";
-      const host = headers.host ?? "localhost";
-      let url = HttpURL.parse(`http://${host}${reqHeaders.url! ?? "/"}`);
-      if (url.is_err()) {
+    const reqHeaders = JSON.parse(event.body) as AWSRequest;
+    headers = (reqHeaders.headers as { host?: string }) ?? {};
+    method = reqHeaders.method ?? "GET";
+    const host = headers.host ?? "localhost";
+    let url = HttpURL.parse(`http://${host}${reqHeaders.url! ?? "/"}`);
+    if (url.is_err()) {
       url = HttpURL.parse("http://localhost");
-      }
+    }
 
     const req: HttpRequest = DefaultHttpRequest({
       Header: HttpHeader.from(headers),

@@ -78,11 +78,11 @@ function toRequest(req: AWSStreamReadable, ctx: Context): Request {
     });
   }
   let reqUrl = req.path;
-    const loc = HttpURL.parse(req.url || "", "http://localhost");
-    if (loc.is_err()) {
-      throw new Error(`Invalid URL: ${req.url}`);
-    }
-    reqUrl = loc.unwrap().String();
+  const loc = HttpURL.parse(req.url || "", "http://localhost");
+  if (loc.is_err()) {
+    throw new Error(`Invalid URL: ${req.url}`);
+  }
+  reqUrl = loc.unwrap().String();
   req.headers = HttpHeader.from({}).AsHeaders();
 
   return new Request(reqUrl, {

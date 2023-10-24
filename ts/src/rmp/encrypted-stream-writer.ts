@@ -3,7 +3,7 @@ import net from "node:net";
 import crypto from "node:crypto";
 import { base64EncArr, readerLoop } from "./utils";
 import { HttpHeader, HttpURL } from "../types";
-import { Result as WuesteResult } from "wueste/result"
+import { Result as WuesteResult } from "wueste/result";
 
 export interface CrypterParam {
   readonly key: Uint8Array;
@@ -98,7 +98,9 @@ export class DeCrypter extends CrypterBase {
   // }
 }
 
-export function connectTcp(urlOrStr: string | HttpURL|WuesteResult<HttpURL>): Promise<TransformStream<Uint8Array, Uint8Array> & { close(): void }> {
+export function connectTcp(
+  urlOrStr: string | HttpURL | WuesteResult<HttpURL>,
+): Promise<TransformStream<Uint8Array, Uint8Array> & { close(): void }> {
   return new Promise((resolve, reject) => {
     const rurl = HttpURL.parse(urlOrStr);
     if (rurl.is_err()) {
