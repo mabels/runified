@@ -28,45 +28,48 @@ function reChunk(cs: Uint8Array[], chunkSize: number): ReChunkResult {
 
 interface pumpState {
   readonly reader: ReadableStreamDefaultReader<Uint8Array>;
-  readonly controller: ReadableStreamDefaultController<Uint8Array>;
   tmp: Uint8Array[];
   tmpLen: number;
   readonly chunkSize: number;
 }
 
-function pump(ps: pumpState): void {
+function pump(ps: pumpState, controller: ReadableStreamDefaultController<Uint8Array>, next: () => void): void {
   ps.reader.read().then(({ done, value }) => {
     if (done) {
       if (ps.tmpLen > 0) {
-        ps.controller.enqueue(reChunk(ps.tmp, ps.tmpLen).chunk);
+        controller.enqueue(reChunk(ps.tmp, ps.tmpLen).chunk);
       }
-      ps.controller.close();
+      controller.close();
+      next();
       return;
     }
     if (ps.tmpLen + value.length > ps.chunkSize) {
       ps.tmp.push(value);
       const res = reChunk(ps.tmp, ps.chunkSize);
-      ps.controller.enqueue(res.chunk);
+      controller.enqueue(res.chunk);
       ps.tmp = [res.rest];
       ps.tmpLen = res.rest.length;
+      next();
+      return;
     } else if (value.length) {
       ps.tmp.push(value);
       ps.tmpLen += value.length;
     }
-    pump(ps);
+    pump(ps, controller, next);
   });
 }
 
 export function rebuffer(a: ReadableStream<Uint8Array>, chunkSize: number): ReadableStream<Uint8Array> {
+  const state: pumpState = {
+    reader: a.getReader(),
+    tmp: [],
+    tmpLen: 0,
+    chunkSize,
+  };
   return new ReadableStream<Uint8Array>({
-    start(controller) {
-      const reader = a.getReader();
-      pump({
-        reader,
-        controller,
-        tmp: [],
-        tmpLen: 0,
-        chunkSize,
+    async pull(controller) {
+      return new Promise<void>((resolve) => {
+        pump(state, controller, resolve);
       });
     },
   });
