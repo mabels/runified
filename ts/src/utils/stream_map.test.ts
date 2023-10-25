@@ -98,7 +98,7 @@ describe("test streaming through streamMap", () => {
     for (let i = 0; i < state.CollectorFn.mock.calls.length - 1 /*done*/; i++) {
       const { fillCalls, reBufferCalls, value } = state.CollectorFn.mock.calls[i][0];
       expect(value![0]).toBe((i + 1) % 256);
-      expect(fillCalls).toBeLessThanOrEqual(
+      expect(fillCalls * state.sendChunkSize).toBeGreaterThanOrEqual(
         (fillCalls - lastfillCalls) * state.sendChunkSize + reBufferCalls * state.sendChunkSize,
       );
       lastfillCalls = fillCalls;
