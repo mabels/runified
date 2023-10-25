@@ -1,4 +1,3 @@
-import exp from "node:constants";
 import { rebuffer, rebufferArray } from "./rebuffer";
 
 it("rechunk empty", async () => {
