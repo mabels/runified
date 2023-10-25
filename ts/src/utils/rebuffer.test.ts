@@ -1,4 +1,5 @@
 import { rebuffer, rebufferArray } from "./rebuffer";
+import { streamingTestState, receiveFromStream, sendToStream } from "./stream-test-utils.test";
 
 it("rechunk empty", async () => {
   const chunks = await rebufferArray([], 10);
@@ -63,74 +64,27 @@ it("rechunk smaller 10 pack bigger chunks", async () => {
 });
 
 describe("test streaming through rebuffer", () => {
-
-  interface streamingTestState {
-    readonly sendChunks: number;
-    readonly sendChunkSize: number;
-    readonly reBufferSize: number;
-    fillCalls: number;
-    CollectorFn: jest.Mock<void, [{done:boolean, value: Uint8Array|undefined, fillCalls: number, reBufferCalls: number}]>;
-  }
-
   const state: streamingTestState = {
     sendChunks: 10000,
     sendChunkSize: 3,
     fillCalls: 0,
-    reBufferSize: 11,
     CollectorFn: jest.fn(),
-  }
-
-  async function receiveFromRebuffer(reb: ReadableStream<Uint8Array>, state: streamingTestState) {
-    return new Promise<void>((resolve) => {
-      let reBufferCalls = 0;
-      const reader = reb.getReader();
-      function pump() {
-        reader.read().then(({ done, value }) => {
-          state.CollectorFn({ done, value, fillCalls: state.fillCalls, reBufferCalls });
-          reBufferCalls++;
-          if (done) {
-            resolve();
-            return;
-          }
-          pump();
-        });
-      }
-      pump();
-    });
-  }
-
-  async function sendToRebuffer(reb: WritableStream<Uint8Array>, state: streamingTestState) {
-    return new Promise<void>((resolve) => {
-      const writer = reb.getWriter();
-      function pump(i: number) {
-        if (i >= state.sendChunks) {
-          writer.close();
-          resolve();
-          return;
-        }
-        writer.ready.then(() => {
-          state.fillCalls++;
-          writer.write(new Uint8Array(Array(state.sendChunkSize).fill(i)));
-          pump(i + 1);
-        });
-      }
-      pump(0);
-    });
-  }
+  };
+  const reBufferSize = 11;
 
   it("does rebuffer respect backpressure", async () => {
     const ts = new TransformStream<Uint8Array, Uint8Array>(undefined, undefined, { highWaterMark: 2 });
-    const reb = rebuffer(ts.readable, state.reBufferSize);
-    await Promise.all([receiveFromRebuffer(reb, state), sendToRebuffer(ts.writable, state)]);
+    const reb = rebuffer(ts.readable, reBufferSize);
+    await Promise.all([receiveFromStream(reb, state), sendToStream(ts.writable, state)]);
 
-    expect(state.CollectorFn).toBeCalledTimes(~~((state.sendChunkSize * state.sendChunks) / state.reBufferSize) + 1 + 1 /*done*/);
+    expect(state.CollectorFn).toBeCalledTimes(~~((state.sendChunkSize * state.sendChunks) / reBufferSize) + 1 + 1 /*done*/);
     expect(state.CollectorFn.mock.calls.slice(-1)[0][0].done).toBeTruthy();
     let lastfillCalls = 0;
-    for (let i = 0; i < state.CollectorFn.mock.calls.length - 1/*done*/; i++) {
+    for (let i = 0; i < state.CollectorFn.mock.calls.length - 1 /*done*/; i++) {
       const { fillCalls, reBufferCalls, value } = state.CollectorFn.mock.calls[i][0];
-      expect(value![0]).toBe(~~((state.reBufferSize * i) / state.sendChunkSize) % 256);
-      expect(fillCalls).toBeLessThanOrEqual((fillCalls - lastfillCalls) * state.sendChunkSize + reBufferCalls * state.reBufferSize);
+      expect(value![0]).toBe(~~((reBufferSize * i) / state.sendChunkSize) % 256);
+      expect(fillCalls).toBeLessThanOrEqual((fillCalls - lastfillCalls) * state.sendChunkSize + reBufferCalls * reBufferSize);
       lastfillCalls = fillCalls;
     }
   });
-})
+});
