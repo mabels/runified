@@ -65,12 +65,13 @@ it("rechunk smaller 10 pack bigger chunks", async () => {
 it("test streaming backpressure", async () => {
   const ts = new TransformStream<Uint8Array, Uint8Array>(undefined, undefined, { highWaterMark: 2 });
   const bufsize = 11;
+  const fillChunkSize = 3;
+  const sendChunks = 10000;
 
   const reb = rebuffer(ts.readable, bufsize);
   const rebFn = jest.fn();
   let fillCalls = 0;
   let reBufferCalls = 0;
-  const sendChunks = 10000;
   const rebuffered = new Promise<void>((resolve) => {
     const reader = reb.getReader();
     function pump() {
@@ -86,7 +87,6 @@ it("test streaming backpressure", async () => {
     }
     pump();
   });
-  const fillChunkSize = 3;
   const filled = new Promise<void>((resolve) => {
     const writer = ts.writable.getWriter();
     function pump(i: number) {
@@ -107,11 +107,8 @@ it("test streaming backpressure", async () => {
   expect(rebFn.mock.calls.length).toEqual(~~((fillChunkSize * sendChunks) / bufsize) + 1 + 1 /*done*/);
   expect(rebFn.mock.calls[rebFn.mock.calls.length - 1][0].done).toBeTruthy();
   let lastfillCalls = 0;
-  for (let i = 0; i < rebFn.mock.calls.length; i++) {
-    const { fillCalls, reBufferCalls, done, value } = rebFn.mock.calls[i][0];
-    if (done) {
-      break;
-    }
+  for (let i = 0; i < rebFn.mock.calls.length - 1; i++) {
+    const { fillCalls, reBufferCalls, value } = rebFn.mock.calls[i][0];
     // console.log(i, fillCalls, reBufferCalls, value[0], ~~((bufsize*i)/fillChunkSize))
     expect(value[0]).toBe(~~((bufsize * i) / fillChunkSize) % 256);
     expect(fillCalls).toBeLessThanOrEqual((fillCalls - lastfillCalls) * fillChunkSize + reBufferCalls * bufsize);
