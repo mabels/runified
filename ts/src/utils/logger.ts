@@ -1,4 +1,5 @@
 // import { v4 } from "uuid";
+import { Result } from "wueste/result";
 import { Level, Logger, SysAbstraction, WithLogger } from "../types";
 import { SystemAbstractionImpl } from "./system_abstraction";
 
@@ -146,8 +147,19 @@ export class LoggerImpl implements Logger {
     this._attributes["level"] = Level.INFO;
     return this;
   }
-  Err(err: Error): Logger {
-    this._attributes["error"] = err.message;
+  Err(err: Result<unknown>|Error|unknown): Logger {
+    if (Result.Is(err)) {
+      if (err.isOk()) {
+        this._attributes["error"] = "OK";
+        return this;
+      }
+      return this.Err(err.unwrap_err());
+    }
+    if (err instanceof Error) {
+      this._attributes["error"] = err.message;
+      return this;
+    }
+    this._attributes["error"] = err
     return this;
   }
   WithLevel(l: Level): Logger {

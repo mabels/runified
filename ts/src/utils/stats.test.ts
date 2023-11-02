@@ -35,6 +35,16 @@ it("set value", () => {
   });
 });
 
+it('action measures time if unresolved action', async () => {
+  const stats = new Stats({
+  })
+  await stats.Action("value", async () => {
+    return new Promise((resolve) => setTimeout(resolve, 50));
+  })
+  expect((stats.RenderReduced()["#value"].current as {val:number}).val).toBeGreaterThan(40)
+  expect((stats.RenderReduced()["#value"].total as {val:number}).val).toBeGreaterThan(40)
+})
+
 it("set action", async () => {
   const stats = new Stats({
     sys: new SystemAbstractionImpl({
