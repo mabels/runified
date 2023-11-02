@@ -1,8 +1,9 @@
-import { Message, Connection, Channel, ConsumeMessage } from "amqplib";
-import { PrismaClient, Prisma } from "../prisma/client";
-import { Logger, SysAbstraction } from "@adviser/runified/types";
-import { Stats, SystemAbstractionImpl } from "@adviser/runified/utils";
-import { sanitizeJson } from "./sanitize-elastic-search";
+import { Result } from "wueste/result";
+import { RetryMsg } from "../generated/retrymsg";
+import { RetryState, RetryStateFactory } from "../generated/retrystate";
+import { Logger, SysAbstraction } from "../types";
+import { QMessage } from "../types/queue";
+import { Stats, SystemAbstractionImpl } from "../utils";
 import { walk } from "wueste/helper";
 
 export interface RetryHandlerResult {
@@ -21,56 +22,21 @@ export interface RetryHandlerConfig {
   readonly initialRetryDelay: number;
 }
 
-export interface RetryHandler<T> {
+export interface RetryHandler {
   readonly name: string;
-  handle(msg: Message, payload: RetryMsg<T>, stat: Stats): Promise<RetryHandlerResult>;
+  handle(msg: QMessage, payload: RetryState, stat: Stats): Promise<RetryHandlerResult>;
   readonly config: Partial<RetryHandlerConfig>;
 }
 
-export interface RetryMsg<T> {
-  readonly key: T;
-  readonly handler: string;
-  readonly next?: unknown;
-  readonly txn: string;
-}
-export interface RetryStep {
-  readonly stepAt: Date;
-  readonly value: {
-    readonly payload: RetryMsg<unknown>;
-    readonly headers?: Record<string, unknown>;
-    readonly ctx?: unknown;
-  };
-  readonly error?: {
-    readonly error: string;
-  };
-  readonly stats?: unknown;
-}
-
-export interface RetryState {
-  readonly state: string; // "fetching" | "retrying" | "done" | "error"
-  readonly handler: string;
-  readonly key: string;
-  readonly txn: string;
-  readonly steps: RetryStep[];
-  readonly updated_at: Date;
-  readonly created_at: Date;
-}
-
-export type RetryStatePrisma = RetryState & { readonly steps: Prisma.InputJsonValue };
-
 export interface RetryHandlerParams {
-  readonly conn: Connection;
-  readonly dataBaseUrl: string;
+  readonly driver: RetryDriver;
   readonly instance: string;
-  readonly queueName?: string;
-  readonly exchangeName?: string;
   readonly prefetch?: number;
   readonly log: Logger;
   readonly retryCount?: number;
   readonly historyLength?: number;
   readonly initialRetryDelay?: number;
   readonly reclaimInterval?: number;
-  readonly prisma?: PrismaClient;
   readonly handlerConfig?: Partial<RetryHandlerConfig>;
   readonly sys?: SysAbstraction;
 }
@@ -109,38 +75,32 @@ export function keyAsString(unk: unknown): string {
   }
 }
 
+export interface RetryDriver {
+  init(my: RetryManager): void
+  updateState(state: RetryState): Promise<void>
+  ensureRetryState(key: string, msg: RetryState): Promise<RetryState | undefined>
+  startConsumer(my: RetryManager, msg: (msg: QMessage, rs: RetryState)=> Promise<void>): Promise<void>
+  // return list of to be reclaimed
+  reclaimByHandler(my: RetryManager, log: Logger , handle: RetryHandler): Promise<RetryState[]>
+  msgPublishRetry(my: RetryManager, rs: RetryState|Result<RetryState>): Promise<void>
+  msgAck(my: RetryManager, msg: QMessage): void|Promise<void>
+}
+
 export class RetryManager {
-  readonly conn: Connection;
   readonly instance: string;
-  readonly queueName: string;
-  readonly exchangeName: string;
-  readonly dataBaseUrl: string;
   readonly prefetch: number;
   readonly historyLength: number;
   readonly log: Logger;
   readonly sys: SysAbstraction;
-  readonly prisma: PrismaClient;
   readonly reclaimInterval: number;
   readonly handlerConfig: RetryHandlerConfig;
 
-  readonly handlers: Map<string, RetryHandler<unknown>> = new Map();
+  readonly handlers: Map<string, RetryHandler> = new Map();
 
-  _ch?: Channel;
+  readonly _driver: RetryDriver
 
   constructor(param: RetryHandlerParams) {
-    this.conn = param.conn;
-    let quName = param.queueName;
-    let exName = param.exchangeName;
-    if (!quName) {
-      quName = "retry-queue-" + param.instance;
-    }
-    if (!exName) {
-      exName = "retry-exchange-" + param.instance;
-    }
     this.instance = param.instance;
-    this.queueName = quName;
-    this.exchangeName = exName;
-    this.dataBaseUrl = param.dataBaseUrl;
     this.prefetch = param.prefetch || 4;
     this.log = param.log.With().Module("RetryManager").Str("instance", param.instance).Logger();
     this.historyLength = param.historyLength || 10;
@@ -155,146 +115,60 @@ export class RetryManager {
       initialRetryDelay: param.initialRetryDelay || 2,
       delayStrategy: handlerConfig.delayStrategy || ((step, initial) => initial ** step),
     };
-    this.prisma = param.prisma || new PrismaClient({ datasourceUrl: this.dataBaseUrl });
+    this._driver = param.driver;
+    this._driver.init(this)
   }
 
-  async setQueue() {
-    const ch = await this.conn.createChannel();
-
-    await ch.assertExchange(this.exchangeName, "x-delayed-message", {
-      arguments: { "x-delayed-type": "direct" },
-      durable: true,
-    });
-    await ch.assertQueue(this.queueName, { durable: true });
-    await ch.bindQueue(this.queueName, this.exchangeName, "");
-    return ch;
-  }
-
-  registerHandler<T>(handler: RetryHandler<T>) {
+  registerHandler(handler: RetryHandler) {
     this.handlers.set(handler.name, handler);
   }
 
-  async updateState(state: RetryState) {
-    return this.prisma.$transaction(async (prisma) => {
-      const dbState = await prisma.retryStates.findUnique({
-        where: {
-          handler_key: {
-            key: state.key,
-            handler: state.handler,
-          },
-          txn: state.txn,
-        },
-      });
-      if (dbState) {
-        state = {
-          ...state,
-          steps: [...(dbState.steps as unknown as []), ...state.steps].slice(0, this.historyLength),
-        };
-      }
-      return prisma.retryStates.update({
-        where: {
-          handler_key: {
-            key: state.key,
-            handler: state.handler,
-          },
-          txn: state.txn,
-        },
-        data: {
-          state: state.state,
-          steps: state.steps as unknown as Prisma.InputJsonValue,
-          updated_at: state.updated_at,
-        },
-      });
-    });
+  // async updateState(state: RetryState) {
+  //   return this._driver.updateState(state)
+  // }
+
+  async ensureRetryState(key: string, msg: RetryState): Promise<RetryState | undefined> {
+    return this._driver.ensureRetryState(key, msg)
   }
 
-  async ensureRetryState<T>(key: string, msg: RetryMsg<T>): Promise<RetryMsg<T> | undefined> {
-    return await this.prisma.$transaction(async (prisma) => {
-      let rs = await prisma.retryStates.findUnique({
-        where: {
-          handler_key: {
-            key: key,
-            handler: msg.handler,
-          },
-        },
-      });
-      if (!rs) {
-        const now = this.sys.Time().Now();
-        rs = await prisma.retryStates.create({
-          data: {
-            state: "new",
-            handler: msg.handler,
-            key: key,
-            real_key: msg.key as unknown as Prisma.InputJsonValue,
-            txn: this.sys.NextId(),
-            steps: [],
-            updated_at: now,
-            created_at: now,
-          },
-        });
-      }
-      if (msg.txn && rs.txn !== msg.txn) {
-        return undefined;
-      }
-      return {
-        ...msg,
-        txn: rs.txn,
-      };
-    });
-  }
-
-  async msgHandler(log: Logger, ch: Channel, msg: ConsumeMessage) {
+  async msgHandler(msg: QMessage, rs: RetryState) {
     msg.properties = msg.properties || {
       headers: {},
     };
+    let log = this.log.With().Any("payload", rs).Any("headers", msg.properties.headers).Logger();
     const now = this.sys.Time().Now();
-    let payload: RetryMsg<unknown> | undefined = undefined;
     let key: string | undefined = undefined;
     try {
-      const msgContent = msg.content.toString();
-      payload = JSON.parse(msgContent) as RetryMsg<unknown>;
-      log = this.log.With().Any("payload", payload).Any("headers", msg.properties.headers).Logger();
-      if (!payload) {
-        log.Error().Msg("payload not exist");
-        ch.ack(msg);
-        return;
-      }
+      key = keyAsString(rs.key);
 
-      key = keyAsString(payload.key);
-
-      const handler = this.handlers.get(payload.handler);
-      log = log.With().Str("handler", payload.handler).Logger();
+      const handler = this.handlers.get(rs.handler);
+      log = log.With().Str("handler", rs.handler).Logger();
       if (!handler) {
-        ch.ack(msg);
+        this._driver.msgAck(this, msg);
         log.Error().Msg("handler not found");
         return;
       }
-      const txnPayload = await this.ensureRetryState(key, payload);
+      const txnPayload = await this.ensureRetryState(key, rs);
       if (!txnPayload) {
-        ch.ack(msg);
+        this._driver.msgAck(this, msg);
         log.Error().Msg("txn mismatch");
         return;
       }
-      payload = txnPayload;
-      log = log.With().Any("payload", payload).Logger();
+      rs = txnPayload;
+      log = log.With().Any("payload", rs).Logger();
 
-      if (
-        msg.properties &&
-        msg.properties.headers &&
-        msg.properties.headers["x-retry-count"] &&
-        msg.properties.headers["x-retry-count"] >= (handler.config.retryCount || this.handlerConfig.retryCount)
-      ) {
-        ch.ack(msg);
-        await this.updateState({
+      if (txnPayload.retry_count >= this.handlerConfig.retryCount) {
+        this._driver.msgAck(this, msg);
+        this._driver.updateState({
           state: "error",
-          handler: payload.handler,
+          handler: rs.handler,
           key: key,
-          txn: payload.txn,
-          steps: [{ stepAt: now, value: { payload, headers: msg.properties.headers }, error: { error: "max retry reached" } }],
+          txn: rs.txn,
+          steps: [{ stepAt: now, value: { payload: rs, headers: msg.properties.headers }, error: { error: "max retry reached" } }],
           updated_at: now,
           created_at: now,
         });
-        log.Error().Uint64("retryCount", msg.properties.headers["x-retry-count"]).Msg("max retry reached");
+        log.Error().Uint64("retryCount", txnPayload.retry_count).Msg("max retry reached");
         return;
       }
       try {
@@ -303,16 +177,16 @@ export class RetryManager {
           sys: this.sys,
         });
         const res = await stat.Action("", async () => {
-          return handler.handle(msg, payload!, stat);
+          return handler.handle(msg, rs, stat);
         });
         if (typeof res !== "object") {
-          ch.ack(msg);
-          await this.updateState({
+          this._driver.msgAck(this, msg);
+          await this._driver.updateState({
             state: "error",
-            handler: payload.handler,
+            handler: rs.handler,
             key: key,
-            txn: payload.txn,
-            steps: [{ stepAt: now, value: { payload, headers: msg.properties.headers }, error: { error: "invalid result" } }],
+            txn: rs.txn,
+            steps: [{ stepAt: now, value: { payload: rs, headers: msg.properties.headers }, error: { error: "invalid result" } }],
             updated_at: now,
             created_at: now,
           });
@@ -320,16 +194,16 @@ export class RetryManager {
           return;
         }
         if (res.error) {
-          ch.ack(msg);
-          await this.updateState({
+          this._driver.msgAck(this,msg);
+          await this._driver.updateState({
             state: "error",
-            handler: payload.handler,
+            handler: rs.handler,
             key: key,
-            txn: payload.txn,
+            txn: rs.txn,
             steps: [
               {
                 stepAt: now,
-                value: { payload, headers: msg.properties.headers, ctx: walk(res.ctx, sanitizeJson) },
+                value: { payload: rs, headers: msg.properties.headers, ctx: res.ctx },
                 error: { error: res.error.message },
               },
             ],
@@ -339,39 +213,41 @@ export class RetryManager {
           log.Error().Err(res.error).Any("ctx", res.ctx).Msg("handler reports error");
           return;
         }
-        let state = "done";
-        payload = { ...payload, next: res.next };
-        log = log.With().Any("payload", payload).Logger();
+        // rs = { ...rs, next: res.next };
+        log = log.With().Any("payload", rs).Logger();
+        const builder = RetryStateFactory.Builder();
+        builder.Coerce(rs);
+        builder.state("done");
         if (res.retry) {
-          const retryCount = (msg.properties.headers["x-retry-count"] || 0) + 1;
-          (msg.properties.headers["x-delay"] =
-            1000 * this.handlerConfig.delayStrategy(retryCount, this.handlerConfig.initialRetryDelay, this.sys)),
-            (msg.properties.headers["x-retry-count"] = retryCount);
-          ch.publish(this.exchangeName, "", Buffer.from(JSON.stringify(payload)), msg.properties);
-          state = "retrying";
+          builder.retry_count(rs.retry_count + 1);
+          builder.delay(this.handlerConfig.delayStrategy(rs.retry_count, this.handlerConfig.initialRetryDelay, this.sys))
+          builder.state("retrying");
+          this._driver.msgPublishRetry(this, builder.Get());
         } else if (res.next) {
-          ch.publish(this.exchangeName, "", Buffer.from(JSON.stringify(payload)), msg.properties);
-          state = "next";
+          builder.state("next");
+          builder.next(res.next);
+          this._driver.msgPublishRetry(this, builder.Get());
         }
-        await this.updateState({
+
+        await this._driver.updateState({
           state,
-          handler: payload.handler,
+          handler: rs.handler,
           key: key,
-          txn: payload.txn,
-          steps: [{ stepAt: now, value: { payload, headers: msg.properties.headers, ctx: res.ctx }, stats: stat.RenderCurrent() }],
+          txn: rs.txn,
+          steps: [{ stepAt: now, value: { payload: rs, headers: msg.properties.headers, ctx: res.ctx }, stats: stat.RenderCurrent() }],
           updated_at: now,
           created_at: now,
         });
-        ch.ack(msg);
+        this._driver.msgAck(this, msg);
         log.Debug().Any("stats", stat.RenderCurrent()).Any("res", res).Msg("handler done");
       } catch (e) {
-        ch.ack(msg);
-        await this.updateState({
+        this._driver.msgAck(this, msg);
+        await this._driver.updateState({
           state: "error",
-          handler: payload.handler,
+          handler: rs.handler,
           key: key,
-          txn: payload.txn,
-          steps: [{ stepAt: now, value: { payload, headers: msg.properties.headers }, error: { error: (e as Error).message } }],
+          txn: rs.txn,
+          steps: [{ stepAt: now, value: { payload: rs, headers: msg.properties.headers }, error: { error: (e as Error).message } }],
           updated_at: now,
           created_at: now,
         });
@@ -382,18 +258,18 @@ export class RetryManager {
         return;
       }
     } catch (e) {
-      if (payload && key) {
-        await this.updateState({
+      if (rs && key) {
+        await this._driver.updateState({
           state: "error",
-          handler: payload.handler,
+          handler: rs.handler,
           key: key,
-          txn: payload.txn,
-          steps: [{ stepAt: now, value: { payload, headers: msg.properties.headers }, error: { error: (e as Error).message } }],
+          txn: rs.txn,
+          steps: [{ stepAt: now, value: { payload: rs, headers: msg.properties.headers }, error: { error: (e as Error).message } }],
           updated_at: now,
           created_at: now,
         });
       }
-      ch.ack(msg);
+      this._driver.msgAck(this,msg);
       log
         .Error()
         .Err(e as Error)
@@ -402,72 +278,24 @@ export class RetryManager {
     }
   }
 
-  async reclaimByHandler(log: Logger, prisma: PrismaClient, handle: RetryHandler<unknown>, ch: Channel) {
-    const now = this.sys.Time().Now();
-    const toReclaim = await prisma.retryStates.findMany({
-      where: {
-        AND: [
-          {
-            handler: handle.name,
-          },
-          {
-            OR: [
-              {
-                state: "done",
-                updated_at: {
-                  lt: new Date(now.getTime() - (handle.config.refreshInterval || this.handlerConfig.refreshInterval)),
-                },
-              },
-              {
-                state: "error",
-                updated_at: {
-                  lt: new Date(now.getTime() - (handle.config.errorRetryInterval || this.handlerConfig.errorRetryInterval)),
-                },
-              },
-              {
-                state: {
-                  notIn: ["done", "error"],
-                },
-                updated_at: {
-                  lt: new Date(now.getTime() - (handle.config.restartInterval || this.handlerConfig.restartInterval)),
-                },
-              },
-            ],
-          },
-        ],
-      },
-    });
-    for (const claim of toReclaim) {
-      await prisma.retryStates.update({
-        where: {
-          handler_key: {
-            handler: claim.handler,
-            key: claim.key,
-          },
-        },
-        data: {
-          state: "reclaim",
-          updated_at: now,
-        },
-      });
-      this.retrySend(ch)(handle, claim.real_key, claim.txn);
+  async reclaimByHandler(log: Logger, handle: RetryHandler) {
+    const reclaims = await this._driver.reclaimByHandler(this, log, handle)
+    for (const claim of reclaims) {
       log.Debug().Any("claim", claim).Msg("restarted");
+      this._driver.msgPublishRetry(this, handle, claim.real_key, claim.txn);
     }
   }
 
-  async reclaim(ch: Channel) {
+  async reclaim() {
     const log = this.log.With().Str("action", "reclaim").Logger();
     log.Info().Msg("start");
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const stat = new Stats("reclaim");
-      let prisma: PrismaClient | undefined = undefined;
       try {
-        prisma = new PrismaClient({ datasourceUrl: this.dataBaseUrl });
-
         for (const handle of this.handlers.values()) {
           await stat.Action(handle.name, async () => {
-            await this.reclaimByHandler(log, prisma!, handle, ch);
+            await this._driver.reclaimByHandler(this,log, handle);
           });
         }
         log.Info().Any("stats", stat.RenderCurrent()).Msg("reclaimed");
@@ -478,54 +306,14 @@ export class RetryManager {
           .Err(e as Error)
           .Msg("reclaimed failed");
       }
-      prisma && prisma?.$disconnect();
       await new Promise((resolve) => setTimeout(resolve, this.reclaimInterval));
     }
   }
 
-  async consumer(ch: Channel) {
-    try {
-      ch.prefetch(this.prefetch);
-      const log = this.log.With().Str("action", "consumer").Logger();
-      log.Info().Msg("start");
-      await ch.consume(this.queueName, async (msg) => {
-        if (!msg) {
-          return;
-        }
-        this.msgHandler(log, ch, msg);
-      });
-    } catch (e) {
-      this.log
-        .Error()
-        .Err(e as Error)
-        .Msg("consume error");
-    }
-  }
-
-  retrySend<T>(ch?: Channel): RetrySend<T> {
-    return (handler, key, txn) => {
-      ch = ch || this._ch;
-      if (!ch) {
-        throw Error("Need a channel");
-      }
-      ch.publish(
-        this.exchangeName,
-        "",
-        Buffer.from(
-          JSON.stringify({
-            key: key,
-            handler: handler.name,
-            txn: txn,
-          } as RetryMsg<unknown>),
-        ),
-      );
-    };
-  }
-
   async start() {
-    this._ch = await this.setQueue();
-    return Promise.all([this.consumer(this._ch), this.reclaim(this._ch)]);
+    return Promise.all([this._driver.startConsumer(this, this.msgHandler.bind(this)), this.reclaim()]);
   }
 }
 
-export type RetrySend<T> = (h: RetryHandler<T>, key: T, txn?: string) => void;
+export type RetrySend<T> = (h: RetryHandler, key: T, txn?: string) => void;
+

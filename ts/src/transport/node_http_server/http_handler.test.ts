@@ -61,6 +61,7 @@ describe("HTTPHandler", () => {
           query: query,
           header: r.Header.AsRecordStringStringArray(),
           body: await stream2string(r.Body),
+          bigBlock: "a".repeat(1024 * 1024),
         }),
       );
       return Promise.resolve();
@@ -77,6 +78,7 @@ describe("HTTPHandler", () => {
           expect(getRes.Header?.Get("connection")).toEqual("close");
           expect(JSON.parse(await stream2string(getRes.Body))).toStrictEqual({
             body: "",
+            bigBlock: "a".repeat(1024 * 1024),
             header: {
               accept: ["*/*"],
               "accept-encoding": ["gzip, deflate"],
@@ -95,6 +97,7 @@ describe("HTTPHandler", () => {
           expect(postRes.Header?.Get("connection")).toEqual("close");
           expect(JSON.parse(await stream2string(postRes.Body))).toStrictEqual({
             body: `Hi: ${i}`,
+            bigBlock: "a".repeat(1024 * 1024),
             header: {
               accept: ["*/*"],
               "accept-encoding": ["gzip, deflate"],

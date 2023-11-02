@@ -1,0 +1,47 @@
+{
+    "$id": "runified.RetryStep",
+    "title": "RetryStep",
+    "type":"object",
+    "properties": {
+        "stepAt": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "value": {
+            "$id": "Item",
+            "title": "Item",
+            "type": "object",
+            "properties": {
+                "payload": {
+                    "$ref": "file://./retry-msg.schema.json"
+                },
+                "headers": {
+                    "type": "object"
+                },
+                "ctx": {
+                    "type": "object"
+                }
+            },
+            "required": [
+                "payload"
+            ]
+        },
+        "error": {
+            "$id": "Error",
+            "title": "Error",
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "stats": {
+            "type": "object"
+        }
+    },
+    "required": [
+        "stepAt",
+        "value"
+    ]
+}

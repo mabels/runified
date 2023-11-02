@@ -1,5 +1,5 @@
 {
-	"$id": "https://schema.6265746f6f.tech/runified-req.schema.json",
+	"$id": "RunifiedReq",
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "RunifiedReq",
 	"type": "object",

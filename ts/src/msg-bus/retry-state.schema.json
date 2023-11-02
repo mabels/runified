@@ -1,0 +1,45 @@
+{
+    "$id": "runified.RetryState",
+    "title": "RetryState",
+    "type":"object",
+    "properties": {
+        "state": {
+            "type": "string",
+            "description": "['fetching', 'retrying', 'done', 'error']"
+        },
+        "retry_count": {
+            "type": "integer"
+        },
+        "delay": {
+            "type": "integer",
+            "description": "in seconds"
+        },
+        "next": {
+            "type": "object"
+        },
+        "handler": {
+            "type": "string"
+        },
+        "key": {
+            "type": "string"
+        },
+        "txn": {
+            "type": "string"
+        },
+        "steps": {
+            "type": "array",
+            "items": {
+                "$ref": "file://./retry-step.schema.json"
+            }
+        },
+        "updated_at": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time"
+        }
+    }
+    ,"required": ["state", "handler", "key", "txn", "steps", "updated_at", "created_at", "retry_count"]
+}

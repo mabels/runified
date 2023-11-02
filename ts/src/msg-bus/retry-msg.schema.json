@@ -1,0 +1,24 @@
+{
+    "$id": "runified.RetryMsg",
+    "title": "RetryMsg",
+    "type": "object",
+    "properties": {
+        "key": {
+            "type": "object"
+        },
+        "handler": {
+            "type": "string"
+        },
+        "next": {
+            "type": "object"
+        },
+        "txn": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "key",
+        "handler",
+        "txn"
+    ]
+}

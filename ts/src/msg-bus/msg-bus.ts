@@ -1,89 +1,97 @@
-import { Logger } from "@adviser/runified/types";
-import amqplib from "amqplib";
+import { Logger } from "../types";
 import { Result } from "wueste/result";
-import { Payload, WuestenFactory, WuestenReflectionObject } from "wueste/wueste";
+import { WuestePayload, WuestenFactory, WuestenReflectionObject } from "wueste/wueste";
+import { QMessage } from "../types/queue";
 
 export interface MsgBusParams {
-  readonly conn: amqplib.Connection;
   readonly log: Logger;
-  readonly exchangeName?: string;
+  readonly publishQName?: string;
+  readonly driver: MsgBusDriver;
 }
 
 export interface MsgBusConsumer<T, I, G> {
-  readonly name: string;
+  readonly consumeQName: string;
+  readonly skipAutoAck?: boolean;
   readonly prefetch?: number;
   readonly factory: WuestenFactory<T, I, G>;
-  handler(msg: T): Promise<void>;
+  handler(msg: QMessage, t: T): Promise<void>;
 }
 
 const txtEncoder = new TextEncoder();
-export class MsgBus {
-  readonly conn: amqplib.Connection;
-  readonly log: Logger;
-  readonly exchangeName: string;
+const txtDecoder = new TextDecoder();
 
-  channel?: amqplib.Channel;
+export interface MsgBusConsumeParams {
+  readonly qname: string;
+  readonly consumerConcurrency: number;
+}
+export type MsgConsumeFn = (msg: QMessage) => void | Promise<void>;
+
+export interface MsgBusDriver {
+  onStart(my: MsgBus): Promise<void>;
+  init(my: MsgBus): void; // to set up the logger
+  onStop(my: MsgBus): Promise<void>;
+  publish(my: MsgBus, exchange: string, routingKey: string, msg: Uint8Array): void|Promise<void>;
+  consume(my: MsgBus, c: MsgBusConsumeParams, fn: MsgConsumeFn): Promise<void>;
+  readonly consumedMsg?: (my: MsgBus, msg: QMessage) => QMessage;
+  ack(my: MsgBus, msg: QMessage): void|Promise<void>;
+}
+export class MsgBus {
+  readonly log: Logger;
+  readonly _publishQName: string;
+  readonly _driver: MsgBusDriver;
 
   constructor(params: MsgBusParams) {
-    this.conn = params.conn;
     this.log = params.log.With().Module("msg-bus").Logger();
-    this.exchangeName = params.exchangeName || "msg-bus";
+    this._publishQName = params.publishQName || "msg-bus";
+    this._driver = params.driver;
+    this._driver.init(this)
   }
 
   async start(): Promise<MsgBus> {
-    this.channel = await this.conn.createChannel();
-    await this.channel.assertExchange(this.exchangeName, "direct", { durable: false });
+    await this._driver.onStart(this)
     return this;
   }
 
   async stop() {
-    if (!this.channel) {
-      throw Error("channel not initialized");
-    }
-    await this.channel.close();
+    await this._driver.onStop(this)
+    return this
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async send(rmsg: Result<Payload>) {
-    if (!this.channel) {
-      throw Error("channel not initialized");
-    }
+  async send(rmsg: Result<WuestePayload>) {
     if (rmsg.is_err()) {
       throw rmsg.unwrap_err();
     }
     const jsonStr = JSON.stringify(rmsg.unwrap());
     this.log.Debug().Str("component", "send").Str("routingKey", rmsg.unwrap().Type).Any("payload", rmsg.unwrap().Data).Msg("send");
-    this.channel.publish(this.exchangeName, rmsg.unwrap().Type, Buffer.from(txtEncoder.encode(jsonStr)));
+    return this._driver.publish(this, this._publishQName, rmsg.unwrap().Type, txtEncoder.encode(jsonStr));
   }
 
   async consumer<T, I, G>(c: MsgBusConsumer<T, I, G>) {
-    if (!this.channel) {
-      throw Error("channel not initialized");
-    }
-    const log = this.log.With().Str("component", "consumer").Str("name", c.name).Logger();
-    const qname = `${this.exchangeName}-${c.name}`;
-    await this.channel.assertQueue(qname, { durable: true });
+    const log = this.log.With().Str("component", "consumer").Str("name", c.consumeQName).Logger();
+    const qname = c.consumeQName
     const rtk = (c.factory.Schema() as WuestenReflectionObject).id!;
-    await this.channel.bindQueue(qname, this.exchangeName, rtk);
-
-    log.Debug().Str("queueName", qname).Str("exchangeName", this.exchangeName).Str("routingKey", rtk).Msg("consumer start");
-    this.channel.prefetch(c.prefetch || 1);
-    this.channel.consume(qname, (msg) => {
+    log.Debug().Str("queueName", qname).Str("exchangeName", this._publishQName).Str("routingKey", rtk).Msg("consumer start");
+    this._driver.consume(this, {
+      qname,
+      consumerConcurrency: c.prefetch || 1,
+    }, (msg) => {
       if (!msg) {
         return;
       }
+      msg = this._driver.consumedMsg ? this._driver.consumedMsg(this, msg) : msg;
       try {
-        const r = c.factory.FromPayload(JSON.parse(msg.content.toString()));
+        const r = c.factory.FromPayload(JSON.parse(txtDecoder.decode(msg.content)));
         if (r.is_err()) {
           log.Error().Err(r.unwrap_err()).Msg("coerce");
-          this.channel!.ack(msg);
+          this._driver.ack(this, msg);
           return;
         }
         log.Debug().Any("payload", r.unwrap()).Msg("pass to handler");
-        c.handler(r.unwrap());
-        this.channel!.ack(msg);
+        c.handler(msg, r.unwrap());
+        !c.skipAutoAck && this._driver.ack(this, msg);
       } catch (e) {
-        this.channel!.ack(msg);
+        !c.skipAutoAck && this._driver.ack(this, msg);
         log
           .Error()
           .Err(e as Error)
