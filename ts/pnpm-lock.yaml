@@ -54,7 +54,7 @@ devDependencies:
     version: 9.0.6
   '@types/ws':
     specifier: ^8.5.7
-    version: 8.5.8
+    version: 8.5.10
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.7.5
     version: 6.10.0(@typescript-eslint/parser@6.10.0)(eslint@8.52.0)(typescript@5.2.2)
@@ -1307,8 +1307,8 @@ packages:
     resolution: {integrity: sha512-BT2Krtx4xaO6iwzwMFUYvWBWkV2pr37zD68Vmp1CDV196MzczBRxuEpD6Pr395HAgebC/co7hOphs53r8V7jew==}
     dev: true
 
-  /@types/ws@8.5.8:
-    resolution: {integrity: sha512-flUksGIQCnJd6sZ1l5dqCEG/ksaoAg/eUwiLAGTJQcfgvZJKF++Ta4bJA6A5aPSJmsr+xlseHn4KLgVlNnvPTg==}
+  /@types/ws@8.5.10:
+    resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
     dependencies:
       '@types/node': 20.8.4
     dev: true
