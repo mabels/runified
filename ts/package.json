@@ -33,7 +33,7 @@
     "deploy:oci": "pnpm run build; fn deploy --app runified",
     "build:gcp": "mkdir -p dist/gcp ; npx esbuild --bundle --platform=node  --format=cjs dist/transport/gcp-functions/index.js > dist/gcp/index.js",
     "start:gcp": "npx functions-framework --target=runified --signature-type=http --port=8080",
-    "pregenerate": "rm -r src/generated",
+    "pregenerate": "rm -rf src/generated",
     "generate": "pnpm run /generate:/",
     "generate:error": "wueste-generator --output-dir ./src/generated --input-file ../schema/error.schema.json",
     "generate:runified": "wueste-generator --output-dir ./src/generated --input-file ../schema/runified-req.schema.json --input-file ../schema/runified-res.schema.json",
