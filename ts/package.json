@@ -37,7 +37,6 @@
     "generate": "pnpm run /generate:/",
     "generate:error": "wueste-generator --output-dir ./src/generated --input-file ../schema/error.schema.json",
     "generate:runified": "wueste-generator --output-dir ./src/generated --input-file ../schema/runified-req.schema.json --input-file ../schema/runified-res.schema.json",
-    "generate:retry-msg": "wueste-generator --output-dir ./src/generated --input-file src/msg-bus/retry-msg.schema.json --input-file src/msg-bus/retry-step.schema.json --input-file src/msg-bus/retry-state.schema.json",
     "pubdir": "pnpm run build; rm -rf pubdir ; mkdir -p pubdir; cp -pr ../.gitignore .npmignore package.json ../LICENSE ../README.md pubdir/; cd dist ; cp -pr . ../pubdir/",
     "presmoke": "pnpm run pubdir ; cd pubdir ; pnpm pack",
     "smoke": "cd smoke; rm -f package.json; pnpm init ; pnpm install -f ../pubdir/adviser-runified-*.tgz; pnpm dlx ts-node ./smoke.ts"
