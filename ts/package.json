@@ -43,7 +43,7 @@
     "@azure/functions": "^4.1.0",
     "@babel/preset-typescript": "^7.23.3",
     "@cloudflare/workers-types": "^4.20231218.0",
-    "@fnproject/fdk": "^0.0.59",
+    "@fnproject/fdk": "^0.0.61",
     "@google-cloud/functions-framework": "^3.3.0",
     "@jest/globals": "^29.7.0",
     "@types/aws-lambda": "^8.10.130",
