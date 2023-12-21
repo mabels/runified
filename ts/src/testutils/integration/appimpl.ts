@@ -3,8 +3,8 @@ import { HTTPHandler, Logger, SysAbstraction } from "../../types";
 import { SystemAbstractionImpl } from "../../utils";
 import { NodeHttpServer } from "../../transport/node_http_server";
 import { ApiImpl, WrapApiHandler } from "../../app";
-import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
-import { RunifiedRes } from "../../generated/runifiedres";
+import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";
+import { RunifiedResFactoryImpl } from "../../generated/runifiedres";
 import { RunifiedHandler } from "./runified_handler";
 import { ApiHandlers } from "../../app/app";
 
@@ -29,7 +29,7 @@ export class AppImpl implements App {
     this._appParam.Log.Debug().Str("handler", "/runified").Msg("Registering handlers");
     this._httpHandler.RegisterHandler(
       "/runified",
-      WrapApiHandler<RunifiedReq, RunifiedRes>(this._api, ApiHandlers(RunifiedHandler), RunifiedReqFactory),
+      WrapApiHandler<RunifiedReqFactoryImpl, RunifiedResFactoryImpl>(this._api, ApiHandlers(RunifiedHandler), RunifiedReqFactory),
     );
   }
 

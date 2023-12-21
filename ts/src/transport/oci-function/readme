@@ -1,11 +1,10 @@
 oci session authenticate
 
-
 fn init --runtime node oci-function
 cd oci-function/
 fn create context menoabels --provider oracle
 fn update context api-url https://functions.eu-frankfurt-1.oraclecloud.com
 fn create app runified --annotation oracle.com/oci/subnetIds='["ocid1.subnet.oc1.eu-frankfurt-1......."]'
-oci os ns get --profile ....   --auth security_token
+oci os ns get --profile .... --auth security_token
 docker login -u 'tendency-name/user' fra.ocir.io
 fn deploy --app runified

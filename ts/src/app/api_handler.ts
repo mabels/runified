@@ -12,7 +12,10 @@ export function WrapUntypedApi<Q, S>(apihandler: ApiHandlerTyped<Q, S>): ApiHand
   };
 }
 
-export function WrapApiHandler<Q, S>(api: Api, handlers: ApiHandlerUnTyped[], rtf: WuestenFactory<Q, Q, Q>): HttpHandlerFunc {
+export function WrapApiHandler<
+  Q extends WuestenFactory<unknown, unknown, unknown>,
+  S extends WuestenFactory<unknown, unknown, unknown>,
+>(api: Api, handlers: ApiHandlerUnTyped[], rtf: Q): HttpHandlerFunc {
   return BindAppToHandler(api.App(), async (reqApp: AppHandler) => {
     const r = MapBrowserMethod(reqApp.Request());
     const w = reqApp.Response();
@@ -52,16 +55,21 @@ export function WrapApiHandler<Q, S>(api: Api, handlers: ApiHandlerUnTyped[], rt
     return Promise.resolve(true);
   });
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface ApiHandlerParams<Q, S> {
+export interface ApiHandlerParams<
+  Q extends WuestenFactory<unknown, unknown, unknown>,
+  S extends WuestenFactory<unknown, unknown, unknown>,
+> {
   readonly api: Api;
   readonly logRef: Logger;
-  readonly requestTypeFactory: WuestenFactory<Q, Q, Q>;
+  readonly requestTypeFactory: Q;
+  readonly responseFactory?: S;
   readonly requestId: string;
   readonly httpRequest: HttpRequest;
   readonly httpResponse: HttpResponseWriter;
 }
-export class ApiHandler<Q, S> implements APIMsg<Q, S> {
+export class ApiHandler<Q extends WuestenFactory<unknown, unknown, unknown>, S extends WuestenFactory<unknown, unknown, unknown>>
+  implements APIMsg<Q["T"], S["T"]>
+{
   readonly _params: ApiHandlerParams<Q, S>;
   constructor(params: ApiHandlerParams<Q, S>) {
     this._params = params;
@@ -112,7 +120,7 @@ export class ApiHandler<Q, S> implements APIMsg<Q, S> {
     return res.Write(bytesErrMsg);
   }
 
-  WriteMsg(data: S): Promise<number> {
+  WriteMsg(data: S["T"]): Promise<number> {
     const responseJsonPayload = JSON.stringify(data);
     const w = this._params.httpResponse;
 
@@ -127,7 +135,7 @@ export class ApiHandler<Q, S> implements APIMsg<Q, S> {
     }
   }
 
-  async RequestMsg(): Promise<Q> {
+  async RequestMsg(): Promise<Q["T"]> {
     const body = await stream2string(this.Request().Body);
 
     const reqBuilder = this._params.requestTypeFactory.Builder();

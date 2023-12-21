@@ -1,8 +1,8 @@
 import { ApiHandler, FromCommandLine } from "../../app";
 import { MockApi } from "../api";
 import { MockApp } from "../app";
-import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
-import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres";
+import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";
+import { RunifiedResFactory, RunifiedResFactoryImpl } from "../../generated/runifiedres";
 import { MockLogger } from "../logger";
 import { SystemAbstractionImpl, string2stream } from "../../utils";
 import { DefaultHttpRequest, HttpStatusCode, TimeMode } from "../../types";
@@ -40,7 +40,7 @@ describe("api_handler", () => {
         Sys: sys,
       }),
     });
-    const hdl = new ApiHandler<RunifiedReq, RunifiedRes>({
+    const hdl = new ApiHandler<RunifiedReqFactoryImpl, RunifiedResFactoryImpl>({
       api: mockApi,
       logRef: mockApi.Log(),
       requestId: "wurstapi1",
@@ -86,7 +86,7 @@ describe("api_handler", () => {
 
     const requestId = "WriteMsgTest";
 
-    const hdl = new ApiHandler<RunifiedReq, RunifiedRes>({
+    const hdl = new ApiHandler<RunifiedReqFactoryImpl, RunifiedResFactoryImpl>({
       api: mockApi,
       logRef: mockApi.Log(),
       requestId: requestId,
@@ -121,7 +121,7 @@ describe("api_handler", () => {
     });
     const mw = new MockResponseWriter();
 
-    const hdl = new ApiHandler<RunifiedReq, RunifiedRes>({
+    const hdl = new ApiHandler<RunifiedReqFactoryImpl, RunifiedResFactoryImpl>({
       api: mockApi,
       logRef: mockApi.Log(),
       httpRequest: postReq,

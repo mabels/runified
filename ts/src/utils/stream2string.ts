@@ -5,9 +5,9 @@ export async function stream2string(stream?: ReadableStream<Uint8Array> | null, 
   const reader = stream.getReader();
   let res = "";
   const decoder = new TextDecoder();
-  let rSize = 0
+  let rSize = 0;
   // eslint-disable-next-line no-constant-condition
-  while (typeof maxSize === 'undefined' || rSize < maxSize) {
+  while (typeof maxSize === "undefined" || rSize < maxSize) {
     try {
       const read = await reader.read();
       if (read.done) {

@@ -17,7 +17,6 @@ it("stream2string", async () => {
   ).toBe("Hello World!");
 });
 
-
 it("stream2string maxSize", async () => {
   const instr = "Hello World!";
   for (let i = 0; i < instr.length; i++) {
@@ -33,8 +32,8 @@ it("stream2string maxSize", async () => {
             controller.close();
           },
         }),
-        i
+        i,
       ),
     ).toBe(instr.slice(0, i));
   }
-})
+});
