@@ -1,18 +1,23 @@
-export async function stream2string(stream?: ReadableStream<Uint8Array> | null): Promise<string> {
+export async function stream2string(stream?: ReadableStream<Uint8Array> | null, maxSize?: number): Promise<string> {
   if (!stream) {
     return Promise.resolve("");
   }
   const reader = stream.getReader();
   let res = "";
   const decoder = new TextDecoder();
+  let rSize = 0
   // eslint-disable-next-line no-constant-condition
-  while (1) {
+  while (typeof maxSize === 'undefined' || rSize < maxSize) {
     try {
-      const { done, value } = await reader.read();
-      if (done) {
+      const read = await reader.read();
+      if (read.done) {
         break;
       }
-      const block = decoder.decode(value, { stream: true });
+      if (maxSize && rSize + read.value.length > maxSize) {
+        read.value = read.value.slice(0, maxSize - rSize);
+      }
+      const block = decoder.decode(read.value, { stream: true });
+      rSize += read.value.length;
       res += block;
     } catch (err) {
       return Promise.reject(err);
