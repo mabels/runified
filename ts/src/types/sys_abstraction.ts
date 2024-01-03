@@ -31,12 +31,15 @@ export function String2TimeMode(s?: string): TimeMode {
   }
 }
 
+export type VoidFunc = () => void|Promise<void>;
+
 export interface SysAbstraction {
   Time(): Time;
   Stdout(): WritableStream<Uint8Array>;
+  Stderr(): WritableStream<Uint8Array>;
   NextId(): string;
   Random0ToValue(value: number): number;
-  OnSigInt(fn: () => void): void;
-  OnSigTerm(fn: () => void): void;
-  OnSigQuit(fn: () => void): void;
+  // on return unregisters the handler
+  OnExit(hdl: VoidFunc): VoidFunc
+  Exit(code: number): void;
 }
