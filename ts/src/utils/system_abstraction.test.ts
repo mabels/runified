@@ -1,6 +1,6 @@
 import { TimeMode, IDMode, RandomMode } from "../types";
 import { SystemAbstractionImpl } from "./system_abstraction";
-import { fork } from "child_process";
+import { ExecException, exec } from 'node:child_process';
 
 it("IdService UUID", () => {
   const sys = new SystemAbstractionImpl();
@@ -76,48 +76,59 @@ it("random", () => {
   }
 });
 
-it("sigint", () => {
-  const subProcess = fork("./dist/utils/system_abstraction.sample.js", [], { silent: true });
-    subProcess.on('exit', (code) => {
-  console.log(`child process exited with code ${code}`);
-});
-  subProcess.on('message', (message) => {
-    console.log(`I get this from the son : ${message}`);
-  });
-    if(subProcess.stdout)
-    subProcess.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`);
-    })
-  subProcess.send("hello");
-    let killed = false;
-  setTimeout(() => {
-    killed = subProcess.kill("SIGINT"); 
-  }, 2000);
-  console.log('signalCode', subProcess.signalCode)
-  console.log('connected', subProcess.connected)
-    console.log('killed', killed)
-  expect(killed).toEqual(true);
-  expect(subProcess.signalCode).toEqual('SIGINT');
+function exitHandler(errCode: number, larg: string, done: () => void) {
+  return (err: ExecException | null, stdout: string|Buffer, stderr: string|Buffer) => {
+    if (err) {
+      expect(err.code).toBe(errCode);
+    }
+    if (stdout) {
+      const res = stdout.toString().split("\n").filter(line => line.trim()).map((line) => {
+        const out = JSON.parse(line)
+        return out;
+      }).map((obj) => {
+        delete obj.pid;
+        return obj;
+      });
+      expect(res).toEqual(
+        [
+          {
+            "larg": larg,
+          },
+          {
+            "larg": larg,
+            "msg": "Called OnExit 1",
+          },
+          {
+            "larg": larg,
+            "msg": "Called OnExit 2",
+          },
+        ]
+      );
+      done()
+    }
+    if (stderr) {
+      expect(stderr).toEqual({});
+    }
+  }
+}
+
+
+it("just-exit", (done) => {
+  exec("ts-node src/utils/test-exit-handler.ts exit24", exitHandler(24, "exit24", done))
+})
+
+it("throw", (done) => {
+  exec("ts-node src/utils/test-exit-handler.ts throw", exitHandler(19, "throw", done))
+})
+
+it("via sigint", (done) => {
+  exec("ts-node src/utils/test-exit-handler.ts sigint", exitHandler(2, "sigint", done))
+})
+
+it("via sigterm", (done) => {
+  exec("ts-node src/utils/test-exit-handler.ts sigterm", exitHandler(9, "sigterm", done))
 });
 
-it("sigterm", () => {
-  const subProcess = fork("./dist/utils/system_abstraction.sample.js", [], { silent: true, stdio: 'inherit' });
-  subProcess.on('message', (message) => {
-    console.log(`I get this from the son : ${message}`);
-  });
-  subProcess.send("hello");
-  const killed = subProcess.kill("SIGTERM");
-    expect(killed).toEqual(true);
-  expect(subProcess.signalCode).toEqual('SIGTERM');
-});
-
-it("sigquit", () => {
-  const subProcess = fork("./dist/utils/system_abstraction.sample.js", [], { silent: true });
-  subProcess.on('message', (message) => {
-    console.log(`I get this from the son : ${message}`);
-  });
-  subProcess.send("hello");
-  const killed = subProcess.kill("SIGQUIT");
-    expect(killed).toEqual(true);
-  expect(subProcess.signalCode).toEqual('SIGQUIT');
+it("via sigquit", (done) => {
+  exec("ts-node src/utils/test-exit-handler.ts sigquit", exitHandler(3, "sigquit", done))
 });
