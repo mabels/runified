@@ -1,5 +1,6 @@
 import { TimeMode, IDMode, RandomMode } from "../types";
 import { SystemAbstractionImpl } from "./system_abstraction";
+import { fork } from "child_process";
 
 it("IdService UUID", () => {
   const sys = new SystemAbstractionImpl();
@@ -73,4 +74,50 @@ it("random", () => {
     expect(val).toBeGreaterThanOrEqual(0);
     expect(val).toBeLessThanOrEqual(10);
   }
+});
+
+it("sigint", () => {
+  const subProcess = fork("./dist/utils/system_abstraction.sample.js", [], { silent: true });
+    subProcess.on('exit', (code) => {
+  console.log(`child process exited with code ${code}`);
+});
+  subProcess.on('message', (message) => {
+    console.log(`I get this from the son : ${message}`);
+  });
+    if(subProcess.stdout)
+    subProcess.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`);
+    })
+  subProcess.send("hello");
+    let killed = false;
+  setTimeout(() => {
+    killed = subProcess.kill("SIGINT"); 
+  }, 2000);
+  console.log('signalCode', subProcess.signalCode)
+  console.log('connected', subProcess.connected)
+    console.log('killed', killed)
+  expect(killed).toEqual(true);
+  expect(subProcess.signalCode).toEqual('SIGINT');
+});
+
+it("sigterm", () => {
+  const subProcess = fork("./dist/utils/system_abstraction.sample.js", [], { silent: true, stdio: 'inherit' });
+  subProcess.on('message', (message) => {
+    console.log(`I get this from the son : ${message}`);
+  });
+  subProcess.send("hello");
+  const killed = subProcess.kill("SIGTERM");
+    expect(killed).toEqual(true);
+  expect(subProcess.signalCode).toEqual('SIGTERM');
+});
+
+it("sigquit", () => {
+  const subProcess = fork("./dist/utils/system_abstraction.sample.js", [], { silent: true });
+  subProcess.on('message', (message) => {
+    console.log(`I get this from the son : ${message}`);
+  });
+  subProcess.send("hello");
+  const killed = subProcess.kill("SIGQUIT");
+    expect(killed).toEqual(true);
+  expect(subProcess.signalCode).toEqual('SIGQUIT');
 });

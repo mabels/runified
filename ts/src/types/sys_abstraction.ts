@@ -36,4 +36,7 @@ export interface SysAbstraction {
   Stdout(): WritableStream<Uint8Array>;
   NextId(): string;
   Random0ToValue(value: number): number;
+  OnSigInt(fn: () => void): void;
+  OnSigTerm(fn: () => void): void;
+  OnSigQuit(fn: () => void): void;
 }
