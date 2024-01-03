@@ -81,6 +81,9 @@ export interface SystemAbstractionImplParams {
   readonly IdMode?: IDMode;
   readonly Stdout?: WritableStream;
   readonly RandomMode?: RandomMode;
+  readonly SigIntHandler?: () => void;
+  readonly SigTermHandler?: () => void;
+  readonly SigQuitHandler?: () => void;
 }
 
 export class IdService {
@@ -117,11 +120,20 @@ export class SystemAbstractionImpl implements SysAbstraction {
   });
   static readonly _idService = new IdService();
   static readonly _randomService = new RandomService(RandomMode.RANDOM);
+  static readonly _sigIntHandler = () => {}
+  static readonly _sigQuitHandler = () => {}
+  static readonly _sigTermHandler = () => {}
+  static readonly _closeHandler = () => {}
 
   readonly _time: Time = SystemAbstractionImpl._time;
   readonly _stdout: WritableStream = SystemAbstractionImpl._stdout;
   readonly _idService: IdService = SystemAbstractionImpl._idService;
   readonly _randomService: RandomService = SystemAbstractionImpl._randomService;
+  readonly _sigTermHandler: () => void = SystemAbstractionImpl._sigTermHandler;
+  readonly _sigIntHandler: () => void = SystemAbstractionImpl._sigIntHandler;
+  readonly _sigQuitHandler: () => void = SystemAbstractionImpl._sigQuitHandler;
+  readonly _closeHandler: () => void = SystemAbstractionImpl._closeHandler;
+
   constructor(params?: SystemAbstractionImplParams) {
     if (params) {
       if (params.TimeMode) {
@@ -135,6 +147,18 @@ export class SystemAbstractionImpl implements SysAbstraction {
       }
       if (params.RandomMode) {
         this._randomService = new RandomService(params.RandomMode);
+      }
+      if (params.SigIntHandler) {
+        this._sigIntHandler = params.SigIntHandler;
+      }
+      if (params.SigQuitHandler) {
+        this._sigQuitHandler = params.SigQuitHandler;
+      }
+      if (params.SigTermHandler) {
+        this._sigTermHandler = params.SigTermHandler;
+      }
+      if (params.SigTermHandler) {
+        this._closeHandler = params.SigTermHandler;
       }
     }
   }
@@ -150,5 +174,17 @@ export class SystemAbstractionImpl implements SysAbstraction {
   }
   Stdout(): WritableStream {
     return this._stdout;
+  }
+  OnClose(fn: () => void): void {
+    process.on("close", fn);
+  }
+  OnSigInt(fn: () => void): void {
+    process.on("SIGINT", fn);
+  }
+  OnSigTerm(fn: () => void): void {
+    process.on("SIGTERM", fn);
+  }
+  OnSigQuit(fn: () => void): void {
+    process.on("SIGQUIT", fn);
   }
 }
