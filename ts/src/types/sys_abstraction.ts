@@ -31,7 +31,7 @@ export function String2TimeMode(s?: string): TimeMode {
   }
 }
 
-export type VoidFunc = () => void|Promise<void>;
+export type VoidFunc = () => void | Promise<void>;
 
 export interface SysAbstraction {
   Time(): Time;
@@ -40,6 +40,6 @@ export interface SysAbstraction {
   NextId(): string;
   Random0ToValue(value: number): number;
   // on return unregisters the handler
-  OnExit(hdl: VoidFunc): VoidFunc
+  OnExit(hdl: VoidFunc): VoidFunc;
   Exit(code: number): void;
 }

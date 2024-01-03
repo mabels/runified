@@ -125,12 +125,12 @@ export class ExitServiceImpl implements ExitService {
     //   console.error("ExitService: failed to import exit-hook", err)
     // })
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    process.on('unhandledRejection', (reason: string, p: Promise<unknown>) => {
+    process.on("unhandledRejection", (reason: string, p: Promise<unknown>) => {
       // console.error('Unhandled Rejection at:', p, 'reason:', reason);
       this.exit(19);
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    process.on('uncaughtException', (error: Error) => {
+    process.on("uncaughtException", (error: Error) => {
       // console.error(`Caught exception: ${error}\n` + `Exception origin: ${error.stack}`);
       this.exit(18);
     });
@@ -144,7 +144,7 @@ export class ExitServiceImpl implements ExitService {
     process.on("exit", () => {
       // console.log("ExitService: EXIT");
       this.exit(0);
-    })
+    });
     process.on("SIGQUIT", () => {
       // console.log("ExitService: SIGQUIT");
       this.exit(3);
@@ -156,7 +156,7 @@ export class ExitServiceImpl implements ExitService {
     process.on("SIGTERM", () => {
       // console.log("ExitService: SIGTERM");
       this.exit(9);
-    })
+    });
     // exitHook(signal => {
     //   console.log(`Exiting with signal: ${signal}`);
     // });
@@ -170,7 +170,7 @@ export class ExitServiceImpl implements ExitService {
   readonly _handleExit = async (): Promise<void> => {
     if (this.invoked) {
       // console.error("ExitService: already invoked");
-      return
+      return;
     }
     this.invoked = true;
     for (const h of this._exitHandlers) {
@@ -185,16 +185,18 @@ export class ExitServiceImpl implements ExitService {
         // ignore
       }
     }
-  }
+  };
 
   exit(code: number): void {
     // console.log("ExitService: exit called", code)
-    this._handleExit().then(() => {
-      process.exit(code)
-    }).catch((err) => {
-      console.error("ExitService: failed to handle exit", err)
-      process.exit(code)
-    })
+    this._handleExit()
+      .then(() => {
+        process.exit(code);
+      })
+      .catch((err) => {
+        console.error("ExitService: failed to handle exit", err);
+        process.exit(code);
+      });
   }
 }
 
@@ -219,7 +221,6 @@ export class SystemAbstractionImpl implements SysAbstraction {
     },
   });
 
-
   static readonly _idService = new IdService();
   static readonly _exitService = new ExitServiceImpl();
   static readonly _randomService = new RandomService(RandomMode.RANDOM);
@@ -229,7 +230,7 @@ export class SystemAbstractionImpl implements SysAbstraction {
   readonly _stderr: WritableStream = SystemAbstractionImpl._stderr;
   readonly _idService: IdService = SystemAbstractionImpl._idService;
   readonly _randomService: RandomService = SystemAbstractionImpl._randomService;
-  readonly _exitService: ExitService = SystemAbstractionImpl._exitService
+  readonly _exitService: ExitService = SystemAbstractionImpl._exitService;
 
   constructor(params?: SystemAbstractionImplParams) {
     if (params) {
@@ -282,6 +283,6 @@ export class SystemAbstractionImpl implements SysAbstraction {
     };
   }
   Exit(code: number): void {
-      this._exitService.exit(code)
+    this._exitService.exit(code);
   }
 }
