@@ -118,48 +118,29 @@ export interface ExitService {
 
 export class ExitServiceImpl implements ExitService {
   constructor() {
-    // import( 'exit-hook').then(({ asyncExitHook, gracefulExit }) => {
-    //   asyncExitHook(this._handleExit, { wait: 2000 });
-    //   this.gracefulExit = gracefulExit;
-    // }).catch((err) => {
-    //   console.error("ExitService: failed to import exit-hook", err)
-    // })
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     process.on("unhandledRejection", (reason: string, p: Promise<unknown>) => {
-      // console.error('Unhandled Rejection at:', p, 'reason:', reason);
       this.exit(19);
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     process.on("uncaughtException", (error: Error) => {
-      // console.error(`Caught exception: ${error}\n` + `Exception origin: ${error.stack}`);
       this.exit(18);
     });
-    // function handle() {
-    //   for (let i = 0; i < 100; i++) {
-    //     setImmediate(() => { });
-    //   }
-    //   setTimeout(handle, 1000);
-    // }
-    // setTimeout(handle, 1000);
+    process.on("close", () => {
+      this.exit(0);
+    });
     process.on("exit", () => {
-      // console.log("ExitService: EXIT");
       this.exit(0);
     });
     process.on("SIGQUIT", () => {
-      // console.log("ExitService: SIGQUIT");
       this.exit(3);
     });
     process.on("SIGINT", () => {
-      // console.log("ExitService: SIGINT");
       this.exit(2);
     });
     process.on("SIGTERM", () => {
-      // console.log("ExitService: SIGTERM");
       this.exit(9);
     });
-    // exitHook(signal => {
-    //   console.log(`Exiting with signal: ${signal}`);
-    // });
   }
   _exitHandlers: ExitHandler[] = [];
   injectExitHandlers(hdls: ExitHandler[]): void {
@@ -280,7 +261,7 @@ export class SystemAbstractionImpl implements SysAbstraction {
       if (idx >= 0) {
         SystemAbstractionImpl._exitHandlers.splice(idx, 1);
       }
-    };
+    }
   }
   Exit(code: number): void {
     this._exitService.exit(code);
