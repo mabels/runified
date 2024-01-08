@@ -42,7 +42,7 @@ devDependencies:
     version: 29.7.0
   '@types/aws-lambda':
     specifier: ^8.10.130
-    version: 8.10.130
+    version: 8.10.131
   '@types/jest':
     specifier: ^29.5.11
     version: 29.5.11
@@ -1202,8 +1202,8 @@ packages:
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
     dev: true
 
-  /@types/aws-lambda@8.10.130:
-    resolution: {integrity: sha512-HxTfLeGvD1wTJqIGwcBCpNmHKenja+We1e0cuzeIDFfbEj3ixnlTInyPR/81zAe0Ss/Ip12rFK6XNeMLVucOSg==}
+  /@types/aws-lambda@8.10.131:
+    resolution: {integrity: sha512-IWmFpqnVDvskYWnNSiu/qlRn80XlIOU0Gy5rKCl/NjhnI95pV8qIHs6L5b+bpHhyzuOSzjLgBcwgFSXrC1nZWA==}
     dev: true
 
   /@types/babel__core@7.20.5:
