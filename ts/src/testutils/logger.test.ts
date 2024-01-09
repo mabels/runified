@@ -7,8 +7,8 @@ describe("logger", () => {
     l.logger.Str("bla2", "blub2").Msg("hello2");
     await l.logger.Flush();
     expect(l.logCollector.Logs()).toEqual([
-      { bla1: "blub1", msg: "hello1" },
-      { bla2: "blub2", msg: "hello2" },
+      { bla1: "blub1", msg: "hello1", module: "MockLogger" },
+      { bla2: "blub2", msg: "hello2", module: "MockLogger" },
     ]);
   });
 });

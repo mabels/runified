@@ -7,10 +7,13 @@ export interface MockLoggerReturn {
   readonly logCollector: LogCollector;
 }
 
-export function MockLogger(params?: { sys?: SysAbstraction }): MockLoggerReturn {
+export function MockLogger(params?: { readonly sys?: SysAbstraction; readonly moduleName?: string }): MockLoggerReturn {
   const lc = new LogCollector();
   return {
     logCollector: lc,
-    logger: new LoggerImpl({ out: lc, sys: params?.sys }),
+    logger: new LoggerImpl({ out: lc, sys: params?.sys })
+      .With()
+      .Module(params?.moduleName || "MockLogger")
+      .Logger(),
   };
 }

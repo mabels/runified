@@ -261,7 +261,7 @@ export class SystemAbstractionImpl implements SysAbstraction {
       if (idx >= 0) {
         SystemAbstractionImpl._exitHandlers.splice(idx, 1);
       }
-    }
+    };
   }
   Exit(code: number): void {
     this._exitService.exit(code);

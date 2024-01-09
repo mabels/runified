@@ -56,6 +56,7 @@ describe("api_handler", () => {
     expect(logs.length).toBe(1);
     expect(logs[0]).toEqual({
       MockApi: "MockApi",
+      module: "MockLogger",
       error: "test error",
       level: "error",
       msg: "API error",
