@@ -65,9 +65,10 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@adviser/result": "^0.0.1",
     "ion-js": "^5.2.0",
     "uuid": "^9.0.1",
     "ws": "^8.16.0",
-    "wueste": "^1.1.0"
+    "wueste": "^1.2.0"
   }
 }

@@ -2,7 +2,7 @@ import { KeyNotFound, KeyValueStore } from "../types/key_value";
 import { SerDe } from "../types/serde";
 import { KVInMemory } from "./kv_inmemory";
 import { WrapKvStore } from "./wrap_kv";
-import { Result } from "wueste/result";
+import { Result } from "@adviser/result";
 
 export async function testKV(kv: KeyValueStore<string>) {
   const hiStr = "hi";

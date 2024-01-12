@@ -1,4 +1,4 @@
-import { Result } from "wueste/result";
+import { Result } from "@adviser/result";
 import { HttpHeader } from "./http_header";
 import { result } from "wueste";
 
