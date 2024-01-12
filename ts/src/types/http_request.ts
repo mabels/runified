@@ -1,6 +1,5 @@
 import { Result } from "@adviser/result";
 import { HttpHeader } from "./http_header";
-import { result } from "wueste";
 
 export class HttpURLSearchParams {
   readonly _urlSearchParams: URLSearchParams;
@@ -171,17 +170,17 @@ export class HttpURL {
     return parts.join("/").replace(/\/+/g, "/");
   }
 
-  static parse(url: string | HttpURL | URL | result.Result<HttpURL>, base?: string): result.Result<HttpURL> {
+  static parse(url: string | HttpURL | URL | Result<HttpURL>, base?: string): Result<HttpURL> {
     if (Result.Is(url)) {
       url = url.unwrap();
     }
     try {
       if (url instanceof HttpURL) {
-        return result.Result.Ok(new HttpURL(new URL(url._url)));
+        return Result.Ok(new HttpURL(new URL(url._url)));
       }
-      return result.Result.Ok(new HttpURL(new URL(url, base)));
+      return Result.Ok(new HttpURL(new URL(url, base)));
     } catch (e) {
-      return result.Result.Err(e as Error);
+      return Result.Err(e as Error);
     }
   }
   Query(): URLSearchParams {
