@@ -28,6 +28,18 @@ describe("TestLogger", () => {
       await logger.Flush();
       expect(logCollector.Logs()).toEqual([{ error: "test" }]);
     });
+
+    it("should set the error from string", async () => {
+      logger.Err("test").Msg("");
+      await logger.Flush();
+      expect(logCollector.Logs()).toEqual([{ error: "test" }]);
+    });
+
+    it("should set the error from bool", async () => {
+      logger.Err(false).Msg("");
+      await logger.Flush();
+      expect(logCollector.Logs()).toEqual([{ error: "false" }]);
+    });
   });
 
   describe("Info()", () => {
