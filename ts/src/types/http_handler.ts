@@ -2,7 +2,7 @@ import { HttpHandlerFunc } from "./http_handler_func";
 import { HttpRequest } from "./http_request";
 import { HttpResponseWriter } from "./http_response_writer";
 import { HttpServer } from "./http_server";
-import { result } from "wueste";
+import { Result } from "@adviser/result";
 
 export interface HTTPHandlerParam {
   readonly HttpServer: HttpServer;
@@ -47,12 +47,12 @@ export class HTTPHandler {
     return this._params.HttpServer.Shutdown();
   }
 
-  RegisterHandler(path: string, fn: HttpHandlerFunc): result.Result<() => void, Error> {
+  RegisterHandler(path: string, fn: HttpHandlerFunc): Result<() => void, Error> {
     if (this._handlerMap.has(path)) {
-      return result.Result.Err(new Error(`Handler already registered, path: ${path}`));
+      return Result.Err(new Error(`Handler already registered, path: ${path}`));
     }
     this._handlerMap.set(path, fn);
-    return result.Result.Ok(() => {
+    return Result.Ok(() => {
       this._handlerMap.delete(path);
     });
   }
