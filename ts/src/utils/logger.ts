@@ -146,8 +146,12 @@ export class LoggerImpl implements Logger {
     this._attributes["level"] = Level.INFO;
     return this;
   }
-  Err(err: Error): Logger {
-    this._attributes["error"] = err.message;
+  Err(err: unknown): Logger {
+    if (err instanceof Error) {
+      this._attributes["error"] = err.message;
+    } else {
+      this._attributes["error"] = "" + err;
+    }
     return this;
   }
   WithLevel(l: Level): Logger {
@@ -271,7 +275,7 @@ class WithLoggerBuilder implements WithLogger {
     this._li.Debug();
     return this;
   }
-  Err(err: Error): WithLogger {
+  Err(err: unknown): WithLogger {
     this._li.Err(err);
     return this;
   }
