@@ -3,9 +3,9 @@ import { MockApi } from "../api";
 import { MockApp } from "../app";
 import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";
 import { RunifiedResFactory, RunifiedResFactoryImpl } from "../../generated/runifiedres";
-import { MockLogger } from "../logger";
-import { SystemAbstractionImpl, string2stream } from "../../utils";
-import { DefaultHttpRequest, HttpStatusCode, TimeMode } from "../../types";
+import { MockLogger, NodeSysAbstraction, TimeMode } from "@adviser/cement";
+import { string2stream } from "../../utils";
+import { DefaultHttpRequest, HttpStatusCode, } from "../../types";
 import { ErrorFactory } from "../../generated/error";
 import { MockResponseWriter } from "../response_writer";
 
@@ -26,7 +26,7 @@ const reqObj = {
 
 describe("api_handler", () => {
   it("ApiErrorMsg", async () => {
-    const sys = new SystemAbstractionImpl({
+    const sys = new NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
     });
     const { logCollector: lc, logger } = MockLogger({
@@ -60,7 +60,7 @@ describe("api_handler", () => {
       error: "test error",
       level: "error",
       msg: "API error",
-      ts: new SystemAbstractionImpl({ TimeMode: TimeMode.STEP }).Time().Now().toISOString(),
+      ts: new NodeSysAbstraction({ TimeMode: TimeMode.STEP }).Time().Now().toISOString(),
     });
     expect(mw.StatusCode).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
     const body = mw.Body;

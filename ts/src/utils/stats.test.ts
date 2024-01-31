@@ -1,7 +1,6 @@
-import { TimeMode } from "../types";
+import { NodeSysAbstraction, TimeMode } from "@adviser/cement";
 import { DurationUnit, ValueType, ValueWithUnit } from "../types/stats";
 import { DateRange, DateRangeAvg, Stats, renderUnitForMs } from "./stats";
-import { SystemAbstractionImpl } from "./system_abstraction";
 
 it("stats empty", () => {
   const stats = new Stats();
@@ -37,7 +36,7 @@ it("set value", () => {
 
 it("set action", async () => {
   const stats = new Stats({
-    sys: new SystemAbstractionImpl({
+    sys: new NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
     }),
   }).Feature("feature");
@@ -46,7 +45,7 @@ it("set action", async () => {
     return 24;
   });
   expect(res).toEqual(24);
-  const myT = new SystemAbstractionImpl({
+  const myT = new NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
   expect(stats._stats).toEqual({
@@ -64,7 +63,7 @@ it("set action", async () => {
 
 it("it renders value", () => {
   const l1 = new Stats({
-    sys: new SystemAbstractionImpl({
+    sys: new NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
     }),
   }).Feature("l1");
@@ -149,13 +148,13 @@ it("it renders value", () => {
 
 it("it renders single log action", async () => {
   const l1 = new Stats({
-    sys: new SystemAbstractionImpl({
+    sys: new NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
     }),
   }).Feature("l1");
   const l2 = l1.Feature("l2");
 
-  const myT = new SystemAbstractionImpl({
+  const myT = new NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
 
@@ -297,13 +296,13 @@ it("it renders single log action", async () => {
 
 it("it renders single time avg action", async () => {
   const l1 = new Stats({
-    sys: new SystemAbstractionImpl({
+    sys: new NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
     }),
   }).Feature("l1");
   const l2 = l1.Feature("l2");
 
-  const myT = new SystemAbstractionImpl({
+  const myT = new NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
 
@@ -439,7 +438,7 @@ it("it renders single time avg action", async () => {
 
 it("it renders total and resets", async () => {
   const l1 = new Stats().Feature("l1");
-  const myT = new SystemAbstractionImpl({
+  const myT = new NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
   const double = () => {

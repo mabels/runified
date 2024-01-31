@@ -1,6 +1,7 @@
 import { KVInMemory } from "../kv/kv_inmemory";
 import { Api, App } from "../types/app";
-import { KeyValueStoreBlob, Logger } from "../types";
+import { KeyValueStoreBlob, } from "../types";
+import { Logger } from "@adviser/cement";
 
 export interface MockApiParams {
   readonly App: App;

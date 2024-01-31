@@ -1,4 +1,4 @@
-import { Logger } from "../logger";
+import { Logger } from "@adviser/cement";
 import { Api } from "./api";
 import { CtxHandler } from "./ctx_handler";
 

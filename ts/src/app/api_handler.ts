@@ -1,9 +1,10 @@
 import { APIMsg, Api, ApiHandler as ApiHandlerIf, ApiHandlerTyped, ApiHandlerUnTyped, AppHandler } from "../types/app";
-import { ErrorFactory, HttpHandlerFunc, HttpRequest, HttpResponseWriter, HttpStatusCode, Logger } from "../types";
+import { ErrorFactory, HttpHandlerFunc, HttpRequest, HttpResponseWriter, HttpStatusCode, } from "../types";
 import { stream2string } from "../utils";
 import { MapBrowserMethod } from "./map-browser-method";
 import { WuestenFactory } from "wueste/wueste";
 import { BindAppToHandler } from "./app";
+import { Logger } from "@adviser/cement";
 
 // wraps typed apihandler into untyped apihandler
 export function WrapUntypedApi<Q, S>(apihandler: ApiHandlerTyped<Q, S>): ApiHandlerUnTyped {

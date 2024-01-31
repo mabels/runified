@@ -1,12 +1,12 @@
 import path from "node:path";
 import { App } from "../../types/app";
 import { FromCommandLine } from "../../app";
-import { HttpClientImpl, SystemAbstractionImpl, stream2string, string2stream } from "../../utils";
-import { DefaultHttpRequest, Logger, SysAbstraction, TimeMode } from "../../types";
+import { HttpClientImpl, stream2string, string2stream } from "../../utils";
+import { DefaultHttpRequest, } from "../../types";
 import { SDKClient, postWithRequestContext } from "../../sdk";
 import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
 import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres";
-import { MockLogger } from "../logger";
+import { Logger, MockLogger, NodeSysAbstraction, SysAbstraction, TimeMode } from "@adviser/cement";
 import { ErrorFactory } from "../../generated/error";
 import { globalToLocalBaseUrl } from "../global-to-local-base-url";
 import { HttpHeader } from "../../types/http_header";
@@ -26,7 +26,7 @@ async function startApp(sys: SysAbstraction, fn: (baseUrl: string, app: App, log
 }
 
 it("TestRunifiedGetMethod()", async () => {
-  const sys = new SystemAbstractionImpl({
+  const sys = new NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,7 +51,7 @@ it("TestRunifiedGetMethod()", async () => {
 
 it("TestRunified", async () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const sys = new SystemAbstractionImpl({
+  const sys = new NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
 
@@ -85,7 +85,7 @@ it("TestRunified", async () => {
       RunifiedResFactory,
       reqVal,
     );
-    const mySys = new SystemAbstractionImpl({ TimeMode: TimeMode.STEP });
+    const mySys = new NodeSysAbstraction({ TimeMode: TimeMode.STEP });
     for (let i = 0; i < 3; i++) {
       mySys.Time().Now();
     }

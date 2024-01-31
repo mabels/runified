@@ -1,12 +1,12 @@
 import { App } from "@adviser/runified/types/app";
 import { FromCommandLine } from "@adviser/runified/app";
-import { HttpHeader, Logger } from "@adviser/runified/types";
+import { HttpHeader, } from "@adviser/runified/types";
 import { AppImpl } from "@adviser/runified/testutils/integration/appimpl";
 import { globalToLocalBaseUrl } from "@adviser/runified/testutils";
-import { LoggerImpl } from "@adviser/runified/utils";
 import { RunifiedReqFactory, RunifiedReq } from "@adviser/runified/generated/runifiedreq";
 import { RunifiedResFactory, RunifiedRes } from "@adviser/runified/generated/runifiedres";
 import { SDKClient, postWithRequestContext } from "@adviser/runified/sdk";
+import { Logger, LoggerImpl } from "@adviser/cement";
 
 async function startApp(fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>) {
   const log = new LoggerImpl();

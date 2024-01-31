@@ -1,7 +1,6 @@
 import { b64ToUint6, quickId, uint6ToB64 } from "./utils";
 import { SimpleBuffer } from "./simple-buffer";
-import { SysAbstraction } from "../types";
-import { SystemAbstractionImpl } from "../utils";
+import { NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
 
 // export enum Format {
 //   Binary,
@@ -155,7 +154,7 @@ export class FrameProcessor {
       maxSendQueueBytes: 1024 * 1024,
       ...fp,
     };
-    this.sys = fp?.sys ?? new SystemAbstractionImpl();
+    this.sys = fp?.sys ?? new NodeSysAbstraction();
     if (this.config.outputStream) {
       this.writer = this.config.outputStream.getWriter();
     }

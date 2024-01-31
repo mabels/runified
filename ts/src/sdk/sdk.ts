@@ -1,6 +1,7 @@
-import { HttpClientImpl, LoggerImpl, SystemAbstractionImpl } from "../utils";
+import { HttpClientImpl, } from "../utils";
 
-import { HttpClient as HttpClientIf, HttpHeader, Logger, SysAbstraction } from "../types";
+import { HttpClient as HttpClientIf, HttpHeader, } from "../types";
+import { Logger, LoggerImpl, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
 
 export interface SdkClientParams {
   readonly BaseUrl: string;
@@ -19,7 +20,7 @@ export class SDKClient {
   constructor(params: SdkClientParams) {
     this.BaseUrl = params.BaseUrl;
     if (!params.Sys) {
-      this.Sys = new SystemAbstractionImpl();
+      this.Sys = new NodeSysAbstraction();
     } else {
       this.Sys = params.Sys;
     }

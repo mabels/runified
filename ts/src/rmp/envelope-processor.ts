@@ -4,8 +4,7 @@ import { IonTypes, Writer } from "ion-js";
 // import { BinaryReader } from "ion-js/dist/commonjs/es6/IonBinaryReader";
 // import { BinarySpan } from "ion-js/dist/commonjs/es6/IonSpan";
 import { ensureWriter } from "./ion-utils";
-import { SysAbstraction } from "../types";
-import { SystemAbstractionImpl } from "../utils";
+import { NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
 
 export interface Payload {
   readonly Type: string;
@@ -138,7 +137,7 @@ export class EnvelopeProcessor {
   _sys: SysAbstraction;
 
   constructor(sys?: SysAbstraction) {
-    this._sys = sys ?? new SystemAbstractionImpl();
+    this._sys = sys ?? new NodeSysAbstraction();
   }
 
   create(env: ParamEnvelope): EnvelopeEncoder {

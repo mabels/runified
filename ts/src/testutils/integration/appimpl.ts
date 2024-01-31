@@ -1,12 +1,12 @@
 import { Api, App, AppParam, CLIConfig } from "../../types/app";
-import { HTTPHandler, Logger, SysAbstraction } from "../../types";
-import { SystemAbstractionImpl } from "../../utils";
+import { HTTPHandler, } from "../../types";
 import { NodeHttpServer } from "../../transport/node_http_server";
 import { ApiImpl, WrapApiHandler } from "../../app";
 import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";
 import { RunifiedResFactoryImpl } from "../../generated/runifiedres";
 import { RunifiedHandler } from "./runified_handler";
 import { ApiHandlers } from "../../app/app";
+import { Logger, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
 
 export class AppImpl implements App {
   readonly _appParam: AppParam;
@@ -19,7 +19,7 @@ export class AppImpl implements App {
       ...args,
       Log: args.Log.With().Timestamp().Module("appimpl").Logger(),
     };
-    this._sys = args.Sys ?? new SystemAbstractionImpl();
+    this._sys = args.Sys ?? new NodeSysAbstraction();
     this._httpHandler = new HTTPHandler({
       HttpServer: args.HttpServer ?? new NodeHttpServer(this._appParam.CLIconfig.Listen),
     });

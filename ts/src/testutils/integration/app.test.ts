@@ -1,12 +1,11 @@
-import { MockLogger, MockLoggerReturn } from "../logger";
+import { MockLogger, MockLoggerReturn, NodeSysAbstraction, TimeMode, TimeUnits } from "@adviser/cement";
 import { AppHandler } from "../../types/app";
 import { HttpClientImpl, stream2string, string2stream } from "../../utils";
 
 import { AppImpl } from "./appimpl";
 import { FromCommandLine } from "../../app";
 import { describe, expect, it } from "@jest/globals";
-import { DefaultHttpRequest, HttpHeader, TimeMode, TimeUnits } from "../../types";
-import { SystemAbstractionImpl } from "../../utils";
+import { DefaultHttpRequest, HttpHeader, } from "../../types";
 import { globalToLocalBaseUrl } from "../global-to-local-base-url";
 import { BindAppToHandler } from "../../app/app";
 
@@ -17,7 +16,7 @@ describe("App", () => {
     const app = new AppImpl({
       Log: log,
       CLIconfig: cliCFG,
-      Sys: new SystemAbstractionImpl({
+      Sys: new NodeSysAbstraction({
         TimeMode: TimeMode.STEP,
       }),
     });

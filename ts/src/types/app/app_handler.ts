@@ -1,6 +1,6 @@
 import { HttpRequest } from "../http_request";
 import { HttpResponseWriter } from "../http_response_writer";
-import { Logger } from "../logger";
+import { Logger } from "@adviser/cement";
 import { App } from "./app";
 
 export type AppHandlerFn = (app: AppHandler) => Promise<boolean>;

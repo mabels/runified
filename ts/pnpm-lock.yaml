@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@adviser/cement':
+    specifier: ^0.0.1
+    version: 0.0.1
   '@adviser/result':
     specifier: ^0.0.1
     version: 0.0.1
@@ -101,6 +104,11 @@ packages:
     resolution: {integrity: sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /@adviser/cement@0.0.1:
+    resolution: {integrity: sha512-cnxwrOAZibZMgC14fl6rekmGBRYUJlEFL6brONQxf4pjZcysESJsKFYea426o1XgmPMqOcZf28WOQFTHvUoklA==}
+    engines: {node: '>=16'}
+    dev: false
 
   /@adviser/result@0.0.1:
     resolution: {integrity: sha512-GFLtKP+M+NVXC6d4Hsx25DMG4CaXGg10b7aATlvrJNFQXcCCN1uIiSRLPUMMuuG5UWiHZjx4Q3I2O8ekRrSwiw==}

@@ -1,5 +1,5 @@
 import { App } from "./app";
-import { Logger } from "../logger";
+import { Logger } from "@adviser/cement";
 import { KeyValueStoreBlob } from "../key_value";
 
 export interface Api {

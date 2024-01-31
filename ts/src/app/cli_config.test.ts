@@ -1,4 +1,4 @@
-import { TimeMode } from "../types";
+import { TimeMode } from "@adviser/cement"
 import { FromCommandLine } from "./cli_config";
 
 describe("cli_config", () => {

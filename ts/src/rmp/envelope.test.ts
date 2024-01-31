@@ -1,14 +1,13 @@
-import { SystemAbstractionImpl } from "../utils";
-import { TimeMode } from "../types";
 import { EnvelopeHandler, MatchState } from "./envelope-handler";
 import { FrameProcessor } from "./frame-processor";
 import { RMProtocolCtx } from "./rmp-protocol";
 import { EnvelopeEncoder } from "./envelope-processor";
+import { NodeSysAbstraction, TimeMode } from "@adviser/cement";
 
 describe("Envelope", () => {
   const txtEncoder = new TextEncoder();
   const fp = new FrameProcessor({
-    sys: new SystemAbstractionImpl({
+    sys: new NodeSysAbstraction({
       TimeMode: TimeMode.CONST,
     }),
   });

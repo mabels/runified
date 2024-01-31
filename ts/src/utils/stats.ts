@@ -1,4 +1,4 @@
-import { SysAbstraction } from "../types";
+import { NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
 import {
   ActionItem,
   DateTuple,
@@ -9,7 +9,6 @@ import {
   ValueWithCount,
   ValueWithUnit,
 } from "../types/stats";
-import { SystemAbstractionImpl } from "./system_abstraction";
 
 export function renderUnitForMs(valMS: number): UnitValue {
   if (valMS < 1) {
@@ -179,7 +178,7 @@ export class Stats {
       this._sys = sp.sys;
     }
     if (!this._sys) {
-      this._sys = new SystemAbstractionImpl();
+      this._sys = new NodeSysAbstraction();
     }
   }
 

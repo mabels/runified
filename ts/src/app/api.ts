@@ -1,6 +1,7 @@
 import { Api, App, ErrKVStoreNotSupported } from "../types/app";
-import { KeyValueStoreBlob, Logger } from "../types";
+import { KeyValueStoreBlob, } from "../types";
 import { KVInMemory } from "../kv/kv_inmemory";
+import { Logger } from "@adviser/cement";
 
 export class ApiImpl implements Api {
   readonly _app: App;

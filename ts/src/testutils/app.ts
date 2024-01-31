@@ -1,7 +1,6 @@
 import { App, CLIConfig } from "../types/app";
-import { HTTPHandler, Logger, SysAbstraction } from "../types";
-import { SystemAbstractionImpl } from "../utils";
-import { MockLogger } from "./logger";
+import { HTTPHandler, } from "../types";
+import { Logger, MockLogger, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
 
 interface MockAppParams {
   readonly CliConfig: CLIConfig;
@@ -16,7 +15,7 @@ export class MockApp implements App {
 
   constructor(params: MockAppParams) {
     this._cliConfig = params.CliConfig;
-    this._sys = new SystemAbstractionImpl({ TimeMode: params.CliConfig.TimeMode });
+    this._sys = new NodeSysAbstraction({ TimeMode: params.CliConfig.TimeMode });
     this._log = params.Log || MockLogger().logger;
   }
 

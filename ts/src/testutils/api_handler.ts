@@ -1,8 +1,9 @@
 import { APIMsg, Api, CLIConfig } from "../types/app";
-import { HttpRequest, HttpResponseWriter, Logger } from "../types";
+import { HttpRequest, HttpResponseWriter, } from "../types";
 import { MockApi } from "./api";
 import { MockApp } from "./app";
 import { MockResponseWriter } from "./response_writer";
+import { Logger } from "@adviser/cement";
 
 export class MockApiHandler<Q, S> implements APIMsg<Q, S> {
   readonly _log: Logger;
