@@ -1,5 +1,5 @@
 import { Api, App, ErrKVStoreNotSupported } from "../types/app";
-import { KeyValueStoreBlob, } from "../types";
+import { KeyValueStoreBlob } from "../types";
 import { KVInMemory } from "../kv/kv_inmemory";
 import { Logger } from "@adviser/cement";
 

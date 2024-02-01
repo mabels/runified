@@ -1,5 +1,5 @@
 import { APIMsg, Api, CLIConfig } from "../types/app";
-import { HttpRequest, HttpResponseWriter, } from "../types";
+import { HttpRequest, HttpResponseWriter } from "../types";
 import { MockApi } from "./api";
 import { MockApp } from "./app";
 import { MockResponseWriter } from "./response_writer";

@@ -1,6 +1,6 @@
-import { HttpClientImpl, } from "../utils";
+import { HttpClientImpl } from "../utils";
 
-import { HttpClient as HttpClientIf, HttpHeader, } from "../types";
+import { HttpClient as HttpClientIf, HttpHeader } from "../types";
 import { Logger, LoggerImpl, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
 
 export interface SdkClientParams {

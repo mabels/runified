@@ -1,5 +1,5 @@
 import { Api, App, AppParam, CLIConfig } from "../../types/app";
-import { HTTPHandler, } from "../../types";
+import { HTTPHandler } from "../../types";
 import { NodeHttpServer } from "../../transport/node_http_server";
 import { ApiImpl, WrapApiHandler } from "../../app";
 import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";

@@ -1,6 +1,6 @@
 import { App } from "@adviser/runified/types/app";
 import { FromCommandLine } from "@adviser/runified/app";
-import { HttpHeader, } from "@adviser/runified/types";
+import { HttpHeader } from "@adviser/runified/types";
 import { AppImpl } from "@adviser/runified/testutils/integration/appimpl";
 import { globalToLocalBaseUrl } from "@adviser/runified/testutils";
 import { RunifiedReqFactory, RunifiedReq } from "@adviser/runified/generated/runifiedreq";

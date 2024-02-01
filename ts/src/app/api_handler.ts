@@ -1,5 +1,5 @@
 import { APIMsg, Api, ApiHandler as ApiHandlerIf, ApiHandlerTyped, ApiHandlerUnTyped, AppHandler } from "../types/app";
-import { ErrorFactory, HttpHandlerFunc, HttpRequest, HttpResponseWriter, HttpStatusCode, } from "../types";
+import { ErrorFactory, HttpHandlerFunc, HttpRequest, HttpResponseWriter, HttpStatusCode } from "../types";
 import { stream2string } from "../utils";
 import { MapBrowserMethod } from "./map-browser-method";
 import { WuestenFactory } from "wueste/wueste";

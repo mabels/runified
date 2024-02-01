@@ -1,5 +1,5 @@
 import { App, CLIConfig } from "../types/app";
-import { HTTPHandler, } from "../types";
+import { HTTPHandler } from "../types";
 import { Logger, MockLogger, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
 
 interface MockAppParams {

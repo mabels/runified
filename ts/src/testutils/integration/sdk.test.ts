@@ -2,7 +2,7 @@ import path from "node:path";
 import { App } from "../../types/app";
 import { FromCommandLine } from "../../app";
 import { HttpClientImpl, stream2string, string2stream } from "../../utils";
-import { DefaultHttpRequest, } from "../../types";
+import { DefaultHttpRequest } from "../../types";
 import { SDKClient, postWithRequestContext } from "../../sdk";
 import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
 import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres";

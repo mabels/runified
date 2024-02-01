@@ -5,7 +5,7 @@ import { HttpClientImpl, stream2string, string2stream } from "../../utils";
 import { AppImpl } from "./appimpl";
 import { FromCommandLine } from "../../app";
 import { describe, expect, it } from "@jest/globals";
-import { DefaultHttpRequest, HttpHeader, } from "../../types";
+import { DefaultHttpRequest, HttpHeader } from "../../types";
 import { globalToLocalBaseUrl } from "../global-to-local-base-url";
 import { BindAppToHandler } from "../../app/app";
 
