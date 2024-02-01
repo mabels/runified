@@ -3,7 +3,7 @@
 import { HTTPHandler, HttpRequest, HttpResponseWriter } from "../../types";
 import { NodeHttpServer } from ".";
 import { describe, expect, it } from "@jest/globals";
-import { HttpClientImpl, stream2string, string2stream } from "../../utils";
+import { FetchHttpClient, stream2string, string2stream } from "../../utils";
 describe("HTTPHandler", () => {
   it("StartStop", async () => {
     const hp = new HTTPHandler({
@@ -68,7 +68,7 @@ describe("HTTPHandler", () => {
     expect(res.is_ok()).toBeTruthy();
     await hp.Start().then(async () => {
       // console.log("started");
-      const hc = new HttpClientImpl();
+      const hc = new FetchHttpClient();
       try {
         const loops = 3;
         for (let i = 0; i < loops; i++) {

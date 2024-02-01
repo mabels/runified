@@ -1,6 +1,6 @@
 import { MockLogger, MockLoggerReturn, NodeSysAbstraction, TimeMode, TimeUnits } from "@adviser/cement";
 import { AppHandler } from "../../types/app";
-import { HttpClientImpl, stream2string, string2stream } from "../../utils";
+import { FetchHttpClient, stream2string, string2stream } from "../../utils";
 
 import { AppImpl } from "./appimpl";
 import { FromCommandLine } from "../../app";
@@ -42,7 +42,7 @@ describe("App", () => {
     expect(app.CLIConfig()).toBe(cliCFG);
 
     await app.Start();
-    const hc = new HttpClientImpl();
+    const hc = new FetchHttpClient();
 
     const postBody = "hi";
     const url = globalToLocalBaseUrl(app.HTTPHandler().HttpServer().GetListenAddr(), "/test");

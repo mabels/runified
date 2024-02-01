@@ -8,6 +8,7 @@ import {
   HttpServer,
   HttpStatusCode,
   HttpURL,
+  toHttpMethods,
 } from "../../types";
 
 import { createServer, IncomingMessage, ServerResponse } from "http";
@@ -75,7 +76,7 @@ export class NodeHttpServer implements HttpServer {
     const req: HttpRequest = DefaultHttpRequest({
       Header: HttpHeader.from(nodeReq.headers),
       URL: url.unwrap(),
-      Method: nodeReq.method ?? "GET",
+      Method: toHttpMethods(nodeReq.method ?? "GET"),
       Body: new ReadableStream<Uint8Array>({
         start(controller) {
           nodeReq.on("error", (err: Error) => {

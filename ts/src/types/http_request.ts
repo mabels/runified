@@ -274,25 +274,51 @@ export class HttpURL {
   }
 }
 
+export type HttpMethods = "GET" | "POST" | "OPTIONS" | "PUT" | "DELETE" | "HEAD";
+
+export function toHttpMethods(m: string): HttpMethods {
+  switch (m) {
+    case "GET":
+    case "POST":
+    case "OPTIONS":
+    case "PUT":
+    case "DELETE":
+    case "HEAD":
+      return m;
+    default:
+      throw new Error(`Invalid method: ${m}`);
+  }
+}
 export interface HttpRequestParam {
   readonly Header?: HttpHeader;
   readonly URL: HttpURL | string;
   readonly Body?: ReadableStream<Uint8Array>;
-  readonly Method?: string;
+  readonly Method?: HttpMethods;
 }
 
-export interface HttpRequest {
+export interface HttpRequestBase {
   readonly Header: HttpHeader;
   readonly URL: HttpURL;
   readonly Body?: ReadableStream<Uint8Array>;
-  readonly Method: string;
+  readonly Method: HttpMethods;
 }
+
+export interface HttpWithBodyRequest extends HttpRequestBase {
+  readonly Method: "POST" | "OPTIONS" | "PUT" | "DELETE" | "HEAD";
+}
+
+export interface HttpGetRequest extends HttpRequestBase {
+  readonly Method: "GET";
+  readonly Redirect?: "follow" | "error" | "manual";
+}
+
+export type HttpRequest = HttpWithBodyRequest | HttpGetRequest;
 
 export function DefaultHttpRequest(hp: HttpRequestParam): HttpRequest {
   return {
     Header: hp.Header || new HttpHeader(),
     URL: HttpURL.parse(hp.URL).unwrap(),
-    Method: hp.Method || "GET",
+    Method: toHttpMethods(hp.Method || "GET"),
     Body: hp.Body,
   };
 }

@@ -10,6 +10,7 @@ import {
   HttpServer,
   HttpStatusCode,
   HttpURL,
+  toHttpMethods,
 } from "../../types";
 
 import { setupTestServer } from "../test-server";
@@ -93,7 +94,7 @@ export class AWSHttpServer implements HttpServer {
     const req: HttpRequest = DefaultHttpRequest({
       Header: HttpHeader.from(headers),
       URL: url.unwrap(),
-      Method: method,
+      Method: toHttpMethods(method),
       Body: new ReadableStream<Uint8Array>({
         start(controller) {
           controller.enqueue(textEncoder.encode(event.body));
