@@ -290,31 +290,25 @@ export function toHttpMethods(m: string): HttpMethods {
   }
 }
 
-export interface HttpRequestParamWithBody {
+export interface HttpRequestParamBase {
+  readonly Method?: HttpMethods;
   readonly URL: HttpURL | string;
   readonly Header?: HttpHeader;
-  readonly Method: "POST" | "OPTIONS" | "PUT" | "DELETE" | "HEAD";
   readonly Body?: ReadableStream<Uint8Array>;
 }
 
-export interface HttpGetRequestParam {
-  readonly URL: HttpURL | string;
-  readonly Header?: HttpHeader;
-  readonly Method?: "GET";
+export interface HttpGetRequestParam extends HttpRequestParamBase {
+  readonly Method: "GET";
   readonly Redirect?: "follow" | "error" | "manual";
 }
 
-export type HttpRequestParam = HttpRequestParamWithBody | HttpGetRequestParam;
+export type HttpRequestParam = HttpGetRequestParam | HttpRequestParamBase;
 
 export interface HttpRequestBase {
   readonly URL: HttpURL;
   readonly Header: HttpHeader;
   readonly Method: HttpMethods;
-}
-
-export interface HttpWithBodyRequest extends HttpRequestBase {
-  readonly Body: ReadableStream<Uint8Array>;
-  readonly Method: "POST" | "OPTIONS" | "PUT" | "DELETE" | "HEAD";
+  readonly Body?: ReadableStream<Uint8Array>;
 }
 
 export interface HttpGetRequest extends HttpRequestBase {
@@ -322,7 +316,7 @@ export interface HttpGetRequest extends HttpRequestBase {
   readonly Redirect?: "follow" | "error" | "manual";
 }
 
-export type HttpRequest = HttpWithBodyRequest | HttpGetRequest;
+export type HttpRequest = HttpGetRequest | HttpRequestBase;
 
 export function DefaultHttpRequest(hp: HttpRequestParam): HttpRequest {
   return {
