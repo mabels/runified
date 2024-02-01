@@ -1,7 +1,7 @@
 import path from "node:path";
 import { App } from "../../types/app";
 import { FromCommandLine } from "../../app";
-import { HttpClientImpl, stream2string, string2stream } from "../../utils";
+import { FetchHttpClient, stream2string, string2stream } from "../../utils";
 import { DefaultHttpRequest } from "../../types";
 import { SDKClient, postWithRequestContext } from "../../sdk";
 import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
@@ -33,7 +33,7 @@ it("TestRunifiedGetMethod()", async () => {
   await startApp(sys, async (baseUrl: string, app: App, log: Logger) => {
     // console.log("baseUrl", baseUrl)
     const uri = path.join(baseUrl, "/runified");
-    const hc = new HttpClientImpl();
+    const hc = new FetchHttpClient();
     const hq = DefaultHttpRequest({
       Method: "POST",
       URL: uri,

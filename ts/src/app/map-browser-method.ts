@@ -1,6 +1,6 @@
-import { HttpHeader, HttpRequest, HttpURL } from "../types";
+import { HttpHeader, HttpMethods, HttpRequest, HttpRequestBase, HttpURL, toHttpMethods } from "../types";
 
-class mapBrowserMethod implements HttpRequest {
+class mapBrowserMethod implements HttpRequestBase {
   readonly _req: HttpRequest;
 
   constructor(req: HttpRequest) {
@@ -16,12 +16,12 @@ class mapBrowserMethod implements HttpRequest {
   get Body(): ReadableStream<Uint8Array> | undefined {
     return this._req.Body;
   }
-  get Method(): string {
+  get Method(): HttpMethods {
     const override = this._req.Header.Get("X-HTTP-Method-Override");
     if (!override) {
       return this._req.Method;
     }
-    return override;
+    return toHttpMethods(override);
   }
 }
 export function MapBrowserMethod(req: HttpRequest): HttpRequest {

@@ -1,13 +1,13 @@
 import { HttpHeader } from "../types/http_header";
-import { HttpRequest, HttpURL } from "../types/http_request";
+import { HttpMethods, HttpRequest, HttpRequestBase, HttpURL } from "../types/http_request";
 
 type MockHttpRequestImplParams = Partial<HttpRequest>;
 
-class MockHttpRequestImpl implements HttpRequest {
+class MockHttpRequestImpl implements HttpRequestBase {
   readonly Header: HttpHeader;
   readonly URL: HttpURL;
   readonly Body: ReadableStream<Uint8Array>;
-  readonly Method: string;
+  readonly Method: HttpMethods;
 
   constructor(params: MockHttpRequestImplParams) {
     if (params.Header) {

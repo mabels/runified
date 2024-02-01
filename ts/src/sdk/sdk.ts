@@ -1,4 +1,4 @@
-import { HttpClientImpl } from "../utils";
+import { FetchHttpClient } from "../utils";
 
 import { HttpClient as HttpClientIf, HttpHeader } from "../types";
 import { Logger, LoggerImpl, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
@@ -31,7 +31,7 @@ export class SDKClient {
     }
     this.Logger = this.Logger.With().Timestamp().Module("sdk").Logger();
     if (!params.Client) {
-      this.Client = new HttpClientImpl();
+      this.Client = new FetchHttpClient();
     } else {
       this.Client = params.Client;
     }

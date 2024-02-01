@@ -8,6 +8,7 @@ import {
   HttpServer,
   HttpStatusCode,
   HttpURL,
+  toHttpMethods,
 } from "../types";
 
 class FetchResponseWriter implements HttpResponseWriter {
@@ -93,7 +94,7 @@ export class FetchHttpServer implements HttpServer {
     const req: HttpRequest = DefaultHttpRequest({
       Header: HttpHeader.from(fetchReq.headers),
       URL: url.unwrap(),
-      Method: fetchReq.method ?? "GET",
+      Method: toHttpMethods(fetchReq.method ?? "GET"),
       Body: fetchReq.body ?? undefined,
     });
     const res = new FetchResponseWriter();
