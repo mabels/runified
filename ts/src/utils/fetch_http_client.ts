@@ -1,4 +1,13 @@
-import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse, HttpURL } from "../types";
+import {
+  DefaultHttpRequest,
+  HttpClient,
+  HttpGetRequest,
+  HttpHeader,
+  HttpRequest,
+  HttpResponse,
+  HttpURL,
+  HttpWithBodyRequest,
+} from "../types";
 
 const defaultHeader = HttpHeader.from({
   "User-Agent": "runified/1.0.0",
@@ -17,12 +26,13 @@ export class FetchHttpClient implements HttpClient {
 
   async Do(req: HttpRequest): Promise<HttpResponse> {
     const duplex: { duplex?: string } = {};
-    if (req.Body) {
+    const breq = req as HttpWithBodyRequest;
+    if (breq.Body) {
       duplex.duplex = "half";
     }
     const fres = await fetch(req.URL.String(), {
       method: req.Method,
-      body: req.Body,
+      body: breq.Body,
       headers: req.Header.Merge(this._defaultHeader).AsHeaderInit(),
       signal: this._abortController.signal,
       redirect: req.Method === "GET" ? (req as HttpGetRequest).Redirect : undefined,
