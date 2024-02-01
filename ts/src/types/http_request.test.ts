@@ -1,6 +1,6 @@
 import { stream2string, string2stream } from "../utils";
 import { HttpHeader } from "./http_header";
-import { DefaultHttpRequest, HttpURL, HttpWithBodyRequest } from "./http_request";
+import { DefaultHttpRequest, HttpURL } from "./http_request";
 
 it("test from string", () => {
   const url = HttpURL.parse("http://localhost:8080/abc/def?m=1&n=2").unwrap();
@@ -91,7 +91,7 @@ it("body request", async () => {
     URL: "http://localhost:8080/abc/def?m=1&n=2",
     Header: HttpHeader.from({ x: "1" }),
     Body: string2stream("hello world"),
-  }) as HttpWithBodyRequest;
+  });
   expect({
     ...r,
     URL: r.URL.String(),
