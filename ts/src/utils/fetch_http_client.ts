@@ -1,13 +1,4 @@
-import {
-  DefaultHttpRequest,
-  HttpClient,
-  HttpGetRequest,
-  HttpHeader,
-  HttpRequest,
-  HttpResponse,
-  HttpURL,
-  HttpWithBodyRequest,
-} from "../types";
+import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse, HttpURL } from "../types";
 
 const defaultHeader = HttpHeader.from({
   "User-Agent": "runified/1.0.0",
@@ -26,7 +17,7 @@ export class FetchHttpClient implements HttpClient {
 
   async Do(req: HttpRequest): Promise<HttpResponse> {
     const duplex: { duplex?: string } = {};
-    const breq = req as HttpWithBodyRequest;
+    const breq = req;
     if (breq.Body) {
       duplex.duplex = "half";
     }
