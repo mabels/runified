@@ -1,9 +1,9 @@
-import { DefaultHttpRequest, HttpClient, HttpHeader, HttpRequest, HttpResponse, HttpURL } from "../types";
+import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse, HttpURL } from "../types";
 
 const defaultHeader = HttpHeader.from({
   "User-Agent": "runified/1.0.0",
 });
-export class HttpClientImpl implements HttpClient {
+export class FetchHttpClient implements HttpClient {
   readonly _defaultHeader: HttpHeader;
   readonly _abortController = new AbortController();
 
@@ -25,6 +25,7 @@ export class HttpClientImpl implements HttpClient {
       body: req.Body,
       headers: req.Header.Merge(this._defaultHeader).AsHeaderInit(),
       signal: this._abortController.signal,
+      redirect: req.Method === "GET" ? (req as HttpGetRequest).Redirect : undefined,
       ...duplex,
     });
     return Promise.resolve({

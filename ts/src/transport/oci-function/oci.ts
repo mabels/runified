@@ -11,6 +11,7 @@ import {
   HttpResponseWriter,
   HttpServer,
   HttpStatusCode,
+  toHttpMethods,
 } from "../../types";
 
 interface OciContext {
@@ -101,7 +102,7 @@ export class OciHttpServer implements HttpServer {
     const req: HttpRequest = DefaultHttpRequest({
       Header: HttpHeader.from(headers),
       URL: HttpURL.parse(rurl).unwrap(),
-      Method: method,
+      Method: toHttpMethods(method),
       Body: new ReadableStream<Uint8Array>({
         start(controller) {
           controller.enqueue(textEncoder.encode(event._body.body));

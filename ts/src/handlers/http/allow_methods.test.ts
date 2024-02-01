@@ -1,6 +1,6 @@
 import { FromCommandLine } from "../../app";
 import { MockApiHandler, MockHttpRequest, MockResponseWriter } from "../../testutils";
-import { HttpStatusCode } from "../../types";
+import { HttpMethods, HttpStatusCode } from "../../types";
 import { AllowMethods } from "./allow_methods";
 
 describe("TestAllowMethod", () => {
@@ -15,7 +15,7 @@ describe("TestAllowMethod", () => {
     const hdl = new MockApiHandler<never, never>(
       FromCommandLine([]),
       MockHttpRequest({
-        Method: "BRETT",
+        Method: "BRETT" as HttpMethods,
       }),
     );
     expect(await fn(hdl)).toBeFalsy();
@@ -28,7 +28,7 @@ describe("TestAllowMethod", () => {
       const hdl = new MockApiHandler<never, never>(
         FromCommandLine([]),
         MockHttpRequest({
-          Method: method,
+          Method: method as HttpMethods,
         }),
       );
       expect(await fn(hdl)).toBeTruthy();

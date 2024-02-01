@@ -9,6 +9,7 @@ import {
   HttpServer,
   HttpStatusCode,
   HttpURL,
+  toHttpMethods,
 } from "../../types";
 import { setupTestServer } from "../test-server";
 
@@ -94,7 +95,7 @@ export class AzureHttpServer implements HttpServer {
       const req = DefaultHttpRequest({
         Header: headers,
         URL: url.unwrap(),
-        Method: method,
+        Method: toHttpMethods(method),
         Body: request.body as ReadableStream<Uint8Array>,
       });
       const res = new AzureResponseWriter();
