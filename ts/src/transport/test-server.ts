@@ -5,7 +5,7 @@ async function handler(w: HttpResponseWriter, r: HttpRequest): Promise<void> {
   w.WriteHeader(203);
   w.Header().Set("X-Test", "close");
   const query: Record<string, string[]> = {};
-  for (const [key, value] of r.URL.Query().entries()) {
+  for (const [key, value] of r.URL.Query().Entries()) {
     const vs = [value];
     if (!query[key]) {
       query[key] = [];

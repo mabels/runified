@@ -1,35 +1,25 @@
-import * as http from "node:http";
 import { FetchHttpClient } from "./fetch_http_client";
-import enableDestroy from "server-destroy";
 import { stream2string } from "./stream2string";
 import { string2stream } from "./string2stream";
+import { NodeHttpServer } from "../transport/node_http_server";
+import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpURL } from "../types";
 
-function runServer(fn: (url: string) => Promise<void>) {
-  const host = "localhost";
-  const port = ~~(Math.random() * (65535 - 1024) + 1024);
-  const server = http.createServer((req, res) => {
-    res.writeHead(200);
-    req.on("data", (chunk) => {
-      res.write(chunk);
-    });
-    req.on("end", () => {
-      res.end();
-    });
+async function runServer(fn: (url: string) => Promise<void>) {
+  const handler = new HTTPHandler({
+    HttpServer: new NodeHttpServer({ Port: 0 }),
   });
-  enableDestroy(server);
-  try {
-    server.listen(port, host, () => {
-      // console.log(`Server is running on http://${host}:${port}`);
-    });
-    fn(`http://${host}:${port}`).finally(() => {
-      // console.log(`Server is closed`);
-      server.destroy();
-      server.close();
-    });
-  } catch (e) {
-    // console.warn(`try different port: ${port}`);
-    runServer(fn);
-  }
+  handler.RegisterHandler("/", async (w: HttpResponseWriter, r: HttpRequest) => {
+    w.WriteHeader(200);
+    await w.Write(await stream2string(r.Body));
+    await w.End();
+  });
+
+  await handler.Start();
+  const srvUrl = HttpURL.parse(`http://dummy`).Ok();
+  srvUrl.SetPort(handler.HttpServer().GetListenAddr()!.Port);
+  srvUrl.SetHostname(handler.HttpServer().GetListenAddr()!.Addr || "localhost");
+  await fn(srvUrl.String());
+  await handler.Stop();
 }
 
 it(`loop test`, async () => {

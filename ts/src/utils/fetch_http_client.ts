@@ -1,4 +1,5 @@
-import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse, HttpURL } from "../types";
+import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse } from "../types";
+import { HttpURL } from "../types/http_url";
 import { string2stream, uint8array2stream } from "./string2stream";
 
 const defaultHeader = HttpHeader.from({

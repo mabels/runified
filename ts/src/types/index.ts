@@ -3,6 +3,7 @@ export * from "./http_handler_func";
 export * from "./http_handler";
 export * from "./http_header";
 export * from "./http_request";
+export * from "./http_url";
 export * from "./http_response";
 export * from "./http_response_writer";
 export * from "./http_server";
