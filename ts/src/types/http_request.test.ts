@@ -1,4 +1,4 @@
-import { stream2string, string2stream } from "../utils";
+import { stream2string, string2stream } from "@adviser/cement/utils";
 import { HttpHeader } from "./http_header";
 import { DefaultHttpRequest } from "./http_request";
 

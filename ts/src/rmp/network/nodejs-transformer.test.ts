@@ -2,7 +2,7 @@ import { createServer, Server } from "node:http";
 import { nodejsTransform } from "./nodejs-transformer";
 import { HttpHeader } from "../../types";
 import { AddressInfo } from "node:net";
-import { stream2string } from "../../utils";
+import { stream2string } from "@adviser/cement/utils";
 
 const duplex: { duplex?: string } = {
   duplex: "half",

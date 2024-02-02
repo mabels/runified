@@ -1,6 +1,6 @@
 import { MockLogger, MockLoggerReturn, NodeSysAbstraction, TimeMode, TimeUnits } from "@adviser/cement";
 import { AppHandler } from "../../types/app";
-import { FetchHttpClient, stream2string, string2stream } from "../../utils";
+import { FetchHttpClient } from "../../utils";
 
 import { AppImpl } from "./appimpl";
 import { FromCommandLine } from "../../app";
@@ -8,6 +8,7 @@ import { describe, expect, it } from "@jest/globals";
 import { DefaultHttpRequest, HttpHeader } from "../../types";
 import { globalToLocalBaseUrl } from "../global-to-local-base-url";
 import { BindAppToHandler } from "../../app/app";
+import { stream2string, string2stream } from "@adviser/cement/utils";
 
 describe("App", () => {
   const cliCFG = FromCommandLine(["", "--listen-port", "0"]);

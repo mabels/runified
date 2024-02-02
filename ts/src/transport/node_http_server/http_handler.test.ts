@@ -3,8 +3,9 @@
 import { HTTPHandler, HttpRequest, HttpResponseWriter } from "../../types";
 import { NodeHttpServer } from ".";
 import { describe, expect, it } from "@jest/globals";
-import { FetchHttpClient, stream2string, string2stream } from "../../utils";
+import { FetchHttpClient } from "../../utils";
 import { HttpURL } from "../../types/http_url";
+import { stream2string, string2stream } from "@adviser/cement/utils";
 describe("HTTPHandler", () => {
   it("StartStop", async () => {
     const hp = new HTTPHandler({

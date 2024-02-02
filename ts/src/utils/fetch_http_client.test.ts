@@ -1,6 +1,5 @@
 import { FetchHttpClient } from "./fetch_http_client";
-import { stream2string } from "./stream2string";
-import { string2stream } from "./string2stream";
+import { stream2string, string2stream } from "@adviser/cement/utils";
 import { NodeHttpServer } from "../transport/node_http_server";
 import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpURL } from "../types";
 

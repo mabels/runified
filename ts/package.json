@@ -69,7 +69,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@adviser/cement": "^0.0.2",
+    "@adviser/cement": "^0.0.3",
     "@adviser/result": "^0.0.1",
     "ion-js": "^5.2.0",
     "ipaddress": "^0.2.5",

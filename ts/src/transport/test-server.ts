@@ -1,5 +1,5 @@
 import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpServer } from "../types";
-import { stream2string } from "../utils";
+import { stream2string } from "@adviser/cement/utils";
 
 async function handler(w: HttpResponseWriter, r: HttpRequest): Promise<void> {
   w.WriteHeader(203);
