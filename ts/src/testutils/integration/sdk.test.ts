@@ -1,7 +1,7 @@
 import path from "node:path";
 import { App } from "../../types/app";
 import { FromCommandLine } from "../../app";
-import { FetchHttpClient, stream2string, string2stream } from "../../utils";
+import { FetchHttpClient } from "../../utils";
 import { DefaultHttpRequest } from "../../types";
 import { SDKClient, postWithRequestContext } from "../../sdk";
 import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
@@ -11,6 +11,7 @@ import { ErrorFactory } from "../../generated/error";
 import { globalToLocalBaseUrl } from "../global-to-local-base-url";
 import { HttpHeader } from "../../types/http_header";
 import { AppImpl } from "./appimpl";
+import { stream2string, string2stream } from "@adviser/cement/utils";
 
 async function startApp(sys: SysAbstraction, fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>) {
   const { logger: log } = MockLogger();

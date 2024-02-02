@@ -1,6 +1,6 @@
 import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse } from "../types";
 import { HttpURL } from "../types/http_url";
-import { string2stream, uint8array2stream } from "./string2stream";
+import { string2stream, uint8array2stream } from "@adviser/cement/utils";
 
 const defaultHeader = HttpHeader.from({
   "User-Agent": "runified/1.0.0",

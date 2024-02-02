@@ -4,7 +4,7 @@ import { postWithRequestContext } from "./request_context";
 import { RunifiedReqFactory } from "../generated/runifiedreq";
 import { RunifiedResFactory } from "../generated/runifiedres";
 import { ErrSdkHttpRequestFailed, HttpHeader, JsonSerDe } from "../types";
-import { string2stream, uint8array2stream } from "../utils";
+import { string2stream, uint8array2stream } from "@adviser/cement/utils";
 import { v4 } from "uuid";
 import { MockLogger, NodeSysAbstraction, TimeMode, TimeUnits } from "@adviser/cement";
 

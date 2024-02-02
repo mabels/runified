@@ -4,7 +4,7 @@ import { MockApp } from "../app";
 import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";
 import { RunifiedResFactory, RunifiedResFactoryImpl } from "../../generated/runifiedres";
 import { MockLogger, NodeSysAbstraction, TimeMode } from "@adviser/cement";
-import { string2stream } from "../../utils";
+import { string2stream } from "@adviser/cement/utils";
 import { DefaultHttpRequest, HttpStatusCode } from "../../types";
 import { ErrorFactory } from "../../generated/error";
 import { MockResponseWriter } from "../response_writer";
