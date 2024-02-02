@@ -1,7 +1,7 @@
 import { NodeHttpServer } from "../node_http_server/index";
 import { HTTPHandler } from "../../types";
 
-import { stream2string } from "../../utils";
+import { stream2string } from "@adviser/cement/utils";
 
 const nodeHttpServer = new NodeHttpServer({ Port: 0 });
 const hp = new HTTPHandler({

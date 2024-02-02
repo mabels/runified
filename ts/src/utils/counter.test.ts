@@ -1,7 +1,7 @@
 import { MockResponseWriter } from "../testutils";
 import { HttpHeader } from "../types";
 import { CalculateHeaderByteLength, CountingReadableStream, CountingResponseWriter, FilterHeaders } from "./counter";
-import { stream2string } from "./stream2string";
+import { stream2string } from "@adviser/cement/utils";
 
 describe("test filter", () => {
   it("CountingRequestReader", async () => {

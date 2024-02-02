@@ -1,3 +1,4 @@
+import { stream2uint8array, uint8array2stream } from "@adviser/cement/utils";
 import {
   DefaultHttpRequest,
   ErrSdkHttpRequestFailed,
@@ -9,7 +10,8 @@ import {
   SerDe,
   Stats,
 } from "../types";
-import { CalculateHeaderByteLength, stream2uint8array, uint8array2stream } from "../utils";
+import { CalculateHeaderByteLength } from "../utils";
+
 import { SDKClient } from "./sdk";
 import { v4 } from "uuid";
 import { WuestenFactory } from "wueste/wueste";
