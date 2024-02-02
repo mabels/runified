@@ -1,18 +1,14 @@
 import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse, HttpURL } from "../types";
+import { string2stream, uint8array2stream } from "./string2stream";
 
 const defaultHeader = HttpHeader.from({
   "User-Agent": "runified/1.0.0",
 });
 export class FetchHttpClient implements HttpClient {
   readonly _defaultHeader: HttpHeader;
-  readonly _abortController = new AbortController();
 
   constructor(headers?: HttpHeader) {
     this._defaultHeader = defaultHeader.Merge(headers);
-  }
-
-  Abort() {
-    this._abortController.abort();
   }
 
   async Do(req: HttpRequest): Promise<HttpResponse> {
@@ -25,7 +21,7 @@ export class FetchHttpClient implements HttpClient {
       method: req.Method,
       body: breq.Body,
       headers: req.Header.Merge(this._defaultHeader).AsHeaderInit(),
-      signal: this._abortController.signal,
+      signal: req.Signal,
       redirect: req.Method === "GET" ? (req as HttpGetRequest).Redirect : undefined,
       ...duplex,
     });
@@ -43,7 +39,18 @@ export class FetchHttpClient implements HttpClient {
       }),
     );
   }
-  Post(url: string, contentType: string, body: ReadableStream<Uint8Array>): Promise<HttpResponse> {
+  Post(url: string, contentType: string, ibody: ReadableStream<Uint8Array> | Uint8Array | string): Promise<HttpResponse> {
+    let body: ReadableStream<Uint8Array>;
+    if (typeof ibody === "string") {
+      body = string2stream(ibody);
+    } else {
+      const rbody = ibody as ReadableStream<Uint8Array>;
+      if (typeof rbody.getReader === "function") {
+        body = rbody;
+      } else {
+        body = uint8array2stream(ibody as Uint8Array);
+      }
+    }
     return this.Do({
       Method: "POST",
       URL: HttpURL.parse(url).unwrap(),

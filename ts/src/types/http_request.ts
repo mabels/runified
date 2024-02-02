@@ -309,6 +309,7 @@ export interface HttpRequestBase {
   readonly Header: HttpHeader;
   readonly Method: HttpMethods;
   readonly Body?: ReadableStream<Uint8Array>;
+  readonly Signal?: AbortSignal;
 }
 
 export interface HttpGetRequest extends HttpRequestBase {
