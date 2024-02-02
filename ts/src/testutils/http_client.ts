@@ -1,7 +1,8 @@
-import { HttpRequest, HttpURL } from "../types/http_request";
+import { HttpRequest } from "../types/http_request";
 import { HttpClient } from "../types/http_client";
 import { HttpResponse } from "../types/http_response";
 import { HttpHeader } from "../types/http_header";
+import { HttpURL } from "../types/http_url";
 
 class httpClient implements HttpClient {
   readonly res: HttpResponse;

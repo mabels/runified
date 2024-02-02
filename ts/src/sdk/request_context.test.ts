@@ -6,7 +6,7 @@ import { RunifiedResFactory } from "../generated/runifiedres";
 import { ErrSdkHttpRequestFailed, HttpHeader, JsonSerDe } from "../types";
 import { string2stream, uint8array2stream } from "../utils";
 import { v4 } from "uuid";
-import { NodeSysAbstraction, TimeMode, TimeUnits } from "@adviser/cement";
+import { MockLogger, NodeSysAbstraction, TimeMode, TimeUnits } from "@adviser/cement";
 
 const reqData = RunifiedReqFactory.Builder()
   .Coerce({
@@ -26,9 +26,11 @@ const reqData = RunifiedReqFactory.Builder()
   .unwrap();
 
 describe("TestRequestContext", () => {
+  const logger = MockLogger();
   it("TestRequestContextErrorStatusCode", async () => {
     const sdk = new SDKClient({
       BaseUrl: "http://localhost:8080",
+      Logger: logger.logger,
       Client: NewMockHttpClient({
         StatusCode: 4711,
       }),
@@ -46,6 +48,7 @@ describe("TestRequestContext", () => {
   it("TestRequestContextMarshalError", async () => {
     const sdk = new SDKClient({
       BaseUrl: "http://localhost:8080",
+      Logger: logger.logger,
       Client: NewMockHttpClient({
         StatusCode: 200,
         Body: string2stream("{-}"),

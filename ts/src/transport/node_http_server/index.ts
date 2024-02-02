@@ -7,11 +7,13 @@ import {
   HttpResponseWriter,
   HttpServer,
   HttpStatusCode,
-  HttpURL,
   toHttpMethods,
 } from "../../types";
 
 import { createServer, IncomingMessage, ServerResponse } from "http";
+
+import enableDestroy from "server-destroy";
+import { HttpURL } from "../../types/http_url";
 
 class NodeResponseWriter implements HttpResponseWriter {
   readonly _header: HttpHeader = new HttpHeader();
@@ -112,32 +114,52 @@ export class NodeHttpServer implements HttpServer {
   }
   ListenAndServe(): Promise<void> {
     this._srv = createServer(this.nodeHandler);
-    return new Promise((resolve, reject) => {
-      this._srv?.listen;
-      const ret = this._srv?.listen(this._listenAddr.Port, this._listenAddr.Addr, () => {
-        const addr = this._srv?.address();
-        if (typeof addr === "string") {
-          this._address = {
-            Addr: addr,
-            Port: this._listenAddr.Port,
-          };
-        }
-        if (addr && typeof addr === "object") {
-          this._address = {
-            Addr: addr.address,
-            Port: addr.port,
-          };
-        }
-        resolve();
-      });
-      if (ret instanceof Error) {
-        reject(ret);
+    enableDestroy(this._srv);
+    return new Promise(this._findPort());
+  }
+
+  _getPort() {
+    if (this._listenAddr.Port <= 0) {
+      return ~~(Math.random() * (65535 - 1024)) + 1024;
+    }
+    return this._listenAddr.Port;
+  }
+  _listen(resolve: () => void) {
+    this._srv?.listen(this._getPort(), this._listenAddr.Addr, () => {
+      const addr = this._srv?.address();
+      if (typeof addr === "string") {
+        this._address = {
+          Addr: addr,
+          Port: this._listenAddr.Port,
+        };
       }
+      if (addr && typeof addr === "object") {
+        this._address = {
+          Addr: addr.address,
+          Port: addr.port,
+        };
+      }
+      resolve();
     });
+  }
+
+  _findPort() {
+    return (resolve: () => void, reject: (e: unknown) => void) => {
+      this._srv?.on("error", (err: Error) => {
+        if (this._listenAddr.Port <= 0 && (err as Error).message.includes("EADDRINUSE")) {
+          console.warn("retry find listen");
+          this._listen(resolve);
+        } else {
+          reject(err);
+        }
+        reject(err);
+      });
+      this._listen(resolve);
+    };
   }
   Shutdown(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this._srv?.close((err?: Error) => {
+      this._srv?.destroy((err?: Error) => {
         if (err) {
           return reject(err);
         }
