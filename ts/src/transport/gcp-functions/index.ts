@@ -11,7 +11,7 @@ hp.RegisterHandler("/", async (w, r) => {
   w.WriteHeader(200);
   w.Header().Set("X-Test", "close");
   const query: Record<string, string[]> = {};
-  for (const [key, value] of r.URL.Query().entries()) {
+  for (const [key, value] of r.URL.Query().Entries()) {
     const vs = [value];
     if (!query[key]) {
       query[key] = [];

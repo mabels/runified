@@ -1,5 +1,6 @@
 import { HttpHeader } from "../types/http_header";
-import { HttpMethods, HttpRequest, HttpRequestBase, HttpURL } from "../types/http_request";
+import { HttpMethods, HttpRequest, HttpRequestBase } from "../types/http_request";
+import { HttpURL } from "../types/http_url";
 
 type MockHttpRequestImplParams = Partial<HttpRequest>;
 
