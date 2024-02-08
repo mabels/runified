@@ -3,7 +3,7 @@ import net from "node:net";
 import crypto from "node:crypto";
 import { base64EncArr, readerLoop } from "./utils";
 import { HttpHeader, HttpURL } from "../types";
-import { Result as WuesteResult } from "@adviser/result";
+import { Result as WuesteResult } from "@adviser/cement";
 
 export interface CrypterParam {
   readonly key: Uint8Array;

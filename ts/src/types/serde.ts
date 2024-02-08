@@ -1,4 +1,4 @@
-import { Result } from "@adviser/result";
+import { Result } from "@adviser/cement";
 import { WuestenFactory } from "wueste/wueste";
 
 export interface SerDe<T> {

@@ -2,7 +2,7 @@ import { HttpHandlerFunc } from "./http_handler_func";
 import { HttpRequest } from "./http_request";
 import { HttpResponseWriter } from "./http_response_writer";
 import { HttpServer } from "./http_server";
-import { Result } from "@adviser/result";
+import { Result } from "@adviser/cement";
 
 export interface HTTPHandlerParam {
   readonly HttpServer: HttpServer;

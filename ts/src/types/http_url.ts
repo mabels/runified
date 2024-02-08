@@ -1,4 +1,4 @@
-import { Result } from "@adviser/result";
+import { Result } from "@adviser/cement";
 import IPAddress from "ipaddress";
 
 export class HttpURLSearchParams {
