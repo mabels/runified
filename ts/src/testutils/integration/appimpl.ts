@@ -19,7 +19,7 @@ export class AppImpl implements App {
       ...args,
       Log: args.Log.With().Timestamp().Module("appimpl").Logger(),
     };
-    this._sys = args.Sys ?? new NodeSysAbstraction();
+    this._sys = args.Sys ?? NodeSysAbstraction();
     this._httpHandler = new HTTPHandler({
       HttpServer: args.HttpServer ?? new NodeHttpServer(this._appParam.CLIconfig.Listen),
     });

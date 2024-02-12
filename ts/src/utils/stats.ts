@@ -178,7 +178,7 @@ export class Stats {
       this._sys = sp.sys;
     }
     if (!this._sys) {
-      this._sys = new NodeSysAbstraction();
+      this._sys = NodeSysAbstraction();
     }
   }
 

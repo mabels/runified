@@ -20,7 +20,7 @@ export class SDKClient {
   constructor(params: SdkClientParams) {
     this.BaseUrl = params.BaseUrl;
     if (!params.Sys) {
-      this.Sys = new NodeSysAbstraction();
+      this.Sys = NodeSysAbstraction();
     } else {
       this.Sys = params.Sys;
     }
