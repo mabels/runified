@@ -15,7 +15,7 @@ export class MockApp implements App {
 
   constructor(params: MockAppParams) {
     this._cliConfig = params.CliConfig;
-    this._sys = new NodeSysAbstraction({ TimeMode: params.CliConfig.TimeMode });
+    this._sys = NodeSysAbstraction({ TimeMode: params.CliConfig.TimeMode });
     this._log = params.Log || MockLogger().logger;
   }
 

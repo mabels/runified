@@ -7,7 +7,7 @@ import { NodeSysAbstraction, TimeMode } from "@adviser/cement";
 describe("Envelope", () => {
   const txtEncoder = new TextEncoder();
   const fp = new FrameProcessor({
-    sys: new NodeSysAbstraction({
+    sys: NodeSysAbstraction({
       TimeMode: TimeMode.CONST,
     }),
   });

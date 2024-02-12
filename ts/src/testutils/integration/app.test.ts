@@ -17,7 +17,7 @@ describe("App", () => {
     const app = new AppImpl({
       Log: log,
       CLIconfig: cliCFG,
-      Sys: new NodeSysAbstraction({
+      Sys: NodeSysAbstraction({
         TimeMode: TimeMode.STEP,
       }),
     });

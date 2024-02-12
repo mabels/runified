@@ -27,7 +27,7 @@ async function startApp(sys: SysAbstraction, fn: (baseUrl: string, app: App, log
 }
 
 it("TestRunifiedGetMethod()", async () => {
-  const sys = new NodeSysAbstraction({
+  const sys = NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,7 +52,7 @@ it("TestRunifiedGetMethod()", async () => {
 
 it("TestRunified", async () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const sys = new NodeSysAbstraction({
+  const sys = NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
 
@@ -86,7 +86,7 @@ it("TestRunified", async () => {
       RunifiedResFactory,
       reqVal,
     );
-    const mySys = new NodeSysAbstraction({ TimeMode: TimeMode.STEP });
+    const mySys = NodeSysAbstraction({ TimeMode: TimeMode.STEP });
     for (let i = 0; i < 3; i++) {
       mySys.Time().Now();
     }

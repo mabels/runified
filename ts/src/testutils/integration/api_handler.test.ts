@@ -26,7 +26,7 @@ const reqObj = {
 
 describe("api_handler", () => {
   it("ApiErrorMsg", async () => {
-    const sys = new NodeSysAbstraction({
+    const sys = NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
     });
     const { logCollector: lc, logger } = MockLogger({
@@ -60,7 +60,7 @@ describe("api_handler", () => {
       error: "test error",
       level: "error",
       msg: "API error",
-      ts: new NodeSysAbstraction({ TimeMode: TimeMode.STEP }).Time().Now().toISOString(),
+      ts: NodeSysAbstraction({ TimeMode: TimeMode.STEP }).Time().Now().toISOString(),
     });
     expect(mw.StatusCode).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
     const body = mw.Body;

@@ -64,7 +64,7 @@ describe("TestRequestContext", () => {
   });
 
   it("TestRequestContextOK", async () => {
-    const sys = new NodeSysAbstraction({
+    const sys = NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
     });
     const reqVal = RunifiedReqFactory.Builder()

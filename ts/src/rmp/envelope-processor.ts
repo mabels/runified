@@ -137,7 +137,7 @@ export class EnvelopeProcessor {
   _sys: SysAbstraction;
 
   constructor(sys?: SysAbstraction) {
-    this._sys = sys ?? new NodeSysAbstraction();
+    this._sys = sys ?? NodeSysAbstraction();
   }
 
   create(env: ParamEnvelope): EnvelopeEncoder {

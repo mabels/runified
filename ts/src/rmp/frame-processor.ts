@@ -154,7 +154,7 @@ export class FrameProcessor {
       maxSendQueueBytes: 1024 * 1024,
       ...fp,
     };
-    this.sys = fp?.sys ?? new NodeSysAbstraction();
+    this.sys = fp?.sys ?? NodeSysAbstraction();
     if (this.config.outputStream) {
       this.writer = this.config.outputStream.getWriter();
     }
