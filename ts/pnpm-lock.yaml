@@ -36,7 +36,7 @@ devDependencies:
     version: 7.23.3(@babel/core@7.23.9)
   '@cloudflare/workers-types':
     specifier: ^4.20240129.0
-    version: 4.20240129.0
+    version: 4.20240320.1
   '@fnproject/fdk':
     specifier: ^0.0.61
     version: 0.0.61
@@ -566,8 +566,8 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
 
-  /@cloudflare/workers-types@4.20240129.0:
-    resolution: {integrity: sha512-VyHbih/bqh/RN2FRxnXznG0bpBIg9RfSP1ldbAVnCXFinjOdv0zm2P/RWqOVN9+FgU5sanRltwwT7jGngxZy8w==}
+  /@cloudflare/workers-types@4.20240320.1:
+    resolution: {integrity: sha512-CiYtVpQURPgQqtBKkmOAnfPElVZuD7Xyf1IxKtKp2B4aB9gnooapwJhzeY8c4Ls4u17SgMS0MprOkrgYwzZ6xg==}
     dev: true
 
   /@cmdcode/buff@2.2.5:
