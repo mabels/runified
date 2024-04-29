@@ -38,8 +38,8 @@ devDependencies:
     specifier: ^4.20240129.0
     version: 4.20240129.0
   '@fnproject/fdk':
-    specifier: ^0.0.61
-    version: 0.0.61
+    specifier: ^0.0.65
+    version: 0.0.65
   '@google-cloud/functions-framework':
     specifier: ^3.3.0
     version: 3.3.0
@@ -833,8 +833,8 @@ packages:
     engines: {node: '>=14'}
     dev: true
 
-  /@fnproject/fdk@0.0.61:
-    resolution: {integrity: sha512-ktNxwKfogkqePJUK5Wr1ZsIL317Q+kAu8D9g+fl04R1vcn0OCZtvTDzv+0ohwjhI1ig1a3sj7Y9sLDlhnPfwCQ==}
+  /@fnproject/fdk@0.0.65:
+    resolution: {integrity: sha512-hKKgUYGDARn+Xpk3yzvVnbKu8KErVAqthJhhh9hfj6Xy1nyeNpaRdvmihbBa6Unl+cf0wT0r7JMSbaKwqx6YnA==}
     dev: true
 
   /@google-cloud/functions-framework@3.3.0:
