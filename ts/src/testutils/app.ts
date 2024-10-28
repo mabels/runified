@@ -1,6 +1,7 @@
 import { App, CLIConfig } from "../types/app";
 import { HTTPHandler } from "../types";
-import { Logger, MockLogger, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
+import { Logger, MockLogger, SysAbstraction } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 
 interface MockAppParams {
   readonly CliConfig: CLIConfig;

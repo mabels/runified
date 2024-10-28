@@ -3,7 +3,8 @@ import { MockApi } from "../api";
 import { MockApp } from "../app";
 import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";
 import { RunifiedResFactory, RunifiedResFactoryImpl } from "../../generated/runifiedres";
-import { MockLogger, NodeSysAbstraction, TimeMode } from "@adviser/cement";
+import { MockLogger, TimeMode } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 import { string2stream } from "@adviser/cement/utils";
 import { DefaultHttpRequest, HttpStatusCode } from "../../types";
 import { ErrorFactory } from "../../generated/error";
@@ -52,6 +53,7 @@ describe("api_handler", () => {
       }),
     });
     await hdl.ErrorMsg(new Error("test error"));
+    await logger.Flush();
     const logs = lc.Logs();
     expect(logs.length).toBe(1);
     expect(logs[0]).toEqual({

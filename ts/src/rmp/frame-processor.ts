@@ -1,6 +1,7 @@
 import { b64ToUint6, quickId, uint6ToB64 } from "./utils";
 import { SimpleBuffer } from "./simple-buffer";
-import { NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
+import { SysAbstraction } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 
 // export enum Format {
 //   Binary,

@@ -1,7 +1,8 @@
 import { FetchHttpClient } from "../utils";
 
 import { HttpClient as HttpClientIf, HttpHeader } from "../types";
-import { Logger, LoggerImpl, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
+import { Logger, LoggerImpl, SysAbstraction } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 
 export interface SdkClientParams {
   readonly BaseUrl: string;

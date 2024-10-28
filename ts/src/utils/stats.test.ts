@@ -1,4 +1,5 @@
-import { NodeSysAbstraction, TimeMode } from "@adviser/cement";
+import { TimeMode } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 import { DurationUnit, ValueType, ValueWithUnit } from "../types/stats";
 import { DateRange, DateRangeAvg, Stats, renderUnitForMs } from "./stats";
 

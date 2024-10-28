@@ -4,7 +4,8 @@ import { IonTypes, Writer } from "ion-js";
 // import { BinaryReader } from "ion-js/dist/commonjs/es6/IonBinaryReader";
 // import { BinarySpan } from "ion-js/dist/commonjs/es6/IonSpan";
 import { ensureWriter } from "./ion-utils";
-import { NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
+import { SysAbstraction } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 
 export interface Payload {
   readonly Type: string;

@@ -35,7 +35,7 @@ export function BindAppToHandler(app: App, appHandlerfn: AppHandlerFn): HttpHand
 
     const headers = FilterHeaders(q.Header);
     const requestLength = CalculateHeaderByteLength(q.Header) + (crr ? crr.ReadBytes : 0);
-    return log
+    log
       .Info()
       .Any("headers", headers)
       .Dur("duration", app.Sys().Time().TimeSince(start))

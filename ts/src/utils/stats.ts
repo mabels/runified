@@ -1,4 +1,5 @@
-import { NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
+import { SysAbstraction } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 import {
   ActionItem,
   DateTuple,

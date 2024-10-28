@@ -2,7 +2,8 @@ import { EnvelopeHandler, MatchState } from "./envelope-handler";
 import { FrameProcessor } from "./frame-processor";
 import { RMProtocolCtx } from "./rmp-protocol";
 import { EnvelopeEncoder } from "./envelope-processor";
-import { NodeSysAbstraction, TimeMode } from "@adviser/cement";
+import { TimeMode } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 
 describe("Envelope", () => {
   const txtEncoder = new TextEncoder();

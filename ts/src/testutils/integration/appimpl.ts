@@ -6,7 +6,8 @@ import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runi
 import { RunifiedResFactoryImpl } from "../../generated/runifiedres";
 import { RunifiedHandler } from "./runified_handler";
 import { ApiHandlers } from "../../app/app";
-import { Logger, NodeSysAbstraction, SysAbstraction } from "@adviser/cement";
+import { Logger, SysAbstraction } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 
 export class AppImpl implements App {
   readonly _appParam: AppParam;

@@ -1,4 +1,5 @@
-import { MockLogger, MockLoggerReturn, NodeSysAbstraction, TimeMode, TimeUnits } from "@adviser/cement";
+import { MockLogger, MockLoggerReturn, TimeMode, TimeUnits } from "@adviser/cement";
+import { NodeSysAbstraction } from "@adviser/cement/node";
 import { AppHandler } from "../../types/app";
 import { FetchHttpClient } from "../../utils";
 
