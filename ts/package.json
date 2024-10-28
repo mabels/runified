@@ -40,13 +40,16 @@
     "presmoke": "pnpm run pubdir ; cd pubdir ; pnpm pack",
     "smoke": "cd smoke; rm -f package.json; pnpm init ; pnpm install -f ../pubdir/adviser-runified-*.tgz; pnpm add @adviser/cement; pnpm dlx ts-node ./smoke.ts"
   },
+  "peerDependencies": {
+    "cookie": "0.7.1"
+  },
   "devDependencies": {
     "@aws-sdk/protocol-http": "^3.374.0",
-    "@azure/functions": "^4.2.0",
+    "@azure/functions": "^4.5.1",
     "@babel/preset-typescript": "^7.23.3",
     "@cloudflare/workers-types": "^4.20240208.0",
     "@fnproject/fdk": "^0.0.72",
-    "@google-cloud/functions-framework": "^3.3.0",
+    "@google-cloud/functions-framework": "^3.4.2",
     "@jest/globals": "^29.7.0",
     "@types/aws-lambda": "^8.10.133",
     "@types/jest": "^29.5.12",
