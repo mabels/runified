@@ -35,7 +35,7 @@ importers:
         version: 3.374.0
       '@azure/functions':
         specifier: ^4.5.1
-        version: 4.5.1
+        version: 4.6.0
       '@babel/preset-typescript':
         specifier: ^7.23.3
         version: 7.26.0(@babel/core@7.23.9)
@@ -132,8 +132,8 @@ packages:
     engines: {node: '>=14.0.0'}
     deprecated: This package has moved to @smithy/protocol-http
 
-  '@azure/functions@4.5.1':
-    resolution: {integrity: sha512-ikiw1IrM2W9NlQM3XazcX+4Sq3XAjZi4eeG22B5InKC2x5i7MatGF2S/Gn1ACZ+fEInwu+Ru9J8DlnBv1/hIvg==}
+  '@azure/functions@4.6.0':
+    resolution: {integrity: sha512-vGq9jXlgrJ3KaI8bepgfpk26zVY8vFZsQukF85qjjKTAR90eFOOBNaa+mc/0ViDY2lcdrU2fL/o1pQyZUtTDsw==}
     engines: {node: '>=18.0'}
 
   '@babel/code-frame@7.23.5':
@@ -1217,10 +1217,6 @@ packages:
 
   cookie-signature@1.0.6:
     resolution: {integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==}
-
-  cookie@0.6.0:
-    resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
-    engines: {node: '>= 0.6'}
 
   cookie@0.7.1:
     resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
@@ -2808,9 +2804,9 @@ snapshots:
       '@smithy/protocol-http': 1.2.0
       tslib: 2.6.2
 
-  '@azure/functions@4.5.1':
+  '@azure/functions@4.6.0':
     dependencies:
-      cookie: 0.6.0
+      cookie: 0.7.1
       long: 4.0.0
       undici: 5.28.4
 
@@ -4085,8 +4081,6 @@ snapshots:
   convert-source-map@2.0.0: {}
 
   cookie-signature@1.0.6: {}
-
-  cookie@0.6.0: {}
 
   cookie@0.7.1: {}
 
