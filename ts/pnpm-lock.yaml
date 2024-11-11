@@ -41,7 +41,7 @@ importers:
         version: 7.26.0(@babel/core@7.23.9)
       '@cloudflare/workers-types':
         specifier: ^4.20240208.0
-        version: 4.20241022.0
+        version: 4.20241106.0
       '@fnproject/fdk':
         specifier: ^0.0.72
         version: 0.0.72
@@ -388,8 +388,8 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@cloudflare/workers-types@4.20241022.0':
-    resolution: {integrity: sha512-1zOAw5QIDKItzGatzCrEpfLOB1AuMTwVqKmbw9B9eBfCUGRFNfJYMrJxIwcse9EmKahsQt2GruqU00pY/GyXgg==}
+  '@cloudflare/workers-types@4.20241106.0':
+    resolution: {integrity: sha512-pI4ivacmp+vgNO/siHDsZ6BdITR0LC4Mh/1+yzVLcl9U75pt5DUDCOWOiqIRFXRq6H65DPnJbEPFo3x9UfgofQ==}
 
   '@cmdcode/buff@2.2.5':
     resolution: {integrity: sha512-+nc3QDoJ+MU/fp+YkX6WuEjJrXLF6ME+eVX1sj5a+MfBKO9LWb4R9Y2zH6APBrySd7nFr48ozscAui7SKvLmXg==}
@@ -3168,7 +3168,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@cloudflare/workers-types@4.20241022.0': {}
+  '@cloudflare/workers-types@4.20241106.0': {}
 
   '@cmdcode/buff@2.2.5':
     dependencies:
