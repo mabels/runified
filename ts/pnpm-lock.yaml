@@ -77,7 +77,7 @@ importers:
         version: 6.21.0(eslint@8.56.0)(typescript@5.6.3)
       azure-functions-core-tools:
         specifier: ^4.0.5455
-        version: 4.0.6543
+        version: 4.0.6610
       esbuild:
         specifier: ^0.24.0
         version: 0.24.0
@@ -1020,8 +1020,8 @@ packages:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
 
-  azure-functions-core-tools@4.0.6543:
-    resolution: {integrity: sha512-YWbtgGWghgtFc4jZ6+Mrqnt88hsLIlbTBJz0SpkeZ4xTUqTFrlxj8n+tw//0vzIMYcC89T3zk+s3DFGawSV2gA==}
+  azure-functions-core-tools@4.0.6610:
+    resolution: {integrity: sha512-TpSu2YTlpdnuptFkVA+fD6/lfwJRDZTBmUK3T4ESZQXoj06A1R7cRpnhW+hF4z42ShRaSE61xney0Ja5+QVLcg==}
     engines: {node: '>=6.9.1'}
     os: [win32, darwin, linux]
     hasBin: true
@@ -3867,7 +3867,7 @@ snapshots:
 
   available-typed-arrays@1.0.5: {}
 
-  azure-functions-core-tools@4.0.6543:
+  azure-functions-core-tools@4.0.6610:
     dependencies:
       chalk: 3.0.0
       extract-zip: 2.0.1
