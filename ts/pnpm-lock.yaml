@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@adviser/cement':
         specifier: ^0.2.35
-        version: 0.2.41(typescript@5.7.2)
+        version: 0.2.44(typescript@5.7.2)
       cookie:
         specifier: 0.7.1
         version: 0.7.1
@@ -119,8 +119,8 @@ packages:
     resolution: {integrity: sha512-2tDiildR5goSj/UyfNCUZ45bz4ou2gigkuY49n3vaXbkx5kVRv/kNsxAU4XoWUD/Mhw8EQGrCkopwv5AbNUatw==}
     engines: {node: '>=16'}
 
-  '@adviser/cement@0.2.41':
-    resolution: {integrity: sha512-Vam1JYxC1lOSkJZJa7CQJWL7jbjkPw5MzhYxMGWjLIK5l3tKDk5Q4SeLVEvPp2xhRGiBBzE9rZrQdt+0GtefFA==}
+  '@adviser/cement@0.2.44':
+    resolution: {integrity: sha512-IxmNkCSpST2FBeHqhk1RGxcb6pF8FZMSFbPpNUi0Drx3v219gNl5Q1gOQ2TWPqblTvMO942MqSE/QlgEppshgg==}
     engines: {node: '>=16'}
 
   '@ampproject/remapping@2.2.1':
@@ -2777,11 +2777,6 @@ packages:
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
-  yaml@2.6.0:
-    resolution: {integrity: sha512-a6ae//JvKDEra2kdi1qzCyrJW/WZCgFi8ydDV+eXExl95t+5R+ijnqHJbz9tmMh8FUjx3iv2fCQ4dclAQlO2UQ==}
-    engines: {node: '>= 14'}
-    hasBin: true
-
   yaml@2.6.1:
     resolution: {integrity: sha512-7r0XPzioN/Q9kXBro/XPnA6kznR73DHq+GXh5ON7ZozRO6aMjbmiBuKste2wslTFkC5d1dw0GooOCepZXJ2SAg==}
     engines: {node: '>= 14'}
@@ -2812,10 +2807,10 @@ snapshots:
 
   '@adviser/cement@0.1.26': {}
 
-  '@adviser/cement@0.2.41(typescript@5.7.2)':
+  '@adviser/cement@0.2.44(typescript@5.7.2)':
     dependencies:
       ts-essentials: 10.0.2(typescript@5.7.2)
-      yaml: 2.6.0
+      yaml: 2.6.1
     transitivePeerDependencies:
       - typescript
 
@@ -5808,8 +5803,6 @@ snapshots:
   yallist@3.1.1: {}
 
   yallist@4.0.0: {}
-
-  yaml@2.6.0: {}
 
   yaml@2.6.1: {}
 
