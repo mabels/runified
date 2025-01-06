@@ -47,7 +47,7 @@ importers:
         version: 0.0.73
       '@google-cloud/functions-framework':
         specifier: ^3.4.2
-        version: 3.4.4
+        version: 3.4.5
       '@jest/globals':
         specifier: ^29.7.0
         version: 29.7.0
@@ -573,8 +573,8 @@ packages:
   '@fnproject/fdk@0.0.73':
     resolution: {integrity: sha512-aTYxpzD5TCvxpGisaRKYsw5ACHOpmnuFuCn8/jVpNcnSbS4HSPxptalnA1V75ldWTZTUAUJYB6Hh+eUW2/5X+Q==}
 
-  '@google-cloud/functions-framework@3.4.4':
-    resolution: {integrity: sha512-OVDuc9t1NrWvUbg25FClzuPDb5LCIVW65nBhG4YJHuBaSjclbMcr/OAqQsgxzmJxuR/sS+lo8HZyAcPAzJKX2A==}
+  '@google-cloud/functions-framework@3.4.5':
+    resolution: {integrity: sha512-mf3Yw3kRPsz0K7TytvSoqO3peuVZWPi9B3S8zacIk49zi2WqL+rjHaw4zPZ8T3O89jDsCZVj5PFpDJC6Ge4mpA==}
     engines: {node: '>=10.0.0'}
     hasBin: true
 
@@ -3264,7 +3264,7 @@ snapshots:
 
   '@fnproject/fdk@0.0.73': {}
 
-  '@google-cloud/functions-framework@3.4.4':
+  '@google-cloud/functions-framework@3.4.5':
     dependencies:
       '@types/express': 5.0.0
       body-parser: 1.20.3
