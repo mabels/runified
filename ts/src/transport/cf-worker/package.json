@@ -7,6 +7,6 @@
 		"@cloudflare/workers-types": "^4.20230518.0"
 	},
 	"dependencies": {
-		"esbuild": "^0.18.10"
+		"esbuild": "^0.25.0"
 	}
 }
