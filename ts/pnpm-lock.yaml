@@ -35,7 +35,7 @@ importers:
         version: 3.374.0
       '@azure/functions':
         specifier: ^4.5.1
-        version: 4.6.0
+        version: 4.6.1
       '@babel/preset-typescript':
         specifier: ^7.23.3
         version: 7.26.0(@babel/core@7.23.9)
@@ -132,8 +132,8 @@ packages:
     engines: {node: '>=14.0.0'}
     deprecated: This package has moved to @smithy/protocol-http
 
-  '@azure/functions@4.6.0':
-    resolution: {integrity: sha512-vGq9jXlgrJ3KaI8bepgfpk26zVY8vFZsQukF85qjjKTAR90eFOOBNaa+mc/0ViDY2lcdrU2fL/o1pQyZUtTDsw==}
+  '@azure/functions@4.6.1':
+    resolution: {integrity: sha512-Py2Az29yk+A21vHES/rL6iU3ptKB+vVz3sGTjm0jSPFjG4kPbhFLi5vFI7YkCPMGeoD4WMIjHqTAeXvnFrBUBA==}
     engines: {node: '>=18.0'}
 
   '@babel/code-frame@7.23.5':
@@ -566,8 +566,8 @@ packages:
     resolution: {integrity: sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@fastify/busboy@2.1.0':
-    resolution: {integrity: sha512-+KpH+QxZU7O4675t3mnkQKcZZg56u+K/Ct2K+N2AZYNVK8kyeo/bI18tI8aPm3tvNNRyTWfj6s5tnGNlcbQRsA==}
+  '@fastify/busboy@2.1.1':
+    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
   '@fnproject/fdk@0.0.75':
@@ -1219,6 +1219,10 @@ packages:
 
   cookie@0.7.1:
     resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
+    engines: {node: '>= 0.6'}
+
+  cookie@0.7.2:
+    resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
 
   create-jest@29.7.0:
@@ -2664,8 +2668,8 @@ packages:
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
-  undici@5.28.4:
-    resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
+  undici@5.28.5:
+    resolution: {integrity: sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==}
     engines: {node: '>=14.0'}
 
   unpipe@1.0.0:
@@ -2820,11 +2824,11 @@ snapshots:
       '@smithy/protocol-http': 1.2.0
       tslib: 2.6.2
 
-  '@azure/functions@4.6.0':
+  '@azure/functions@4.6.1':
     dependencies:
-      cookie: 0.7.1
+      cookie: 0.7.2
       long: 4.0.0
-      undici: 5.28.4
+      undici: 5.28.5
 
   '@babel/code-frame@7.23.5':
     dependencies:
@@ -3265,7 +3269,7 @@ snapshots:
 
   '@eslint/js@8.56.0': {}
 
-  '@fastify/busboy@2.1.0': {}
+  '@fastify/busboy@2.1.1': {}
 
   '@fnproject/fdk@0.0.75':
     dependencies:
@@ -4096,6 +4100,8 @@ snapshots:
   cookie-signature@1.0.6: {}
 
   cookie@0.7.1: {}
+
+  cookie@0.7.2: {}
 
   create-jest@29.7.0(@types/node@22.10.2)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.7.3)):
     dependencies:
@@ -5697,9 +5703,9 @@ snapshots:
 
   undici-types@6.20.0: {}
 
-  undici@5.28.4:
+  undici@5.28.5:
     dependencies:
-      '@fastify/busboy': 2.1.0
+      '@fastify/busboy': 2.1.1
 
   unpipe@1.0.0: {}
 
