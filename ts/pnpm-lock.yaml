@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@adviser/cement':
         specifier: ^0.3.4
-        version: 0.3.19(typescript@5.7.3)
+        version: 0.3.20(typescript@5.7.3)
       cookie:
         specifier: 0.7.1
         version: 0.7.1
@@ -119,8 +119,8 @@ packages:
     resolution: {integrity: sha512-2tDiildR5goSj/UyfNCUZ45bz4ou2gigkuY49n3vaXbkx5kVRv/kNsxAU4XoWUD/Mhw8EQGrCkopwv5AbNUatw==}
     engines: {node: '>=16'}
 
-  '@adviser/cement@0.3.19':
-    resolution: {integrity: sha512-vEAMdyzgeBbZNxIvxQgH0yMNaEneQljcgLxFrI/xmk+5ti7qDTlaDYdEdLBMmv/O3vwcIM2lqUfJnCkQtO/t3A==}
+  '@adviser/cement@0.3.20':
+    resolution: {integrity: sha512-G6YDbkmr17KAjqFwW7RC0VUha2cjlv/rojFxTrMj55Vwu4crcL3iwerP/RCpxyFZ8Sf9ypaOAX/PRuxmPoL5pw==}
     engines: {node: '>=20'}
 
   '@ampproject/remapping@2.2.1':
@@ -2802,7 +2802,7 @@ snapshots:
 
   '@adviser/cement@0.1.26': {}
 
-  '@adviser/cement@0.3.19(typescript@5.7.3)':
+  '@adviser/cement@0.3.20(typescript@5.7.3)':
     dependencies:
       ts-essentials: 10.0.4(typescript@5.7.3)
       yaml: 2.7.0
