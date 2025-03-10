@@ -35,7 +35,7 @@ importers:
         version: 3.374.0
       '@azure/functions':
         specifier: ^4.5.1
-        version: 4.6.1
+        version: 4.7.0
       '@babel/preset-typescript':
         specifier: ^7.23.3
         version: 7.26.0(@babel/core@7.23.9)
@@ -132,8 +132,8 @@ packages:
     engines: {node: '>=14.0.0'}
     deprecated: This package has moved to @smithy/protocol-http
 
-  '@azure/functions@4.6.1':
-    resolution: {integrity: sha512-Py2Az29yk+A21vHES/rL6iU3ptKB+vVz3sGTjm0jSPFjG4kPbhFLi5vFI7YkCPMGeoD4WMIjHqTAeXvnFrBUBA==}
+  '@azure/functions@4.7.0':
+    resolution: {integrity: sha512-y1caGX6LYrA7msAckQVb/quFOhWHSPiGzWfIML17t0ee2ydpinJTBF+Sti+URfLAH63dtmXJR4meraZkhhK9tw==}
     engines: {node: '>=18.0'}
 
   '@babel/code-frame@7.23.5':
@@ -2824,7 +2824,7 @@ snapshots:
       '@smithy/protocol-http': 1.2.0
       tslib: 2.6.2
 
-  '@azure/functions@4.6.1':
+  '@azure/functions@4.7.0':
     dependencies:
       cookie: 0.7.2
       long: 4.0.0
