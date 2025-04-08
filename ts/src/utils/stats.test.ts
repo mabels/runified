@@ -147,7 +147,7 @@ it("it renders value", () => {
   });
 });
 
-it("it renders single log action", async () => {
+it("it renders single log action", () => {
   const l1 = new Stats({
     sys: NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
@@ -187,10 +187,10 @@ it("it renders single log action", async () => {
     },
   };
 
-  const double = () => {
+  function double(): Date {
     myT.Time().Now();
     return myT.Time().Now();
-  };
+  }
   expect(l1.RenderCurrent()).toEqual(e1);
   l1.AddItem("v1", new DateRange(myT.Time().Now(), double()));
   l1.AddItem("v2", new DateRange(myT.Time().Now(), double()));
@@ -295,7 +295,7 @@ it("it renders single log action", async () => {
   });
 });
 
-it("it renders single time avg action", async () => {
+it("it renders single time avg action", () => {
   const l1 = new Stats({
     sys: NodeSysAbstraction({
       TimeMode: TimeMode.STEP,
@@ -316,10 +316,10 @@ it("it renders single time avg action", async () => {
 
   l1.Reset();
 
-  const double = () => {
+  function double(): Date {
     myT.Time().Now();
     return myT.Time().Now();
-  };
+  }
   expect(l1.RenderCurrent()).toEqual({});
 
   l1.AddItem("v1", new DateRangeAvg(myT.Time().Now(), double()));
@@ -437,15 +437,15 @@ it("it renders single time avg action", async () => {
   });
 });
 
-it("it renders total and resets", async () => {
+it("it renders total and resets", () => {
   const l1 = new Stats().Feature("l1");
   const myT = NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });
-  const double = () => {
+  function double(): Date {
     myT.Time().Now();
     return myT.Time().Now();
-  };
+  }
 
   l1.ValueSum("v1", 42);
   l1.ValueSum("v1", 49);

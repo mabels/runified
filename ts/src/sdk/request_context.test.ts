@@ -42,6 +42,7 @@ describe("TestRequestContext", () => {
       expect(ctx).toBeNull();
     } catch (e) {
       const res = e as ErrSdkHttpRequestFailed;
+      // eslint-disable-next-line no-console
       console.log(res);
       expect(res.Response.StatusCode).toBe(4711);
     }
@@ -87,16 +88,16 @@ describe("TestRequestContext", () => {
       .unwrap();
     const resVal = RunifiedResFactory.Builder()
       .Coerce({
-        collectionAddress: reqVal.collectionAddress!,
-        contract: reqVal.contract!,
-        id: reqVal.id!,
+        collectionAddress: reqVal.collectionAddress,
+        contract: reqVal.contract,
+        id: reqVal.id,
         price: {
           amount: {
-            raw: reqVal.price!.amount!.raw!,
+            raw: reqVal.price.amount.raw,
           },
         },
         source: {
-          name: reqVal.source!.name!,
+          name: reqVal.source.name,
         },
         tokenId: "tokenId",
         createdAt: sys.Time().Now(),

@@ -89,12 +89,12 @@ export class HttpHeader {
     }
     return values[0];
   }
-  Set(key: string, valueOr: string | string[]) {
+  Set(key: string, valueOr: string | string[]): HttpHeader {
     const value = Array.isArray(valueOr) ? valueOr : [valueOr];
     this._headers.set(this._key(key), value);
     return this;
   }
-  Add(key: string, value: string | string[] | undefined) {
+  Add(key: string, value: string | string[] | undefined): HttpHeader {
     if (typeof value === "undefined") {
       return this;
     }
@@ -107,7 +107,7 @@ export class HttpHeader {
     }
     return this;
   }
-  Del(ey: string) {
+  Del(ey: string): HttpHeader {
     this._headers.delete(this._key(ey));
     return this;
   }

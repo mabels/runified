@@ -27,7 +27,7 @@ async function handler(w: HttpResponseWriter, r: HttpRequest): Promise<void> {
   return Promise.resolve();
 }
 
-export function setupTestServer(hs: HttpServer) {
+export function setupTestServer(hs: HttpServer): HTTPHandler {
   const hp = new HTTPHandler({
     HttpServer: hs,
   });

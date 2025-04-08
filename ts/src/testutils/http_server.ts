@@ -5,7 +5,6 @@ export class MockHttpServer implements HttpServer {
   ListenAndServerFn?: (my: MockHttpServer) => Promise<void>;
   ShutdownFn?: (my: MockHttpServer) => Promise<void>;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   SetHandler(h: ActionHandler): void {
     this.Handler = h;
   }

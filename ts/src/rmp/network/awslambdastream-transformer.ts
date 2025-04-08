@@ -30,6 +30,7 @@ interface AWSStreamWriteable {
   headers: Headers;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 declare class awslambda {
   static streamifyResponse(fn: (reqS: AWSStreamReadable, resS: AWSStreamWriteable, ctx: Context) => unknown): unknown;
 }
@@ -59,12 +60,13 @@ const txtEncoder = new TextEncoder();
 function toRequest(req: AWSStreamReadable, ctx: Context): Request {
   const body: { body?: ReadableStream<Uint8Array> | undefined } = {};
   if (req.Payload) {
-    req = JSON.parse(new TextDecoder().decode(base64DecToArr(req.Payload)));
+    req = JSON.parse(txtDecoder.decode(base64DecToArr(req.Payload))) as AWSStreamReadable;
     // console.log("toRequest-payload2req", req, Object.keys(req));
   }
   if (!["GET", "HEAD"].includes(req.method || "")) {
     body.body = new ReadableStream<Uint8Array>({
-      start(controller) {
+      start(controller): void {
+        // eslint-disable-next-line no-console
         console.log("toRequest-start", req, Object.keys(req));
         controller.enqueue(txtEncoder.encode(req.body));
         controller.close();
@@ -96,7 +98,7 @@ function stream2AWSLambdaStreamResponse(
   reader: ReadableStreamDefaultReader<Uint8Array>,
   awslRes: AWSStreamReadable,
   doneFn: (err: Error | undefined) => void,
-) {
+): void {
   // console.log("stream2AWSLambdaStreamResponse-enter");
   reader
     .read()
@@ -115,13 +117,13 @@ function stream2AWSLambdaStreamResponse(
     })
     .catch((err) => {
       // console.log("stream2AWSLambdaStreamResponse-error", err);
-      doneFn(err);
+      doneFn(err as Error);
     });
 }
 
 function sendResponse(awslRes: AWSStreamReadable, pRes: Promise<Response>): Promise<void> {
   return new Promise((resolve, reject) => {
-    pRes.then((res) => {
+    void pRes.then((res) => {
       // const out = {
       //   statusCode: res.status || 200,
       //   statusMessage: res.statusText || "OK",
@@ -152,18 +154,20 @@ function sendResponse(awslRes: AWSStreamReadable, pRes: Promise<Response>): Prom
           .finished()
           .then(() => resolve())
           .catch(reject);
-      } else if (typeof (res.body as ReadableStream<Uint8Array>).getReader === "function") {
+      } else if (typeof res.body.getReader === "function") {
         // console.log("sendResponse-stream", res);
-        stream2AWSLambdaStreamResponse((res.body as ReadableStream<Uint8Array>).getReader(), awslRes, (err) => {
+        stream2AWSLambdaStreamResponse(res.body.getReader(), awslRes, (err) => {
           // console.log("sendResponse-stream-done-started", err);
           if (err) {
             // awslRes.destroy(err);
           }
           awslRes.end();
+          // eslint-disable-next-line no-console
           console.log("sendResponse-stream-done-post-end", err);
           awslRes
             .finished()
             .then(() => {
+              // eslint-disable-next-line no-console
               console.log("sendResponse-stream-done-resolved");
               resolve();
             })
@@ -178,7 +182,7 @@ function sendResponse(awslRes: AWSStreamReadable, pRes: Promise<Response>): Prom
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /*global awslambda*/
 
-export function awslambdastreamTransform(eh: EdgeHandler) {
+export function awslambdastreamTransform(eh: EdgeHandler): unknown {
   return awslambda.streamifyResponse((reqS: AWSStreamReadable, resS: AWSStreamWriteable, ctx: Context) => {
     return sendResponse(
       resS,

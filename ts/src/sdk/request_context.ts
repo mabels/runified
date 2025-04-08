@@ -79,28 +79,28 @@ export class RequestContext<QT, QI, QO, ST, SI, SO> {
     //   throw "Result is undefined";
     // }
     if (!this.RequestId) {
-      throw "RequestId is undefined";
+      throw new Error("RequestId is undefined");
     }
     if (!this.Request) {
-      throw "Request is undefined";
+      throw new Error("Request is undefined");
     }
     if (!this.Response) {
-      throw "Response is undefined";
+      throw new Error("Response is undefined");
     }
     // if (!this.Duration) {
     //   throw "Duration is undefined";
     // }
     if (!this.Response.Value) {
-      throw "Response.Value is undefined";
+      throw new Error("Response.Value is undefined");
     }
     if (!this.Request.Value) {
-      throw "Request.Value is undefined";
+      throw new Error("Request.Value is undefined");
     }
     if (!this.Request.Http) {
-      throw "Request.Http is undefined";
+      throw new Error("Request.Http is undefined");
     }
     if (!this.Response.Http) {
-      throw "Response.Http is undefined";
+      throw new Error("Response.Http is undefined");
     }
 
     return {
@@ -126,16 +126,16 @@ export class RequestContext<QT, QI, QO, ST, SI, SO> {
 
   buildStats(s: WriteableStats): Stats {
     if (!s.Start) {
-      throw "Start is undefined";
+      throw new Error("Start is undefined");
     }
     if (!s.End) {
-      throw "End is undefined";
+      throw new Error("End is undefined");
     }
     if (!s.Bytes) {
-      throw "Bytes is undefined";
+      throw new Error("Bytes is undefined");
     }
     if (!s.Length) {
-      throw "Length is undefined";
+      throw new Error("Length is undefined");
     }
     return new Stats({
       Start: s.Start,
@@ -147,7 +147,7 @@ export class RequestContext<QT, QI, QO, ST, SI, SO> {
 
   async post(path: string, requestData: QT): Promise<HttpResponse> {
     if (this._called) {
-      throw "post was already called";
+      throw new Error("post was already called");
     }
     this._called = true;
     try {
@@ -192,7 +192,7 @@ export class RequestContext<QT, QI, QO, ST, SI, SO> {
       }
       return Promise.resolve(postResponse);
     } catch (e) {
-      return Promise.reject(e);
+      return Promise.reject(e as Error);
     }
   }
 }
@@ -230,6 +230,6 @@ export async function postWithRequestContext<QT, QI, QO, ST, SI, SO>(
 
     return Promise.resolve(ctx.build());
   } catch (err) {
-    return Promise.reject(err);
+    return Promise.reject(err as Error);
   }
 }

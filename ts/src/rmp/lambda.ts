@@ -24,7 +24,7 @@ rmp.onConnect((fp, eh) => {
     return MatchState.Pass;
   });
   setTimeout(() => {
-    eh.close();
+    void eh.close();
   }, 1000);
   // eh.onClose((fp, eh) => {
   //   eh.close();

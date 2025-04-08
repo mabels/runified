@@ -7,7 +7,7 @@ import { Result } from "@adviser/cement";
 export async function testKV(kv: KeyValueStore<string>) {
   const hiStr = "hi";
 
-  let res = kv.Get("test");
+  let res = await kv.Get("test");
   expect(res).rejects.toEqual(new KeyNotFound("test"));
   res = kv.Set("test", hiStr);
   expect(res).resolves.toEqual(hiStr);

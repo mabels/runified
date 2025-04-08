@@ -33,7 +33,7 @@ class AWSResponseWriter implements HttpResponseWriter {
     this._body += this._decoder.decode(b, { stream: true });
     return Promise.resolve(b.length);
   }
-  WriteHeader(statusCode: HttpStatusCode) {
+  WriteHeader(statusCode: HttpStatusCode): void {
     this._statusCode = statusCode;
   }
   End(): Promise<void> {
@@ -71,7 +71,7 @@ const textEncoder = new TextEncoder();
 export class AWSHttpServer implements HttpServer {
   _handler?: ActionHandler;
 
-  readonly awsHandler = async (event: AWSRequest, context: { succeed: (x: AWSResponse) => void }) => {
+  readonly awsHandler = async (event: AWSRequest, context: { succeed: (x: AWSResponse) => void }): Promise<string | undefined> => {
     if (!this._handler) {
       return Promise.resolve(
         JSON.stringify({
@@ -86,7 +86,7 @@ export class AWSHttpServer implements HttpServer {
     headers = (reqHeaders.headers as { host?: string }) ?? {};
     method = reqHeaders.method ?? "GET";
     const host = headers.host ?? "localhost";
-    let url = HttpURL.parse(`http://${host}${reqHeaders.url! ?? "/"}`);
+    let url = HttpURL.parse(`http://${host}${reqHeaders.url ?? "/"}`);
     if (url.is_err()) {
       url = HttpURL.parse("http://localhost");
     }
@@ -96,7 +96,7 @@ export class AWSHttpServer implements HttpServer {
       URL: url.unwrap(),
       Method: toHttpMethods(method),
       Body: new ReadableStream<Uint8Array>({
-        start(controller) {
+        start(controller): void {
           controller.enqueue(textEncoder.encode(event.body));
           controller.close();
         },
@@ -108,7 +108,7 @@ export class AWSHttpServer implements HttpServer {
     context.succeed(res.asResponse());
   };
 
-  SetHandler(h: ActionHandler) {
+  SetHandler(h: ActionHandler): void {
     this._handler = h;
   }
   ListenAndServe(): Promise<void> {

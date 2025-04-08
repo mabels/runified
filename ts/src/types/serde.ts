@@ -23,8 +23,8 @@ export class JsonSerDe<T, I, O> implements SerDe<T> {
       if (typeof raw !== "string") {
         raw = JsonSerDe._decoder.decode(raw);
       }
-      const map = JSON.parse(raw);
-      return this._factory.Builder().Coerce(map);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return this._factory.Builder().Coerce(JSON.parse(raw));
     } catch (e) {
       return Result.Err(e as Error);
     }

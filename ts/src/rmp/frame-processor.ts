@@ -35,17 +35,21 @@ export interface Frame {
   readonly Payload: Uint8Array;
 }
 
-export enum VersionCodec {
-  "-" = "-".charCodeAt(0),
-  "Z" = "Z".charCodeAt(0),
-  "G" = "G".charCodeAt(0),
-  "L" = "L".charCodeAt(0),
-}
+export const VersionCodec = {
+  "-": "-".charCodeAt(0),
+  Z: "Z".charCodeAt(0),
+  G: "G".charCodeAt(0),
+  L: "L".charCodeAt(0),
+};
 
-export enum VersionFormat {
-  "I" = "I".charCodeAt(0), // Ion
-  "J" = "J".charCodeAt(0), // Json
-}
+export type VersionCodec = (typeof VersionCodec)[keyof typeof VersionCodec];
+
+export const VersionFormat = {
+  I: "I".charCodeAt(0), // Ion
+  J: "J".charCodeAt(0), // Json
+};
+
+export type VersionFormat = (typeof VersionFormat)[keyof typeof VersionFormat];
 
 export interface Version {
   Version: "A";
@@ -53,7 +57,7 @@ export interface Version {
   Format: VersionFormat;
 }
 
-function buildVersion(v: Version, ret: Uint8Array) {
+function buildVersion(v: Version, ret: Uint8Array): Uint8Array {
   let codec = VersionCodec["-"];
   if (v.Codec) {
     codec = v.Codec;
@@ -220,7 +224,7 @@ export class FrameProcessor {
     return headerBytes;
   }
 
-  _read(r: readBlock<FrameMetrics>) {
+  _read(r: readBlock<FrameMetrics>): void {
     if (r.block.done) {
       r.resolve(this.metrics);
       return;
@@ -247,7 +251,9 @@ export class FrameProcessor {
             });
             if (promise && typeof promise.then === "function") {
               promise
-                .then(() => {})
+                .then(() => {
+                  /* */
+                })
                 .catch((e) => {
                   console.error("FrameProcessor:match:catch:", e);
                 });
@@ -273,10 +279,10 @@ export class FrameProcessor {
   match(frameFn: (frame: Frame) => void | Promise<void>): Promise<FrameMetrics> {
     return new Promise((rs, rj) => {
       if (!this.config.inputStream) {
-        return rj("No input stream");
+        return rj(new Error("No input stream"));
       }
-      const reader = this.config.inputStream!.getReader();
-      // eslint-disable-next-line no-constant-condition
+      const reader = this.config.inputStream.getReader();
+
       // while (true) {
       reader
         .read()
@@ -346,10 +352,14 @@ export class FrameProcessor {
   // }
 
   readonly sendQueue: Uint8Array[] = [];
-  sendQueueLength: number = 0;
+  sendQueueLength = 0;
   // // disableQueue = false
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  runQueue(empty = (err: Error | undefined, fp: FrameProcessor) => {}): void {
+   
+  runQueue(
+    empty = (err: Error | undefined, fp: FrameProcessor): void => {
+      /* */
+    },
+  ): void {
     // if (!sc) {
     //   // console.log(`runQueue:NoStreamController`);
     //   this.getStreamController().then((sc) => {
@@ -368,7 +378,7 @@ export class FrameProcessor {
         .then(() => {
           this.runQueue(empty);
         })
-        .catch((err) => empty(err, this));
+        .catch((err) => empty(err as Error, this));
     } else {
       // console.log(`runQueue:empty`);
       empty(undefined, this);
@@ -381,6 +391,7 @@ export class FrameProcessor {
       // console.log('send:empty');
       return true;
     }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     if (this.sendQueue.length >= this.config.maxSendQueueBytes!) {
       // console.log('send:maxSendQueueBytes');
       return false;

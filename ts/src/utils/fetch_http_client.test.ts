@@ -3,7 +3,7 @@ import { stream2string, string2stream } from "@adviser/cement/utils";
 import { NodeHttpServer } from "../transport/node_http_server";
 import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpURL } from "../types";
 
-async function runServer(fn: (url: string) => Promise<void>) {
+async function runServer(fn: (url: string) => Promise<void>): Promise<void> {
   const handler = new HTTPHandler({
     HttpServer: new NodeHttpServer({ Port: 0 }),
   });
@@ -15,7 +15,9 @@ async function runServer(fn: (url: string) => Promise<void>) {
 
   await handler.Start();
   const srvUrl = HttpURL.parse(`http://dummy`).Ok();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   srvUrl.SetPort(handler.HttpServer().GetListenAddr()!.Port);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   srvUrl.SetHostname(handler.HttpServer().GetListenAddr()!.Addr || "localhost");
   await fn(srvUrl.String());
   await handler.Stop();

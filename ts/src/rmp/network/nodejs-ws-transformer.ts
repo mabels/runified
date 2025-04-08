@@ -71,29 +71,34 @@ export class NodeJSWSTransformer {
   //   return handleWebSocket(wsock, eh);
   // }
 
-  static serve(server: Server, eh: EdgeHandler, url = "/rmp") {
+  static serve(server: Server, eh: EdgeHandler, url = "/rmp"): Promise<void> {
     const wraps = new NodeJSWSTransformer();
     return wraps.wrapServer(server, url, eh);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  wrapServer(server: Server, url: string, eh: EdgeHandler) {
+  wrapServer(server: Server, url: string, eh: EdgeHandler): Promise<void> {
     return new Promise((resolve, reject) => {
       server.on("upgrade", (request, socket, head) => {
         let pathname = request.url ? request.url : "/";
         try {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           pathname = HttpURL.parse(request.url!).unwrap().Path;
         } catch (e) {
-          reject(e);
+          reject(e as Error);
         }
+        // eslint-disable-next-line no-console
         console.log(`upgrade:${pathname}:${url}`);
         if (pathname !== url) {
           socket.destroy();
           return;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this.wsurl.handleUpgrade(request, socket, head, (wsock) => {
+          // eslint-disable-next-line no-console
           console.log(`upgraded:`);
-          resolve(wsock);
+          // resolve(wsock);
+          resolve();
         });
       });
     });

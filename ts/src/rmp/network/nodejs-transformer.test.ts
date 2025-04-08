@@ -17,12 +17,14 @@ describe("nodejs-transformer", () => {
       server = createServer(
         nodejsTransform({
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          fetch: async (req, _env, _ctx) => {
-            return new Response(req.body, {
-              status: 200,
-              statusText: "OK",
-              headers: HttpHeader.from(req.headers).Set("Connection", "close").Add("X-Test", "Test").AsHeaderInit(),
-            });
+          fetch: (req, _env, _ctx): Promise<Response> => {
+            return Promise.resolve(
+              new Response(req.body, {
+                status: 200,
+                statusText: "OK",
+                headers: HttpHeader.from(req.headers).Set("Connection", "close").Add("X-Test", "Test").AsHeaderInit(),
+              }),
+            );
           },
         }),
       ).listen(port, () => {
@@ -66,7 +68,7 @@ describe("nodejs-transformer", () => {
 
   it("nodejs-transformer-stream-body", async () => {
     const rs = new ReadableStream<Uint8Array>({
-      start(controller) {
+      start(controller): void {
         let count = 10;
         const inter = setInterval(() => {
           controller.enqueue(new TextEncoder().encode(`msg:${count--}\n`));
@@ -89,9 +91,10 @@ describe("nodejs-transformer", () => {
     expect(res.statusText).toBe("OK");
     expect(res.headers.get("X-Test")).toBe("Test");
     expect(res.headers.get("hello")).toBe("world");
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const reader = res.body!.getReader();
     let count = 10;
-    // eslint-disable-next-line no-constant-condition
+
     while (true) {
       const { done, value: chunk } = await reader.read();
       if (done) {

@@ -9,7 +9,7 @@ export interface MockApiParams {
 }
 
 export class MockApi implements Api {
-  readonly _kvStoreMap: Map<string, KeyValueStoreBlob> = new Map();
+  readonly _kvStoreMap = new Map<string, KeyValueStoreBlob>();
   readonly _params: MockApiParams;
   readonly _log: Logger;
   constructor(params: MockApiParams) {

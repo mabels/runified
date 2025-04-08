@@ -30,7 +30,7 @@ class FetchResponseWriter implements HttpResponseWriter {
       this._responseResolve = resolve;
     });
     this._rstream = new ReadableStream<Uint8Array>({
-      start: (controller) => {
+      start: (controller): void => {
         this._rstreamController = controller;
       },
     });
@@ -56,7 +56,7 @@ class FetchResponseWriter implements HttpResponseWriter {
     this._rstreamController?.enqueue(b);
     return Promise.resolve(b.length);
   }
-  WriteHeader(statusCode: HttpStatusCode) {
+  WriteHeader(statusCode: HttpStatusCode): void {
     this._resInit.status = statusCode;
   }
   async End(): Promise<void> {
@@ -69,6 +69,7 @@ class FetchResponseWriter implements HttpResponseWriter {
       return Promise.resolve();
     }
     this._ended = true;
+    // eslint-disable-next-line @typescript-eslint/await-thenable
     await this._rstreamController?.close();
     return Promise.resolve();
   }
@@ -77,7 +78,7 @@ class FetchResponseWriter implements HttpResponseWriter {
 export class FetchHttpServer implements HttpServer {
   _handler?: ActionHandler;
 
-  SetHandler(h: ActionHandler) {
+  SetHandler(h: ActionHandler): void {
     this._handler = h;
   }
 

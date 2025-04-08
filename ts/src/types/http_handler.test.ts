@@ -34,7 +34,7 @@ it("RegisterUnregister", () => {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const hpFN = (w: HttpResponseWriter, r: HttpRequest) => {
+  const hpFN = (w: HttpResponseWriter, r: HttpRequest): Promise<void> => {
     return Promise.resolve();
   };
   let res = hp.RegisterHandler("/hi", hpFN);

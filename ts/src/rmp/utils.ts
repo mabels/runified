@@ -2,10 +2,9 @@ import { EnvelopeCtx, MatchFN } from "./envelope-handler";
 import { Envelope } from "./envelope-processor";
 import { UnregFn } from "./pony-types";
 import * as crypto from "node:crypto";
-``;
 export type UnknownFn = (...args: unknown[]) => void;
 
-export function uint6ToB64(nUint6: number) {
+export function uint6ToB64(nUint6: number): number {
   return nUint6 < 26
     ? nUint6 + 65
     : nUint6 < 52
@@ -19,7 +18,7 @@ export function uint6ToB64(nUint6: number) {
             : 65;
 }
 
-export function b64ToUint6(nChr: number) {
+export function b64ToUint6(nChr: number): number {
   return nChr > 64 && nChr < 91
     ? nChr - 65
     : nChr > 96 && nChr < 123
@@ -59,7 +58,7 @@ export function base64EncArr(aBytes: Uint8Array): string {
   return sB64Enc.substring(0, sB64Enc.length - 2 + nMod3) + (nMod3 === 2 ? "" : nMod3 === 1 ? "=" : "==");
 }
 
-export function base64DecToArr(sBase64: string, nBlocksSize: number = 0) {
+export function base64DecToArr(sBase64: string, nBlocksSize = 0): Uint8Array {
   const sB64Enc = sBase64.replace(/[^A-Za-z0-9+/]/g, "");
   const nInLen = sB64Enc.length;
   const nOutLen = nBlocksSize ? Math.ceil(((nInLen * 3 + 1) >> 2) / nBlocksSize) * nBlocksSize : (nInLen * 3 + 1) >> 2;
@@ -104,7 +103,7 @@ export function readerLoop(
   reader: ReadableStreamDefaultReader<Uint8Array>,
   writeFn: (chunk: Uint8Array) => Promise<void>,
   doneFn: (err: Error | undefined) => void,
-) {
+): void {
   reader
     .read()
     .then(({ done, value }) => {
@@ -118,7 +117,7 @@ export function readerLoop(
             readerLoop(reader, writeFn, doneFn);
           })
           .catch((err) => {
-            doneFn(err);
+            doneFn(err as Error);
           });
       } else {
         readerLoop(reader, writeFn, doneFn);
@@ -131,7 +130,7 @@ function readLoop(
   controller: ReadableStreamController<Uint8Array>,
   reader: ReadableStreamDefaultReader<Uint8Array>,
   doneFn: (err: Error | undefined, ctr?: ReadableStreamController<Uint8Array>) => void,
-) {
+): void {
   reader
     .read()
     .then(({ done, value }) => {
@@ -152,7 +151,7 @@ export function PipeWaitToClose(
   doneFn: (err: Error | undefined, ctr?: ReadableStreamController<Uint8Array>) => void,
 ): ReadableStream<Uint8Array> {
   return new ReadableStream<Uint8Array>({
-    start(controller) {
+    start(controller): void {
       const reader = src.getReader();
       readLoop(controller, reader, doneFn);
     },
@@ -160,17 +159,17 @@ export function PipeWaitToClose(
 }
 
 export class OnMatchHandler<FN extends MatchFN> {
-  readonly handlers: Map<string, FN> = new Map();
+  readonly handlers = new Map<string, FN>();
   addId(id: string, fn: FN) {
     this.handlers.set(id, fn);
-    return () => {
+    return (): void => {
       this.handlers.delete(id);
     };
   }
   add(fn: FN): UnregFn {
     return this.addId(quickId(), fn);
   }
-  invoke(id: string, ...args: unknown[]) {
+  invoke(id: string, ...args: unknown[]): boolean {
     const fn = this.handlers.get(id);
     if (fn) {
       fn(args[0] as Envelope, args[1] as EnvelopeCtx);
@@ -179,16 +178,16 @@ export class OnMatchHandler<FN extends MatchFN> {
   }
 }
 
-export function quickId(len = 12) {
+export function quickId(len = 12): string {
   const rand = crypto.getRandomValues(new Uint8Array(len));
   return base64EncArr(rand);
 }
 
 function streamToUint8ArrayArray(
-  reader: ReadableStreamDefaultReader,
+  reader: ReadableStreamDefaultReader<Uint8Array>,
   doneFn: (err: Error | undefined, r: Uint8Array[]) => void,
   result: Uint8Array[] = [],
-) {
+): void {
   reader
     .read()
     .then(({ done, value }) => {
@@ -202,11 +201,11 @@ function streamToUint8ArrayArray(
       streamToUint8ArrayArray(reader, doneFn, result);
     })
     .catch((err) => {
-      doneFn(err, result);
+      doneFn(err as Error, result);
     });
 }
 
-export function streamToUint8Array(stream: ReadableStream<Uint8Array>) {
+export function streamToUint8Array(stream: ReadableStream<Uint8Array>): Promise<Uint8Array> {
   return new Promise<Uint8Array>((resolve, reject) => {
     streamToUint8ArrayArray(stream.getReader(), (err, results) => {
       if (err) {
@@ -229,19 +228,19 @@ export function streamToUint8Array(stream: ReadableStream<Uint8Array>) {
 
 export class WaitToClose {
   awaiting: number;
-  readonly onCloses: Array<() => void> = [];
+  readonly onCloses: (() => void)[] = [];
   constructor(awaiting: number) {
     this.awaiting = awaiting;
   }
 
-  done = () => {
+  done = (): void => {
     this.awaiting--;
     if (this.awaiting <= 0) {
       this.onCloses.forEach((fn) => fn());
     }
   };
 
-  onClose(fn: () => void) {
+  onClose(fn: () => void): void {
     this.onCloses.push(fn);
   }
 }

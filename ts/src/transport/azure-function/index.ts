@@ -32,7 +32,7 @@ class AzureResponseWriter implements HttpResponseWriter {
   _ended = false;
   _contronller?: ReadableStreamDefaultController<Uint8Array>;
   readonly _body = new ReadableStream<Uint8Array>({
-    start: (controller) => {
+    start: (controller): void => {
       this._contronller = controller;
     },
   });
@@ -45,17 +45,19 @@ class AzureResponseWriter implements HttpResponseWriter {
       await this.End();
       return Promise.resolve(0);
     }
+    // eslint-disable-next-line no-console
     console.log("Write", b.length);
     this._contronller?.enqueue(b);
     return Promise.resolve(b.length);
   }
-  WriteHeader(statusCode: HttpStatusCode) {
+  WriteHeader(statusCode: HttpStatusCode): void {
     this._statusCode = statusCode;
   }
   End(): Promise<void> {
     if (this._ended) {
       return Promise.resolve();
     }
+    // eslint-disable-next-line no-console
     console.log("End");
     this._contronller?.close();
     this._ended = true;
@@ -85,6 +87,7 @@ export class AzureHttpServer implements HttpServer {
 
     const headers = HttpHeader.from(Array.from(request.headers.entries()));
     const method = request.method ?? "GET";
+    // eslint-disable-next-line no-console
     console.log("AzureHandler", request.params);
     let url = HttpURL.parse(request.url ?? "http://localhost");
     if (url.is_err()) {
@@ -103,15 +106,17 @@ export class AzureHttpServer implements HttpServer {
       this._handler
         ?.ServeHTTP(res, req)
         .then(() => {
+          // eslint-disable-next-line no-console
           console.log("ServeHTTP done");
         })
         .catch((e) => {
+          // eslint-disable-next-line no-console
           console.log("ServeHTTP error", e);
         });
     });
   };
 
-  SetHandler(h: ActionHandler) {
+  SetHandler(h: ActionHandler): void {
     this._handler = h;
   }
   ListenAndServe(): Promise<void> {

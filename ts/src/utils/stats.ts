@@ -29,14 +29,14 @@ export function renderUnitForMs(valMS: number): UnitValue {
 
 export class DateRange implements ActionItem {
   readonly _range: DateTuple;
-  _cnt: number = 1;
+  _cnt = 1;
   constructor(start: Date, end: Date) {
     this._range = { start, end };
   }
   Value(): DateTuple {
     return this._range;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   Avg(val: ValueType, cnt: number): ValueType {
     this._cnt = cnt;
     return val;
@@ -76,11 +76,11 @@ export class DateRangeAvg extends DateRange {
 
 abstract class Value implements ActionItem {
   readonly _value: number;
-  _cnt: number = 1;
+  _cnt = 1;
   constructor(value: number) {
     this._value = value;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   Avg(val: ValueType, cnt: number): ValueType {
     this._cnt = cnt;
     return val;
@@ -193,12 +193,13 @@ export class Stats {
     };
   }
 
-  Reset() {
+  Reset(): void {
     for (const child of this._children) {
       child.Reset();
     }
     this._children.splice(0, this._children.length);
     for (const key in this._stats) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete this._stats[key];
     }
   }
@@ -262,7 +263,7 @@ export class Stats {
     return ret;
   }
 
-  AddItem(name: string, ai: ActionItem) {
+  AddItem(name: string, ai: ActionItem): void {
     const key = `${this._feature}#${name}`;
     let item = this._stats[key];
     if (!item) {
@@ -282,7 +283,7 @@ export class Stats {
     //     cnt: 1,
     //   };
     // }
-    const ts = this._totalStats[key] as Writeable<ValueWithUnit>;
+    const ts = this._totalStats[key];
     ts.cnt = (ts.cnt || 0) + 1;
     ts.val = ai.Sum([ai], ts.val);
   }

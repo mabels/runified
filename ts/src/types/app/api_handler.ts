@@ -6,7 +6,7 @@ export interface ApiHandler extends CtxHandler {
   Log(): Logger; // *zerolog.Logger
   Api(): Api;
 
-  ErrorMsg(err: unknown | Error): Promise<number>;
+  ErrorMsg<T>(err: T | Error): Promise<number>;
 }
 
 export interface APIMsg<REQ, RES> extends ApiHandler {

@@ -2,7 +2,7 @@ export class SimpleBuffer {
   readonly buffer: Uint8Array[] = [];
   bufferLen = 0;
   nextOfs = 0;
-  push(chunk: Uint8Array) {
+  push(chunk: Uint8Array): void {
     if (chunk.length > 0) {
       this.buffer.push(chunk);
       this.bufferLen += chunk.length;

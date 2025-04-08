@@ -6,7 +6,7 @@ export type Env = unknown;
 
 export type UnregFn = () => void;
 
-export type ExecutionContext<T = unknown> = {
+export interface ExecutionContext<T = unknown> {
   dummy?: T;
   nodejs?: {
     request: IncomingMessage;
@@ -19,7 +19,7 @@ export type ExecutionContext<T = unknown> = {
     wsock: ws.WebSocket;
   };
   lambda?: AWSContext;
-};
+}
 
 export interface EdgeHandler<T = unknown> {
   fetch(request: Request, env: Env, ctx: ExecutionContext<T>): Promise<Response>;
@@ -33,9 +33,10 @@ export interface EdgeHandler<T = unknown> {
 //             error(e?: Error): void;
 // }
 // export type PlainFetchHandler = (request: Request, env: Env, ctx: ExecutionContext) => Response | Promise<Response>;
-export interface FetchHandler extends EdgeHandler {
-  // setFramer?(ctr: ConnectionFrameProcessor): void;
-}
+// export interface FetchHandler extends EdgeHandler {
+//   // setFramer?(ctr: ConnectionFrameProcessor): void;
+// }
+export type FetchHandlerFn = EdgeHandler;
 
 // export interface RequestInit {
 //     body?: BodyInit | null;

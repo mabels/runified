@@ -41,16 +41,16 @@ export class RMProtocol implements EdgeHandler {
   readonly onConnectFns: RMPContextFn[] = [];
   readonly onCloseFns: RMPContextFn[] = [];
 
-  onConnect(fn: RMPContextFn) {
+  onConnect(fn: RMPContextFn): void {
     this.onConnectFns.push(fn);
   }
 
-  onClose(fn: RMPContextFn) {
+  onClose(fn: RMPContextFn): void {
     this.onCloseFns.push(fn);
   }
 
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const tp = new TransformStream();
+    const tp = new TransformStream<Uint8Array, Uint8Array>();
     const fp = new FrameProcessor({
       inputStream: request.body ?? undefined,
       outputStream: tp.writable,
@@ -64,7 +64,7 @@ export class RMProtocol implements EdgeHandler {
     });
     // const cs = await fp.getStreamController();
     if (request.body) {
-      fp.match((frame) => {
+      void fp.match((frame) => {
         eh.match(frame.Payload, {
           ...ctx,
           cf: { env, ctx },

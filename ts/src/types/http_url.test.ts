@@ -44,7 +44,7 @@ describe("HttpURL", () => {
   });
 
   it("throws error on invalid url", () => {
-    expect(() => HttpURL.parse("der meister ist doof")).not.toThrowError();
+    expect(() => HttpURL.parse("der meister ist doof")).not.toThrow();
     expect(HttpURL.parse("der meister ist doof").is_err()).toBeTruthy();
   });
 

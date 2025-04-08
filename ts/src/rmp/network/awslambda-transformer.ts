@@ -13,7 +13,7 @@ function toRequest(req: HttpRequest, ctx: Context): Request {
   const body: { body?: ReadableStream<Uint8Array> } = {};
   if (!["GET", "HEAD"].includes(req.method || "")) {
     body.body = new ReadableStream<Uint8Array>({
-      start(controller) {
+      start(controller): void {
         if (typeof req.body === "string") {
           controller.enqueue(txtEncoder.encode(req.body));
         } else if (req.body instanceof Uint8Array) {
@@ -32,6 +32,7 @@ function toRequest(req: HttpRequest, ctx: Context): Request {
   }
   reqUrl = loc.Ok().String();
 
+  // eslint-disable-next-line no-console
   console.log("bla:", req.method, body);
 
   return new Request(reqUrl, {
@@ -45,7 +46,7 @@ function stream2AWSLambdaResponse(
   reader: ReadableStreamDefaultReader<Uint8Array>,
   out: Uint8Array[],
   doneFn: (err: Error | undefined) => void,
-) {
+): void {
   reader
     .read()
     .then(({ done, value }) => {
@@ -63,7 +64,7 @@ function stream2AWSLambdaResponse(
 
 function sendResponse(pRes: Promise<Response>): Promise<HttpResponse> {
   return new Promise((resolve, reject) => {
-    pRes.then((res) => {
+    void pRes.then((res) => {
       const resp = new HttpResponse({
         statusCode: res.status,
       });
@@ -80,14 +81,15 @@ function sendResponse(pRes: Promise<Response>): Promise<HttpResponse> {
       } else if (res.body.constructor === Uint8Array) {
         resp.body = txtDecoder.decode(res.body);
         resolve(resp);
-      } else if (typeof (res.body as ReadableStream<Uint8Array>).getReader === "function") {
-        const reader = res.body!.getReader();
+      } else if (typeof res.body.getReader === "function") {
+        const reader = res.body.getReader();
         if (!reader) {
           reject(new Error("No body reader"));
           return;
         }
         const out: Uint8Array[] = [];
         stream2AWSLambdaResponse(reader, out, (err) => {
+          // eslint-disable-next-line no-console
           console.log(`stream2AWSLambdaResponse done: ${err}`);
           if (err) {
             reject(err);
@@ -112,7 +114,7 @@ function sendResponse(pRes: Promise<Response>): Promise<HttpResponse> {
 /*global awslambda*/
 
 export function awslambdaTransform(eh: EdgeHandler) {
-  return async (event: unknown, ctx: Context) => {
+  return async (event: unknown, ctx: Context): Promise<HttpResponse> => {
     return sendResponse(
       eh.fetch(
         toRequest(event as HttpRequest, ctx),

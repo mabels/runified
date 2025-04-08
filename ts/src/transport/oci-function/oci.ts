@@ -55,7 +55,7 @@ class OciResponseWriter implements HttpResponseWriter {
     this._body += this._decoder.decode(b, { stream: true });
     return Promise.resolve(b.length);
   }
-  WriteHeader(statusCode: HttpStatusCode) {
+  WriteHeader(statusCode: HttpStatusCode): void {
     this._statusCode = statusCode;
   }
   End(): Promise<void> {
@@ -94,7 +94,7 @@ export class OciHttpServer implements HttpServer {
     headers = (ebody.headers as { host?: string }) ?? {};
     method = ebody.method ?? "GET";
     const host = headers.host ?? "localhost";
-    let rurl = HttpURL.parse(`http://${host}${ebody.url! ?? "/"}`);
+    let rurl = HttpURL.parse(`http://${host}${ebody.url ?? "/"}`);
     if (rurl.is_err()) {
       rurl = HttpURL.parse("http://localhost");
     }
@@ -104,7 +104,7 @@ export class OciHttpServer implements HttpServer {
       URL: HttpURL.parse(rurl).unwrap(),
       Method: toHttpMethods(method),
       Body: new ReadableStream<Uint8Array>({
-        start(controller) {
+        start(controller): void {
           controller.enqueue(textEncoder.encode(event._body.body));
           controller.close();
         },
@@ -120,7 +120,7 @@ export class OciHttpServer implements HttpServer {
     throw new Error("Method not implemented.");
   }
 
-  SetHandler(h: ActionHandler) {
+  SetHandler(h: ActionHandler): void {
     this._handler = h;
   }
   ListenAndServe(): Promise<void> {

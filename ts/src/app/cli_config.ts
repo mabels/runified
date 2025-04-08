@@ -44,8 +44,8 @@ export function FromCommandLine(args: string[]): CLIConfig {
     AppName: appName,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     KVStoreType: pargs["kv-store-type"]!,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    TimeMode: String2TimeMode(pargs["time-mode"]!),
+
+    TimeMode: String2TimeMode(pargs["time-mode"]),
     Listen: {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       Port: pargs["listen-port"]!,

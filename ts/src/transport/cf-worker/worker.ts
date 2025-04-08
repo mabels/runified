@@ -11,7 +11,7 @@ setupTestServer(fetchHttpServer);
 
 export default {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		return await fetchHttpServer.fetchHandler(request);
 	},
 };

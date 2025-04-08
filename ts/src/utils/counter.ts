@@ -33,7 +33,7 @@ export class CountingReadableStream implements ReadableStream<Uint8Array> {
   constructor(stream: ReadableStream<Uint8Array>) {
     this._stream = stream;
   }
-  get locked() {
+  get locked(): boolean {
     return this._stream.locked;
   }
   cancel(reason?: never): Promise<void> {
@@ -41,15 +41,15 @@ export class CountingReadableStream implements ReadableStream<Uint8Array> {
   }
   getReader(options: { mode: "byob" }): ReadableStreamBYOBReader;
   getReader(): ReadableStreamDefaultReader<Uint8Array>;
-  getReader(options?: ReadableStreamGetReaderOptions | undefined): ReadableStreamReader<Uint8Array>;
+  getReader(options?: ReadableStreamGetReaderOptions): ReadableStreamReader<Uint8Array>;
   getReader(options?: unknown): ReadableStreamReader<Uint8Array> {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return new reader(this._stream.getReader(options!), this);
   }
-  pipeThrough<T>(transform: ReadableWritablePair<T, Uint8Array>, options?: StreamPipeOptions | undefined): ReadableStream<T> {
+  pipeThrough<T>(transform: ReadableWritablePair<T, Uint8Array>, options?: StreamPipeOptions): ReadableStream<T> {
     return this._stream.pipeThrough(transform, options);
   }
-  pipeTo(destination: WritableStream<Uint8Array>, options?: StreamPipeOptions | undefined): Promise<void> {
+  pipeTo(destination: WritableStream<Uint8Array>, options?: StreamPipeOptions): Promise<void> {
     return this._stream.pipeTo(destination, options);
   }
   tee(): [ReadableStream<Uint8Array>, ReadableStream<Uint8Array>] {

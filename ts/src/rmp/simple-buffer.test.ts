@@ -22,7 +22,7 @@ function simepleBuffer(ba: Uint8Array, sizeFn: () => number): SimpleBuffer {
   return sb;
 }
 
-function createTestBuffer(len: number) {
+function createTestBuffer(len: number): Uint8Array {
   const values = new Uint8Array(LEN);
   const buffer = new Uint8Array(len);
   for (let i = 0; i < values.length; i++) {
@@ -43,7 +43,7 @@ function createTestBuffer(len: number) {
   return buffer;
 }
 
-function test62(sp: SimpleBuffer, buffer: Uint8Array) {
+function test62(sp: SimpleBuffer, buffer: Uint8Array): void {
   expect(sp.bufferLen).toBe(buffer.length);
   let ok = true;
   for (let i = 0; i < buffer.length; i += LEN) {

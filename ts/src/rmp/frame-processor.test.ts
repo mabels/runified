@@ -3,7 +3,7 @@ import { SimpleBuffer } from "./simple-buffer";
 
 function createStream(bas: Uint8Array[], sizeFn: () => number): ReadableStream {
   return new ReadableStream<Uint8Array>({
-    start(ctr) {
+    start(ctr): void {
       // expect(ba.length).toBe(INPUTLEN)
       for (const ba of bas) {
         for (let ofs = 0; ofs < ba.length; ) {
@@ -56,7 +56,7 @@ describe("FrameProcessor", () => {
     }).not.toThrow();
   });
   it("FrameProcessor empty", async () => {
-    const bytes = Array(10).fill(FrameProcessor.build(new Uint8Array(0)));
+    const bytes = Array(10).fill(FrameProcessor.build(new Uint8Array(0))) as Uint8Array[];
     expect(
       await new FrameProcessor({
         inputStream: createStream(bytes, () => 1),
@@ -153,7 +153,7 @@ describe("FrameProcessor", () => {
     const pks = 100;
     const fp = new FrameProcessor({
       inputStream: new ReadableStream<Uint8Array>({
-        start(ctr) {
+        start(ctr): void {
           for (let i = 0; i < pks; i++) {
             ctr.enqueue(FrameProcessor.build(new TextEncoder().encode(`InputStream:${i}`)));
           }
@@ -171,12 +171,12 @@ describe("FrameProcessor", () => {
         }
         if (onFrames >= pks) {
           let count = 0;
-          const action = () => {
+          const action = (): void => {
             expect(fp.send(new TextEncoder().encode(`AfterClose:${count++}`))).toBe(true);
             if (count < pks) {
               setTimeout(action, 1);
             } else {
-              fp.close().then((metrics) => {
+              void fp.close().then((metrics) => {
                 expect(metrics).toEqual({
                   received: { ...metrics.received, Frames: pks },
                   send: { ...metrics.send, Frames: 2 * pks },
@@ -206,7 +206,7 @@ describe("FrameProcessor", () => {
         .then((metric) => {
           resolve(metric);
         })
-        .catch((e) => reject(e));
+        .catch((e) => reject(e as Error));
     });
     const inputStreamProcessor = fp.start();
 

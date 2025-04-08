@@ -7,7 +7,7 @@ describe("test filter", () => {
   it("CountingRequestReader", async () => {
     const rs = new CountingReadableStream(
       new ReadableStream<Uint8Array>({
-        start(controller) {
+        start(controller): void {
           const encoder = new TextEncoder();
           controller.enqueue(encoder.encode("Hello"));
           controller.enqueue(encoder.encode(" "));

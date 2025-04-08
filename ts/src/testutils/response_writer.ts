@@ -12,7 +12,7 @@ export class MockResponseWriter implements HttpResponseWriter {
   Header(): HttpHeader {
     return this._header;
   }
-  WriteHeader(statusCode: number) {
+  WriteHeader(statusCode: number): void {
     this.StatusCode = statusCode;
   }
 

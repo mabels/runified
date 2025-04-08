@@ -66,6 +66,7 @@ describe("api_handler", () => {
     });
     expect(mw.StatusCode).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
     const body = mw.Body;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const errMsg = ErrorFactory.Builder().Coerce(JSON.parse(body));
     expect(errMsg.unwrap().status).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
     expect(errMsg.unwrap().requestId).toBe("wurstapi1");
@@ -101,11 +102,12 @@ describe("api_handler", () => {
       }),
     });
 
-    hdl.WriteMsg(res.unwrap());
+    await hdl.WriteMsg(res.unwrap());
 
     expect(mw.StatusCode).toBe(HttpStatusCode.OK);
     expect(mw.Header().Get("Content-Type")).toBe("application/json");
     expect(mw.Header().Get("X-Request-ID")).toBe(requestId);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const retRes = RunifiedResFactory.Builder().Coerce(JSON.parse(mw.Body));
     expect(retRes.unwrap()).toEqual(res.unwrap());
   });

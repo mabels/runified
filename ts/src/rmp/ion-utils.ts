@@ -1,7 +1,7 @@
 import { IonType, IonTypes, makeBinaryWriter, makeReader, Reader, Writer } from "ion-js";
 import { HttpHeader } from "../types";
 
-export function makeEnvelopeWriter() {
+export function makeEnvelopeWriter(): Writer {
   // return new BinaryWriter(envelopePayloadSymbols.symbolType, new Writeable());
   // return makeTextWriter();
   return makeBinaryWriter();
@@ -33,33 +33,38 @@ export function ensureReader<T>(reader: Reader | Uint8Array, actionFn: (reader: 
 export function readTuple<T>(reader: Reader, fieldName: string, fn: (type: IonType | null) => T | null): T {
   // console.log("readTuple", fieldName);
   const type = reader.next();
+  const stype = type as unknown as string;
   const fname = reader.fieldName();
   if (fname !== fieldName) {
-    throw Error(`no ${fieldName} field: ${fname}:${type}`);
+    throw Error(`no ${fieldName} field: ${fname}:${stype}`);
   }
   // type = reader.next();
   // console.log("readTuple", fieldName, type);
   const ret = fn.apply(reader, [type]);
   // console.log("readTuple-1", fieldName, ret, type)
   if (ret === null || ret === undefined) {
-    throw Error(`no ${fieldName} value found: ${type}`);
+    throw Error(`no ${fieldName} value found: ${stype}`);
   }
   return ret;
 }
 
 export function readStringTuple(reader: Reader, fieldName: string): string {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   return readTuple(reader, fieldName, reader.stringValue);
 }
 
 export function readNumberTuple(reader: Reader, fieldName: string): number {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   return readTuple(reader, fieldName, reader.numberValue);
 }
 
 export function readBlobTuple(reader: Reader, fieldName: string): Uint8Array {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   return readTuple(reader, fieldName, reader.uInt8ArrayValue);
 }
 
 export function readBoolTuple(reader: Reader, fieldName: string): boolean {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   return readTuple(reader, fieldName, reader.booleanValue);
 }
 
@@ -83,7 +88,7 @@ export function readObject(reader: Reader, type = reader.next()): unknown {
     case IonTypes.LIST: {
       reader.stepIn();
       const outA = [];
-      // eslint-disable-next-line no-constant-condition
+
       while (true) {
         const val = readObject(reader);
         if (val === null) {
@@ -121,7 +126,7 @@ export function readObject(reader: Reader, type = reader.next()): unknown {
   }
 }
 
-export function writeObject(writer: Writer, obj: unknown) {
+export function writeObject(writer: Writer, obj: unknown): void {
   if (Array.isArray(obj)) {
     // writer.writeInt("A".charCodeAt(0));
     // writer.writeInt(obj.length);

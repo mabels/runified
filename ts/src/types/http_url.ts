@@ -190,13 +190,13 @@ export class HttpURL {
   get Scheme(): string {
     return this._url.protocol;
   }
-  SetScheme(scheme: string) {
+  SetScheme(scheme: string): void {
     this._url.protocol = scheme;
   }
   get Href(): string {
     return this._url.href;
   }
-  SetHref(href: string) {
+  SetHref(href: string): void {
     this._url.href = href;
   }
   get Origin(): string {
@@ -205,25 +205,25 @@ export class HttpURL {
   get Username(): string {
     return this._url.username;
   }
-  SetUsername(username: string) {
+  SetUsername(username: string): void {
     this._url.username = username;
   }
   get Password(): string {
     return this._url.password;
   }
-  SetPassword(password: string) {
+  SetPassword(password: string): void {
     this._url.password = password;
   }
   get Host(): string {
     return this._url.host;
   }
-  SetHost(host: string) {
+  SetHost(host: string): void {
     this._url.host = host;
   }
   get Hostname(): string {
     return this._url.hostname;
   }
-  SetHostname(hostname: string) {
+  SetHostname(hostname: string): void {
     const r = IPAddress.parse(hostname);
     if (r && r.is_ipv6()) {
       hostname = `[${hostname}]`;
@@ -233,7 +233,7 @@ export class HttpURL {
   get Path(): string {
     return this._url.pathname;
   }
-  SetPath(...parts: string[]) {
+  SetPath(...parts: string[]): string {
     for (let i = 1; i < parts.length; i++) {
       if (parts[i - 1].endsWith("/")) {
         parts[i - 1] = parts[i - 1].slice(0, -1);
@@ -248,7 +248,7 @@ export class HttpURL {
   get Port(): string {
     return this._url.port;
   }
-  SetPort(port: string | number) {
+  SetPort(port: string | number): void {
     if (typeof port === "number") {
       port = port.toString();
     }
@@ -260,13 +260,13 @@ export class HttpURL {
   get Search(): string {
     return this._url.search;
   }
-  SetSearch(search: string) {
+  SetSearch(search: string): void {
     this._url.search = search;
   }
   get Hash(): string {
     return this._url.hash;
   }
-  SetHash(hash: string) {
+  SetHash(hash: string): void {
     this._url.hash = hash;
   }
 

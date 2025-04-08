@@ -35,7 +35,7 @@ class httpClient implements HttpClient {
       Body: body,
     });
   }
-  CloseIdleConnections() {
+  CloseIdleConnections(): void {
     // pass
   }
 }

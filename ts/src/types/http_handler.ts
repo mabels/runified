@@ -11,7 +11,7 @@ export interface HTTPHandlerParam {
 const textEncoder = new TextEncoder();
 export class HTTPHandler {
   readonly _params: HTTPHandlerParam;
-  readonly _handlerMap: Map<string, HttpHandlerFunc> = new Map();
+  readonly _handlerMap = new Map<string, HttpHandlerFunc>();
 
   constructor(hp: HTTPHandlerParam) {
     this._params = hp;

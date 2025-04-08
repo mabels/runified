@@ -14,7 +14,10 @@ import { HttpHeader } from "../../types/http_header";
 import { AppImpl } from "./appimpl";
 import { stream2string, string2stream } from "@adviser/cement/utils";
 
-async function startApp(sys: SysAbstraction, fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>) {
+async function startApp(
+  sys: SysAbstraction,
+  fn: (baseUrl: string, app: App, logCollector: Logger) => Promise<void>,
+): Promise<void> {
   const { logger: log } = MockLogger();
   const cliCFG = FromCommandLine(["", "--listen-port", "0"]);
   const app = new AppImpl({ Log: log, CLIconfig: cliCFG, Sys: sys });
@@ -45,6 +48,7 @@ it("TestRunifiedGetMethod()", async () => {
     const res = await hc.Do(hq);
     expect(res.StatusCode).toBe(500);
     const body = await stream2string(res.Body);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const resObj = ErrorFactory.Builder().Coerce(JSON.parse(body));
     expect(resObj.is_err()).toBe(false);
     expect(resObj.unwrap().message).toContain("is not valid JSON");
@@ -52,7 +56,6 @@ it("TestRunifiedGetMethod()", async () => {
 });
 
 it("TestRunified", async () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const sys = NodeSysAbstraction({
     TimeMode: TimeMode.STEP,
   });

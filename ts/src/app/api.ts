@@ -5,7 +5,7 @@ import { Logger } from "@adviser/cement";
 
 export class ApiImpl implements Api {
   readonly _app: App;
-  readonly _kvStoreMap: Map<string, KeyValueStoreBlob> = new Map();
+  readonly _kvStoreMap = new Map<string, KeyValueStoreBlob>();
 
   constructor(app: App) {
     this._app = app;

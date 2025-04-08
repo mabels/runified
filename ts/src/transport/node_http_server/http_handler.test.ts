@@ -2,7 +2,7 @@
 
 import { HTTPHandler, HttpRequest, HttpResponseWriter } from "../../types";
 import { NodeHttpServer } from ".";
-import { describe, expect, it } from "@jest/globals";
+// import { describe, expect, it } from "@jest/globals";
 import { FetchHttpClient } from "../../utils";
 import { HttpURL } from "../../types/http_url";
 import { stream2string, string2stream } from "@adviser/cement/utils";
@@ -67,6 +67,7 @@ describe("HTTPHandler", () => {
         const rurl = HttpURL.parse("http://dummy");
         const url = rurl.Ok();
         url.SetHostname(srvAddr?.Addr || "127.0.0.1");
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         url.SetPort(srvAddr!.Port);
         url.SetPath("/hi");
         for (let i = 0; i < loops; i++) {
@@ -110,7 +111,7 @@ describe("HTTPHandler", () => {
           });
         }
       } catch (err) {
-        return Promise.reject(err);
+        return Promise.reject(err as Error);
       } finally {
         // hc.Abort();
         await hp.Stop();

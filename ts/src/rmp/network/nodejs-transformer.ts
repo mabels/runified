@@ -7,8 +7,8 @@ function toRequest(req: IncomingMessage): Request {
   let body: ReadableStream<Uint8Array> | undefined = undefined;
   if (!["GET", "HEAD"].includes(req.method || "")) {
     body = new ReadableStream<Uint8Array>({
-      start(controller) {
-        req.on("data", (chunk) => {
+      start(controller): void {
+        req.on("data", (chunk: Uint8Array) => {
           controller.enqueue(chunk);
         });
         req.on("close", () => {
@@ -45,7 +45,7 @@ function stream2NodeResponse(
   reader: ReadableStreamDefaultReader<Uint8Array>,
   nodeRes: ServerResponse,
   doneFn: (err: Error | undefined) => void,
-) {
+): void {
   reader
     .read()
     .then(({ done, value }) => {
@@ -61,8 +61,8 @@ function stream2NodeResponse(
     .catch(doneFn);
 }
 
-function sendResponse(nodeRes: ServerResponse, pRes: Promise<Response>) {
-  pRes.then((res) => {
+function sendResponse(nodeRes: ServerResponse, pRes: Promise<Response>): void {
+  void pRes.then((res) => {
     nodeRes.statusCode = res.status || 200;
     nodeRes.statusMessage = res.statusText || "OK";
     if (res.headers) {
@@ -78,7 +78,7 @@ function sendResponse(nodeRes: ServerResponse, pRes: Promise<Response>) {
     } else if (res.body.constructor === Uint8Array) {
       nodeRes.write(res.body);
       nodeRes.end();
-    } else if (typeof (res.body as ReadableStream<Uint8Array>).getReader === "function") {
+    } else if (typeof res.body.getReader === "function") {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       return new Promise<void>((_resolve, _reject) => {
         stream2NodeResponse((res.body as ReadableStream<Uint8Array>).getReader(), nodeRes, (err) => {

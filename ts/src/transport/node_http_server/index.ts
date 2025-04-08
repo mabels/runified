@@ -26,7 +26,7 @@ class NodeResponseWriter implements HttpResponseWriter {
   Header(): HttpHeader {
     return this._header;
   }
-  setHeader() {
+  setHeader(): void {
     if (this._setHeader) {
       return;
     }
@@ -44,7 +44,7 @@ class NodeResponseWriter implements HttpResponseWriter {
     this._res.write(b);
     return Promise.resolve(b.length);
   }
-  WriteHeader(statusCode: HttpStatusCode) {
+  WriteHeader(statusCode: HttpStatusCode): void {
     this._res.statusCode = statusCode;
   }
   End(): Promise<void> {
@@ -63,14 +63,14 @@ export class NodeHttpServer implements HttpServer {
 
   _address?: AddrPort;
 
-  readonly nodeHandler = (nodeReq: IncomingMessage, nodeRes: ServerResponse) => {
+  readonly nodeHandler = (nodeReq: IncomingMessage, nodeRes: ServerResponse): void => {
     if (!this._handler) {
       nodeRes.statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR;
       nodeRes.end("No Handler");
       return;
     }
     const host = nodeReq.headers.host ?? "localhost";
-    let url = HttpURL.parse(`http://${host}${nodeReq.url!}`);
+    let url = HttpURL.parse(`http://${host}${nodeReq.url}`);
     if (url.is_err()) {
       url = HttpURL.parse("http://localhost");
     }
@@ -80,7 +80,7 @@ export class NodeHttpServer implements HttpServer {
       URL: url.unwrap(),
       Method: toHttpMethods(nodeReq.method ?? "GET"),
       Body: new ReadableStream<Uint8Array>({
-        start(controller) {
+        start(controller): void {
           nodeReq.on("error", (err: Error) => {
             controller.error(err);
           });
@@ -95,7 +95,7 @@ export class NodeHttpServer implements HttpServer {
     });
 
     const res = new NodeResponseWriter(nodeRes);
-    this._handler.ServeHTTP(res, req);
+    void this._handler.ServeHTTP(res, req);
   };
 
   readonly _listenAddr: AddrPort;
@@ -109,7 +109,7 @@ export class NodeHttpServer implements HttpServer {
     return this._address;
   }
 
-  SetHandler(h: ActionHandler) {
+  SetHandler(h: ActionHandler): void {
     this._handler = h;
   }
   ListenAndServe(): Promise<void> {
@@ -118,13 +118,13 @@ export class NodeHttpServer implements HttpServer {
     return new Promise(this._findPort());
   }
 
-  _getPort() {
+  _getPort(): number {
     if (this._listenAddr.Port <= 0) {
       return ~~(Math.random() * (65535 - 1024)) + 1024;
     }
     return this._listenAddr.Port;
   }
-  _listen(resolve: () => void) {
+  _listen(resolve: () => void): void {
     this._srv?.listen(this._getPort(), this._listenAddr.Addr, () => {
       const addr = this._srv?.address();
       if (typeof addr === "string") {
@@ -144,9 +144,10 @@ export class NodeHttpServer implements HttpServer {
   }
 
   _findPort() {
-    return (resolve: () => void, reject: (e: unknown) => void) => {
+    return (resolve: () => void, reject: (e: unknown) => void): void => {
       this._srv?.on("error", (err: Error) => {
-        if (this._listenAddr.Port <= 0 && (err as Error).message.includes("EADDRINUSE")) {
+        if (this._listenAddr.Port <= 0 && err.message.includes("EADDRINUSE")) {
+          // eslint-disable-next-line no-console
           console.warn("retry find listen");
           this._listen(resolve);
         } else {

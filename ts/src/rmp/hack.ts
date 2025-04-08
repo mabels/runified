@@ -1,6 +1,6 @@
 import http from "node:http";
 
-async function testRun() {
+function testRun(): Promise<void> {
   const port = 4711;
   const server = http.createServer((_req, res) => {
     res.end();
@@ -9,10 +9,13 @@ async function testRun() {
     socket.end("HTTP/1.1 400 Bad Request\r\n\r\n");
   });
   server.listen(port);
+  return Promise.resolve();
 }
 
 testRun()
-  .then(() => {})
-  .catch(process.stderr.write);
+  .then(() => {
+    /* */
+  })
+  .catch((e: Error) => process.stderr.write(e.message));
 
 export {};
