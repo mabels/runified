@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@adviser/cement':
-        specifier: ^0.3.4
-        version: 0.3.20(typescript@5.8.3)
+        specifier: ^0.4.10
+        version: 0.4.10(typescript@5.8.3)
       cookie:
         specifier: 0.7.1
         version: 0.7.1
@@ -119,8 +119,8 @@ packages:
     resolution: {integrity: sha512-2tDiildR5goSj/UyfNCUZ45bz4ou2gigkuY49n3vaXbkx5kVRv/kNsxAU4XoWUD/Mhw8EQGrCkopwv5AbNUatw==}
     engines: {node: '>=16'}
 
-  '@adviser/cement@0.3.20':
-    resolution: {integrity: sha512-G6YDbkmr17KAjqFwW7RC0VUha2cjlv/rojFxTrMj55Vwu4crcL3iwerP/RCpxyFZ8Sf9ypaOAX/PRuxmPoL5pw==}
+  '@adviser/cement@0.4.10':
+    resolution: {integrity: sha512-hoWdCu+Zr1eqGeR6hMZnbPWK9qATJI20luNbZQxlET/PG9jIYUTNmyTGb/NQvBUyAJ5/zCcLs/mEr8pf4C9mlQ==}
     engines: {node: '>=20'}
 
   '@ampproject/remapping@2.2.1':
@@ -138,10 +138,6 @@ packages:
 
   '@babel/code-frame@7.23.5':
     resolution: {integrity: sha512-CgH3s1a96LipHCmSUmYFPwY7MNx8C3avkq7i4Wl3cfa662ldtUe4VM1TPXX70pfmrlWTb6jLqTYrZyT2ZTJBgA==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/code-frame@7.26.0':
-    resolution: {integrity: sha512-INCKxTtbXtcNbUZ3YXutwMpEleqttcswhAdee7dhuoVrD2cnuc3PqtERBtxkX5nziX9vnBL8WXmSGwv8CuPV6g==}
     engines: {node: '>=6.9.0'}
 
   '@babel/code-frame@7.26.2':
@@ -2275,9 +2271,6 @@ packages:
   pend@1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
 
-  picocolors@1.0.0:
-    resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
-
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -2881,10 +2874,10 @@ snapshots:
 
   '@adviser/cement@0.1.26': {}
 
-  '@adviser/cement@0.3.20(typescript@5.8.3)':
+  '@adviser/cement@0.4.10(typescript@5.8.3)':
     dependencies:
       ts-essentials: 10.0.4(typescript@5.8.3)
-      yaml: 2.7.0
+      yaml: 2.7.1
     transitivePeerDependencies:
       - typescript
 
@@ -2908,12 +2901,6 @@ snapshots:
     dependencies:
       '@babel/highlight': 7.23.4
       chalk: 2.4.2
-
-  '@babel/code-frame@7.26.0':
-    dependencies:
-      '@babel/helper-validator-identifier': 7.25.9
-      js-tokens: 4.0.0
-      picocolors: 1.0.0
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -5433,8 +5420,6 @@ snapshots:
   path-type@4.0.0: {}
 
   pend@1.2.0: {}
-
-  picocolors@1.0.0: {}
 
   picocolors@1.1.1: {}
 
