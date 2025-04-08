@@ -19,7 +19,7 @@ class reader implements ReadableStreamDefaultReader<Uint8Array> {
   releaseLock(): void {
     return this._reader.releaseLock();
   }
-  get closed(): Promise<undefined> {
+  get closed(): Promise<void> {
     return this._reader.closed;
   }
   cancel(reason?: never): Promise<void> {
