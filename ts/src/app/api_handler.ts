@@ -1,9 +1,9 @@
-import { APIMsg, Api, ApiHandler as ApiHandlerIf, ApiHandlerTyped, ApiHandlerUnTyped, AppHandler } from "../types/app";
-import { ErrorFactory, HttpHandlerFunc, HttpRequest, HttpResponseWriter, HttpStatusCode } from "../types";
+import { APIMsg, Api, ApiHandler as ApiHandlerIf, ApiHandlerTyped, ApiHandlerUnTyped, AppHandler } from "../types/app/index.js";
+import { ErrorFactory, HttpHandlerFunc, HttpRequest, HttpResponseWriter, HttpStatusCode } from "../types/index.js";
 import { stream2string } from "@adviser/cement/utils";
-import { MapBrowserMethod } from "./map-browser-method";
+import { MapBrowserMethod } from "./map-browser-method.js";
 import { WuestenFactory } from "wueste/wueste";
-import { BindAppToHandler } from "./app";
+import { BindAppToHandler } from "./app.js";
 import { Logger } from "@adviser/cement";
 
 // wraps typed apihandler into untyped apihandler

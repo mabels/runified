@@ -1,7 +1,7 @@
-import { FromCommandLine } from "../../app";
-import { MockApiHandler, MockHttpRequest, MockResponseWriter } from "../../testutils";
-import { HttpMethods, HttpStatusCode } from "../../types";
-import { AllowMethods } from "./allow_methods";
+import { FromCommandLine } from "../../app.js";
+import { MockApiHandler, MockHttpRequest, MockResponseWriter } from "../../testutils.js";
+import { HttpMethods, HttpStatusCode } from "../../types/index.js";
+import { AllowMethods } from "./allow_methods.js";
 
 describe("TestAllowMethod", () => {
   it("AllowMethodEmpty", async () => {

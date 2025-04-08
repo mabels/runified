@@ -1,14 +1,14 @@
 import { MockLogger, MockLoggerReturn, TimeMode, TimeUnits } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
-import { AppHandler } from "../../types/app";
-import { FetchHttpClient } from "../../utils";
+import { AppHandler } from "../../types/app/index.js";
+import { FetchHttpClient } from "../../utils.js";
 
-import { AppImpl } from "./appimpl";
-import { FromCommandLine } from "../../app";
+import { AppImpl } from "./appimpl.js";
+import { FromCommandLine } from "../../app.js";
 // import { describe, expect, it } from "@jest/globals";
-import { DefaultHttpRequest, HttpHeader } from "../../types";
-import { globalToLocalBaseUrl } from "../global-to-local-base-url";
-import { BindAppToHandler } from "../../app/app";
+import { DefaultHttpRequest, HttpHeader } from "../../types/index.js";
+import { globalToLocalBaseUrl } from "../global-to-local-base-url.js";
+import { BindAppToHandler } from "../../app/app.js";
 import { stream2string, string2stream } from "@adviser/cement/utils";
 
 describe("App", () => {

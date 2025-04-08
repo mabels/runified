@@ -1,10 +1,10 @@
 // import { Request, Response, ReadableStream, Headers } from "@edge-runtime/ponyfill";
 import { Context } from "aws-lambda";
 // import { HttpRequest, HttpResponse } from "aws-sdk";
-import { EdgeHandler } from "../pony-types";
-import { base64EncArr } from "../utils";
+import { EdgeHandler } from "../pony-types.js";
+import { base64EncArr } from "../utils.js";
 import { HttpResponse, HttpRequest } from "@aws-sdk/protocol-http";
-import { HttpHeader, HttpURL } from "../../types";
+import { HttpHeader, HttpURL } from "../../types/index.js";
 
 const txtEncoder = new TextEncoder();
 const txtDecoder = new TextDecoder();

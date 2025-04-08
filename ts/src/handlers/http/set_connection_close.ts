@@ -1,4 +1,4 @@
-import { ApiHandler } from "../../types/app";
+import { ApiHandler } from "../../types/app/index.js";
 
 export function SetConnectionClose(api: ApiHandler): Promise<boolean> {
   const connection = api.Request().Header.Get("X-Connection");

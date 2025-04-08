@@ -1,7 +1,7 @@
-import { HttpHandlerFunc } from "./http_handler_func";
-import { HttpRequest } from "./http_request";
-import { HttpResponseWriter } from "./http_response_writer";
-import { HttpServer } from "./http_server";
+import { HttpHandlerFunc } from "./http_handler_func.js";
+import { HttpRequest } from "./http_request.js";
+import { HttpResponseWriter } from "./http_response_writer.js";
+import { HttpServer } from "./http_server.js";
 import { Result } from "@adviser/cement";
 
 export interface HTTPHandlerParam {

@@ -1,14 +1,14 @@
-import { ApiHandler, FromCommandLine } from "../../app";
-import { MockApi } from "../api";
-import { MockApp } from "../app";
-import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";
-import { RunifiedResFactory, RunifiedResFactoryImpl } from "../../generated/runifiedres";
+import { ApiHandler, FromCommandLine } from "../../app.js";
+import { MockApi } from "../api.js";
+import { MockApp } from "../app.js";
+import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq.js";
+import { RunifiedResFactory, RunifiedResFactoryImpl } from "../../generated/runifiedres.js";
 import { MockLogger, TimeMode } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
 import { string2stream } from "@adviser/cement/utils";
-import { DefaultHttpRequest, HttpStatusCode } from "../../types";
-import { ErrorFactory } from "../../generated/error";
-import { MockResponseWriter } from "../response_writer";
+import { DefaultHttpRequest, HttpStatusCode } from "../../types/index.js";
+import { ErrorFactory } from "../../generated/error.js";
+import { MockResponseWriter } from "../response_writer.js";
 
 const reqObj = {
   collectionAddress: "collectionAddress",

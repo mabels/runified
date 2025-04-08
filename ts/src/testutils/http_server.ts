@@ -1,4 +1,4 @@
-import { ActionHandler, AddrPort, HttpServer } from "../types";
+import { ActionHandler, AddrPort, HttpServer } from "../types/index.js";
 
 export class MockHttpServer implements HttpServer {
   Handler?: ActionHandler;

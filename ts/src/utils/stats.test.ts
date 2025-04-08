@@ -1,7 +1,7 @@
 import { TimeMode } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
-import { DurationUnit, ValueType, ValueWithUnit } from "../types/stats";
-import { DateRange, DateRangeAvg, Stats, renderUnitForMs } from "./stats";
+import { DurationUnit, ValueType, ValueWithUnit } from "../types/stats.js";
+import { DateRange, DateRangeAvg, Stats, renderUnitForMs } from "./stats.js";
 
 it("stats empty", () => {
   const stats = new Stats();

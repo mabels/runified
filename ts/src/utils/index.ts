@@ -1,3 +1,3 @@
-export * from "./counter";
-export * from "./stats";
-export * from "./fetch_http_client";
+export * from "./counter.js";
+export * from "./stats.js";
+export * from "./fetch_http_client.js";

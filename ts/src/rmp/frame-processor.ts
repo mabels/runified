@@ -1,5 +1,5 @@
-import { b64ToUint6, quickId, uint6ToB64 } from "./utils";
-import { SimpleBuffer } from "./simple-buffer";
+import { b64ToUint6, quickId, uint6ToB64 } from "./utils.js";
+import { SimpleBuffer } from "./simple-buffer.js";
 import { SysAbstraction } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
 

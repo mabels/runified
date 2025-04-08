@@ -1,4 +1,4 @@
-import { SimpleBuffer } from "./simple-buffer";
+import { SimpleBuffer } from "./simple-buffer.js";
 
 const LEN = 62;
 // const INPUTLEN = ~~(1024 * 1024/LEN) * LEN

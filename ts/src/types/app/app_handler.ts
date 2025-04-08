@@ -1,7 +1,7 @@
-import { HttpRequest } from "../http_request";
-import { HttpResponseWriter } from "../http_response_writer";
+import { HttpRequest } from "../http_request.js";
+import { HttpResponseWriter } from "../http_response_writer.js";
 import { Logger } from "@adviser/cement";
-import { App } from "./app";
+import { App } from "./app.js";
 
 export type AppHandlerFn = (app: AppHandler) => Promise<boolean>;
 

@@ -1,12 +1,12 @@
-import { Logger, SysAbstraction } from "@adviser/cement";
-import { CLIConfig } from "./config";
-import { HttpServer } from "../http_server";
-import { HTTPHandler } from "../http_handler";
+import { Logger, RuntimeSysAbstraction, } from "@adviser/cement";
+import { CLIConfig } from "./config.js";
+import { HttpServer } from "../http_server.js";
+import { HTTPHandler } from "../http_handler.js";
 
 export interface AppParam {
   readonly CLIconfig: CLIConfig;
   readonly Log: Logger;
-  readonly Sys?: SysAbstraction;
+  readonly Sys?: RuntimeSysAbstraction;
   readonly HttpServer?: HttpServer;
 }
 

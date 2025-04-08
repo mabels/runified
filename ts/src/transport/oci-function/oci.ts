@@ -1,6 +1,6 @@
 import fdk from "@fnproject/fdk";
 
-import { setupTestServer } from "../test-server";
+import { setupTestServer } from "../test-server.js";
 import {
   HttpRequest,
   DefaultHttpRequest,
@@ -12,7 +12,7 @@ import {
   HttpServer,
   HttpStatusCode,
   toHttpMethods,
-} from "../../types";
+} from "../../types/index.js";
 
 interface OciContext {
   _config: Record<string, string>;

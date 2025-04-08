@@ -11,9 +11,9 @@ import {
   HttpStatusCode,
   HttpURL,
   toHttpMethods,
-} from "../../types";
+} from "../../types/index.js";
 
-import { setupTestServer } from "../test-server";
+import { setupTestServer } from "../test-server.js";
 
 class AWSResponseWriter implements HttpResponseWriter {
   readonly _header: HttpHeader = new HttpHeader();

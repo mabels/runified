@@ -1,5 +1,5 @@
 import { makeBinaryWriter, makeReader } from "ion-js";
-import { readObject, writeObject } from "./ion-utils";
+import { readObject, writeObject } from "./ion-utils.js";
 
 it("ion writeObject Number", () => {
   const writer = makeBinaryWriter();

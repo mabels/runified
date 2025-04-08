@@ -1,5 +1,5 @@
-import { HttpHeader } from "./http_header";
-import { HttpURL } from "./http_url";
+import { HttpHeader } from "./http_header.js";
+import { HttpURL } from "./http_url.js";
 
 export type HttpMethods = "GET" | "POST" | "OPTIONS" | "PUT" | "DELETE" | "HEAD";
 

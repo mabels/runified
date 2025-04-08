@@ -8,12 +8,12 @@ import {
   HttpServer,
   HttpStatusCode,
   toHttpMethods,
-} from "../../types";
+} from "../../types/index.js";
 
 import { createServer, IncomingMessage, ServerResponse } from "http";
 
 import enableDestroy from "server-destroy";
-import { HttpURL } from "../../types/http_url";
+import { HttpURL } from "../../types/http_url.js";
 
 class NodeResponseWriter implements HttpResponseWriter {
   readonly _header: HttpHeader = new HttpHeader();

@@ -1,5 +1,5 @@
-import { FrameProcessor, Frame, VersionCodec, VersionFormat, FrameMetrics } from "./frame-processor";
-import { SimpleBuffer } from "./simple-buffer";
+import { FrameProcessor, Frame, VersionCodec, VersionFormat, FrameMetrics } from "./frame-processor.js";
+import { SimpleBuffer } from "./simple-buffer.js";
 
 function createStream(bas: Uint8Array[], sizeFn: () => number): ReadableStream {
   return new ReadableStream<Uint8Array>({

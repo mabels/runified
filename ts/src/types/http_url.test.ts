@@ -1,4 +1,4 @@
-import { HttpURL } from "./http_url";
+import { HttpURL } from "./http_url.js";
 
 describe("HttpURL", () => {
   it("test from string", () => {

@@ -1,8 +1,8 @@
-import { APIMsg, Api, CLIConfig } from "../types/app";
-import { HttpRequest, HttpResponseWriter } from "../types";
-import { MockApi } from "./api";
-import { MockApp } from "./app";
-import { MockResponseWriter } from "./response_writer";
+import { APIMsg, Api, CLIConfig } from "../types/app/index.js";
+import { HttpRequest, HttpResponseWriter } from "../types/index.js";
+import { MockApi } from "./api.js";
+import { MockApp } from "./app.js";
+import { MockResponseWriter } from "./response_writer.js";
 import { Logger } from "@adviser/cement";
 
 export class MockApiHandler<Q, S> implements APIMsg<Q, S> {

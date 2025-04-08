@@ -1,5 +1,5 @@
 import { TimeMode } from "@adviser/cement";
-import { FromCommandLine } from "./cli_config";
+import { FromCommandLine } from "./cli_config.js";
 
 describe("cli_config", () => {
   it("default", () => {

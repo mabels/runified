@@ -1,6 +1,6 @@
-import { FetchHttpClient } from "../utils";
+import { FetchHttpClient } from "../utils.js";
 
-import { HttpClient as HttpClientIf, HttpHeader } from "../types";
+import { HttpClient as HttpClientIf, HttpHeader } from "../types/index.js";
 import { Logger, LoggerImpl, SysAbstraction } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
 

@@ -1,10 +1,10 @@
 import { IonTypes, Reader } from "ion-js";
 
-import { Envelope, EnvelopeEncoder, ParamEnvelope, Payload } from "./envelope-processor";
-import { RMPContextFn, RMProtocolCtx } from "./rmp-protocol";
-import { FrameProcessor } from "./frame-processor";
-import { ensureReader, readBlobTuple, readNumberTuple, readStringTuple, readTuple } from "./ion-utils";
-import { OnMatchHandler, quickId } from "./utils";
+import { Envelope, EnvelopeEncoder, ParamEnvelope, Payload } from "./envelope-processor.js";
+import { RMPContextFn, RMProtocolCtx } from "./rmp-protocol.js";
+import { FrameProcessor } from "./frame-processor.js";
+import { ensureReader, readBlobTuple, readNumberTuple, readStringTuple, readTuple } from "./ion-utils.js";
+import { OnMatchHandler, quickId } from "./utils.js";
 
 export enum MatchState {
   // NotMatched = "NotMatched",

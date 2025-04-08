@@ -1,4 +1,4 @@
-import { HttpHeader } from "./http_header";
+import { HttpHeader } from "./http_header.js";
 
 export interface HttpResponseWriter {
   WriteHeader(statusCode: number): void;

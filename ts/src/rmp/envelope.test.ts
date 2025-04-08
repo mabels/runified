@@ -1,7 +1,7 @@
-import { EnvelopeHandler, MatchState } from "./envelope-handler";
-import { FrameProcessor } from "./frame-processor";
-import { RMProtocolCtx } from "./rmp-protocol";
-import { EnvelopeEncoder } from "./envelope-processor";
+import { EnvelopeHandler, MatchState } from "./envelope-handler.js";
+import { FrameProcessor } from "./frame-processor.js";
+import { RMProtocolCtx } from "./rmp-protocol.js";
+import { EnvelopeEncoder } from "./envelope-processor.js";
 import { TimeMode } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
 

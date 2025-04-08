@@ -1,4 +1,4 @@
-import { HttpHeader, HttpResponseWriter } from "../types";
+import { HttpHeader, HttpResponseWriter } from "../types/index.js";
 
 export class MockResponseWriter implements HttpResponseWriter {
   readonly _header: HttpHeader = new HttpHeader();

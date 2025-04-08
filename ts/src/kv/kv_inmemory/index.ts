@@ -1,4 +1,4 @@
-import { KeyNotFound, KeyValueStoreBlob } from "../../types/key_value";
+import { KeyNotFound, KeyValueStoreBlob } from "../../types/key_value.js";
 
 export class KVInMemory implements KeyValueStoreBlob {
   readonly _store: Map<string, Uint8Array> = new Map<string, Uint8Array>();

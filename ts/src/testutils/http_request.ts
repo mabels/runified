@@ -1,6 +1,6 @@
-import { HttpHeader } from "../types/http_header";
-import { HttpMethods, HttpRequest, HttpRequestBase } from "../types/http_request";
-import { HttpURL } from "../types/http_url";
+import { HttpHeader } from "../types/http_header.js";
+import { HttpMethods, HttpRequest, HttpRequestBase } from "../types/http_request.js";
+import { HttpURL } from "../types/http_url.js";
 
 type MockHttpRequestImplParams = Partial<HttpRequest>;
 

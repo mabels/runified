@@ -1,7 +1,7 @@
-import { FetchHttpClient } from "./fetch_http_client";
+import { FetchHttpClient } from "./fetch_http_client.js";
 import { stream2string, string2stream } from "@adviser/cement/utils";
-import { NodeHttpServer } from "../transport/node_http_server";
-import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpURL } from "../types";
+import { NodeHttpServer } from "../transport/node_http_server/index.js";
+import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpURL } from "../types/index.js";
 
 async function runServer(fn: (url: string) => Promise<void>): Promise<void> {
   const handler = new HTTPHandler({

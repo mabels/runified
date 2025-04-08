@@ -1,7 +1,7 @@
-import { KeyNotFound, KeyValueStore } from "../types/key_value";
-import { SerDe } from "../types/serde";
-import { KVInMemory } from "./kv_inmemory";
-import { WrapKvStore } from "./wrap_kv";
+import { KeyNotFound, KeyValueStore } from "../types/key_value.js";
+import { SerDe } from "../types/serde.js";
+import { KVInMemory } from "./kv_inmemory.js";
+import { WrapKvStore } from "./wrap_kv.js";
 import { Result } from "@adviser/cement";
 
 export async function testKV(kv: KeyValueStore<string>) {

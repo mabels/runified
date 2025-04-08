@@ -1,6 +1,6 @@
-import { FromCommandLine } from "../../app";
-import { MockApiHandler, MockHttpRequest } from "../../testutils";
-import { SetCorsHeader } from "./set_cors";
+import { FromCommandLine } from "../../app.js";
+import { MockApiHandler, MockHttpRequest } from "../../testutils.js";
+import { SetCorsHeader } from "./set_cors.js";
 
 describe("TestSetCors", () => {
   it("SetCors", async () => {

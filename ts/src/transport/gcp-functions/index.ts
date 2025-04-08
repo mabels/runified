@@ -1,5 +1,5 @@
-import { NodeHttpServer } from "../node_http_server/index";
-import { HTTPHandler } from "../../types";
+import { NodeHttpServer } from "../node_http_server/index.js";
+import { HTTPHandler } from "../../types/index.js";
 
 import { stream2string } from "@adviser/cement/utils";
 

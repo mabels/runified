@@ -1,10 +1,10 @@
 // TODO rename to http_handler_test.go
 
-import { HTTPHandler, HttpRequest, HttpResponseWriter } from "../../types";
+import { HTTPHandler, HttpRequest, HttpResponseWriter } from "../../types.js";
 import { NodeHttpServer } from ".";
 // import { describe, expect, it } from "@jest/globals";
-import { FetchHttpClient } from "../../utils";
-import { HttpURL } from "../../types/http_url";
+import { FetchHttpClient } from "../../utils.js";
+import { HttpURL } from "../../types/http_url.js";
 import { stream2string, string2stream } from "@adviser/cement/utils";
 describe("HTTPHandler", () => {
   it("StartStop", async () => {

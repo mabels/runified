@@ -1,7 +1,7 @@
-import { MockHttpServer } from "../testutils/http_server";
-import { HTTPHandler } from "./http_handler";
-import { HttpRequest } from "./http_request";
-import { HttpResponseWriter } from "./http_response_writer";
+import { MockHttpServer } from "../testutils/http_server.js";
+import { HTTPHandler } from "./http_handler.js";
+import { HttpRequest } from "./http_request.js";
+import { HttpResponseWriter } from "./http_response_writer.js";
 
 it("DoubleRegister", () => {
   // test 2 same path registers

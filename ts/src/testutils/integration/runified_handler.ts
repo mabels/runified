@@ -1,6 +1,6 @@
-import { RunifiedReq } from "../../generated/runifiedreq";
-import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres";
-import { APIMsg } from "../../types/app";
+import { RunifiedReq } from "../../generated/runifiedreq.js";
+import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres.js";
+import { APIMsg } from "../../types/app/index.js";
 
 export async function RunifiedHandler(api: APIMsg<RunifiedReq, RunifiedRes>): Promise<boolean> {
   api.Log().Debug().Msg("Enter-RunifiedHandler");

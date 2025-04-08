@@ -1,8 +1,8 @@
-import { FrameMetrics, FrameProcessor } from "./frame-processor";
+import { FrameMetrics, FrameProcessor } from "./frame-processor.js";
 import net from "node:net";
 import crypto from "node:crypto";
-import { base64EncArr, readerLoop } from "./utils";
-import { HttpHeader, HttpURL } from "../types";
+import { base64EncArr, readerLoop } from "./utils.js";
+import { HttpHeader, HttpURL } from "../types/index.js";
 import { Result as WuesteResult } from "@adviser/cement";
 
 export interface CrypterParam {

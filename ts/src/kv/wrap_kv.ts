@@ -1,5 +1,5 @@
-import { KeyValueStore, KeyValueStoreBlob } from "../types/key_value";
-import { SerDe } from "../types/serde";
+import { KeyValueStore, KeyValueStoreBlob } from "../types/key_value.js";
+import { SerDe } from "../types/serde.js";
 
 interface wrappedKvStoreParams<TT> {
   readonly blobStore: KeyValueStoreBlob;

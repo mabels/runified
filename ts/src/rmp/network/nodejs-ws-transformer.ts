@@ -1,7 +1,7 @@
 import { Server } from "node:http";
-import { EdgeHandler } from "../pony-types";
+import { EdgeHandler } from "../pony-types.js";
 import { WebSocketServer } from "ws";
-import { HttpURL } from "../../types";
+import { HttpURL } from "../../types/index.js";
 // import { RMPHandler } from "../rmp-protocol";
 // import { ReadableStream } from "stream/web";
 

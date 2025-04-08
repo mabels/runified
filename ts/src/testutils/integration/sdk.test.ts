@@ -1,17 +1,17 @@
 import path from "node:path";
-import { App } from "../../types/app";
-import { FromCommandLine } from "../../app";
-import { FetchHttpClient } from "../../utils";
-import { DefaultHttpRequest } from "../../types";
-import { SDKClient, postWithRequestContext } from "../../sdk";
-import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq";
-import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres";
+import { App } from "../../types/app/index.js";
+import { FromCommandLine } from "../../app.js";
+import { FetchHttpClient } from "../../utils.js";
+import { DefaultHttpRequest } from "../../types/index.js";
+import { SDKClient, postWithRequestContext } from "../../sdk.js";
+import { RunifiedReq, RunifiedReqFactory } from "../../generated/runifiedreq.js";
+import { RunifiedRes, RunifiedResFactory } from "../../generated/runifiedres.js";
 import { Logger, MockLogger, SysAbstraction, TimeMode } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
-import { ErrorFactory } from "../../generated/error";
-import { globalToLocalBaseUrl } from "../global-to-local-base-url";
-import { HttpHeader } from "../../types/http_header";
-import { AppImpl } from "./appimpl";
+import { ErrorFactory } from "../../generated/error.js";
+import { globalToLocalBaseUrl } from "../global-to-local-base-url.js";
+import { HttpHeader } from "../../types/http_header.js";
+import { AppImpl } from "./appimpl.js";
 import { stream2string, string2stream } from "@adviser/cement/utils";
 
 async function startApp(

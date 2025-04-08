@@ -1,4 +1,4 @@
-import { SysAbstraction } from "@adviser/cement";
+import { BaseSysAbstraction, RuntimeSysAbstraction } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
 import {
   ActionItem,
@@ -9,7 +9,7 @@ import {
   ValueType,
   ValueWithCount,
   ValueWithUnit,
-} from "../types/stats";
+} from "../types/stats.js";
 
 export function renderUnitForMs(valMS: number): UnitValue {
   if (valMS < 1) {
@@ -143,7 +143,7 @@ type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 export interface StatsParam {
   readonly feature?: string;
   readonly parent?: Stats;
-  readonly sys?: SysAbstraction;
+  readonly sys?: RuntimeSysAbstraction;
   readonly stats?: Record<string, ActionItem[]>;
   readonly totalStats?: Record<string, Writeable<ValueWithUnit>>;
 }
@@ -153,7 +153,7 @@ export class Stats {
   readonly _stats: Record<string, ActionItem[]> = {};
   readonly _totalStats: Record<string, Writeable<ValueWithUnit>> = {};
   readonly _children: Stats[] = [];
-  readonly _sys: SysAbstraction = undefined as unknown as SysAbstraction;
+  readonly _sys!: RuntimeSysAbstraction // = undefined as unknown as BaseSysAbstraction;
   constructor(sp?: StatsParam | string) {
     if (typeof sp === "string") {
       sp = {

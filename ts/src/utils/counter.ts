@@ -1,4 +1,4 @@
-import { HttpHeader, HttpResponseWriter } from "../types";
+import { HttpHeader, HttpResponseWriter } from "../types/index.js";
 
 export interface CountingRequestReaderParams {
   readonly R?: ReadableStream<Uint8Array>;

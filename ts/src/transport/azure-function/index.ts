@@ -10,8 +10,8 @@ import {
   HttpStatusCode,
   HttpURL,
   toHttpMethods,
-} from "../../types";
-import { setupTestServer } from "../test-server";
+} from "../../types/index.js";
+import { setupTestServer } from "../test-server.js";
 
 async function* streamAsyncIterable(stream: ReadableStream<Uint8Array>): AsyncIterable<Uint8Array> {
   const reader = stream.getReader();

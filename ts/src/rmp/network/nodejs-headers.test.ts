@@ -1,4 +1,4 @@
-import { fromNodeJS } from "./nodejs-headers";
+import { fromNodeJS } from "./nodejs-headers.js";
 
 it("NodeJS HttpHeaders", () => {
   const nh = {

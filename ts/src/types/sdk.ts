@@ -1,6 +1,6 @@
 // import { WuestenAttribute } from "wueste/wueste";
-import { HttpRequest } from "./http_request";
-import { HttpResponse } from "./http_response";
+import { HttpRequest } from "./http_request.js";
+import { HttpResponse } from "./http_response.js";
 // import { Duration } from "./time";
 
 export interface StatsValue {

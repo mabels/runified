@@ -1,5 +1,5 @@
-import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse } from "../types";
-import { HttpURL } from "../types/http_url";
+import { DefaultHttpRequest, HttpClient, HttpGetRequest, HttpHeader, HttpRequest, HttpResponse } from "../types/index.js";
+import { HttpURL } from "../types/http_url.js";
 import { string2stream, uint8array2stream } from "@adviser/cement/utils";
 
 const defaultHeader = HttpHeader.from({

@@ -1,8 +1,8 @@
-import { EnvelopeCtx, MatchState } from "./envelope-handler";
-import { Envelope } from "./envelope-processor";
-import { awslambdaTransform } from "./network/awslambda-transformer";
-import { awslambdastreamTransform } from "./network/awslambdastream-transformer";
-import { RMProtocol } from "./rmp-protocol";
+import { EnvelopeCtx, MatchState } from "./envelope-handler.js";
+import { Envelope } from "./envelope-processor.js";
+import { awslambdaTransform } from "./network/awslambda-transformer.js";
+import { awslambdastreamTransform } from "./network/awslambdastream-transformer.js";
+import { RMProtocol } from "./rmp-protocol.js";
 
 const rmp = new RMProtocol();
 

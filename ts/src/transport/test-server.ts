@@ -1,4 +1,4 @@
-import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpServer } from "../types";
+import { HTTPHandler, HttpRequest, HttpResponseWriter, HttpServer } from "../types/index.js";
 import { stream2string } from "@adviser/cement/utils";
 
 async function handler(w: HttpResponseWriter, r: HttpRequest): Promise<void> {

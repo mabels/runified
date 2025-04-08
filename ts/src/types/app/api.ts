@@ -1,6 +1,6 @@
-import { App } from "./app";
+import { App } from "./app.js";
 import { Logger } from "@adviser/cement";
-import { KeyValueStoreBlob } from "../key_value";
+import { KeyValueStoreBlob } from "../key_value.js";
 
 export interface Api {
   App(): App;

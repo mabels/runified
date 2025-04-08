@@ -1,7 +1,7 @@
-import { connectTcp, createResponseStream, DeCrypter } from "./encrypted-stream-writer";
+import { connectTcp, createResponseStream, DeCrypter } from "./encrypted-stream-writer.js";
 import net from "node:net";
 import crypto from "node:crypto";
-import { Frame, FrameProcessor } from "./frame-processor";
+import { Frame, FrameProcessor } from "./frame-processor.js";
 
 function onceServer(port = 4711, fn: (frame: Frame) => void) {
   return new Promise<void>((resolve, reject) => {

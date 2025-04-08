@@ -1,6 +1,6 @@
 import { Logger } from "@adviser/cement";
-import { Api } from "./api";
-import { CtxHandler } from "./ctx_handler";
+import { Api } from "./api.js";
+import { CtxHandler } from "./ctx_handler.js";
 
 export interface ApiHandler extends CtxHandler {
   Log(): Logger; // *zerolog.Logger

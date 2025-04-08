@@ -1,4 +1,4 @@
-import { AddrPort } from "../types";
+import { AddrPort } from "../types/index.js";
 import * as path from "node:path";
 
 export function globalToLocalBaseUrl(s: AddrPort | undefined, ...add: string[]): string {

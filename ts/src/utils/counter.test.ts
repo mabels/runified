@@ -1,6 +1,6 @@
-import { MockResponseWriter } from "../testutils";
-import { HttpHeader } from "../types";
-import { CalculateHeaderByteLength, CountingReadableStream, CountingResponseWriter, FilterHeaders } from "./counter";
+import { MockResponseWriter } from "../testutils.js";
+import { HttpHeader } from "../types.js";
+import { CalculateHeaderByteLength, CountingReadableStream, CountingResponseWriter, FilterHeaders } from "./counter.js";
 import { stream2string } from "@adviser/cement/utils";
 
 describe("test filter", () => {

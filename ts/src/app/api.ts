@@ -1,6 +1,6 @@
-import { Api, App, ErrKVStoreNotSupported } from "../types/app";
-import { KeyValueStoreBlob } from "../types";
-import { KVInMemory } from "../kv/kv_inmemory";
+import { Api, App, ErrKVStoreNotSupported } from "../types/app/index.js";
+import { KeyValueStoreBlob } from "../types/index.js";
+import { KVInMemory } from "../kv/kv_inmemory/index.js";
 import { Logger } from "@adviser/cement";
 
 export class ApiImpl implements Api {

@@ -1,4 +1,4 @@
-import { HttpHeader } from "./http_header";
+import { HttpHeader } from "./http_header.js";
 
 describe("HttpHeader", () => {
   it("Add should join different case headings to case insensitive ", () => {

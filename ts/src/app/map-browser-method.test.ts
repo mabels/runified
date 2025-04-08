@@ -1,6 +1,6 @@
-import { MockHttpRequest } from "../testutils";
-import { HttpHeader, HttpRequest } from "../types";
-import { MapBrowserMethod } from "./map-browser-method";
+import { MockHttpRequest } from "../testutils.js";
+import { HttpHeader, HttpRequest } from "../types/index.js";
+import { MapBrowserMethod } from "./map-browser-method.js";
 
 describe("TestMapBrowserMethod", () => {
   it("method", () => {

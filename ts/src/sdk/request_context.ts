@@ -9,10 +9,10 @@ import {
   SDKContext,
   SerDe,
   Stats,
-} from "../types";
-import { CalculateHeaderByteLength } from "../utils";
+} from "../types/index.js";
+import { CalculateHeaderByteLength } from "../utils.js";
 
-import { SDKClient } from "./sdk";
+import { SDKClient } from "./sdk.js";
 import { v4 } from "uuid";
 import { WuestenFactory } from "wueste/wueste";
 

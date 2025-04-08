@@ -1,9 +1,9 @@
-import { NewMockHttpClient } from "../testutils";
-import { SDKClient, SdkClientParams } from "./sdk";
-import { postWithRequestContext } from "./request_context";
-import { RunifiedReqFactory } from "../generated/runifiedreq";
-import { RunifiedResFactory } from "../generated/runifiedres";
-import { ErrSdkHttpRequestFailed, HttpHeader, JsonSerDe } from "../types";
+import { NewMockHttpClient } from "../testutils.js";
+import { SDKClient, SdkClientParams } from "./sdk.js";
+import { postWithRequestContext } from "./request_context.js";
+import { RunifiedReqFactory } from "../generated/runifiedreq.js";
+import { RunifiedResFactory } from "../generated/runifiedres.js";
+import { ErrSdkHttpRequestFailed, HttpHeader, JsonSerDe } from "../types/index.js";
 import { string2stream, uint8array2stream } from "@adviser/cement/utils";
 import { v4 } from "uuid";
 import { MockLogger, TimeMode, TimeUnits } from "@adviser/cement";

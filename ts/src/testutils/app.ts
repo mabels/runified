@@ -1,18 +1,18 @@
-import { App, CLIConfig } from "../types/app";
-import { HTTPHandler } from "../types";
-import { Logger, MockLogger, SysAbstraction } from "@adviser/cement";
+import { App, CLIConfig } from "../types/app/index.js";
+import { HTTPHandler } from "../types/index.js";
+import { Logger, MockLogger, RuntimeSysAbstraction } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
 
 interface MockAppParams {
   readonly CliConfig: CLIConfig;
   readonly Log?: Logger;
-  readonly Sys?: SysAbstraction;
+  readonly Sys?: RuntimeSysAbstraction;
 }
 
 export class MockApp implements App {
   readonly _cliConfig: CLIConfig;
   readonly _log: Logger;
-  readonly _sys: SysAbstraction;
+  readonly _sys: RuntimeSysAbstraction;
 
   constructor(params: MockAppParams) {
     this._cliConfig = params.CliConfig;

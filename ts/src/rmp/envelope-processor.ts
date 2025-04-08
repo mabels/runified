@@ -3,7 +3,7 @@ import { IonTypes, Writer } from "ion-js";
 // import { Writeable } from "ion-js/dist/commonjs/es6/IonWriteable";
 // import { BinaryReader } from "ion-js/dist/commonjs/es6/IonBinaryReader";
 // import { BinarySpan } from "ion-js/dist/commonjs/es6/IonSpan";
-import { ensureWriter } from "./ion-utils";
+import { ensureWriter } from "./ion-utils.js";
 import { SysAbstraction } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
 

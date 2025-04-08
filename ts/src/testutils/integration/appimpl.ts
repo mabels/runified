@@ -1,11 +1,11 @@
-import { Api, App, AppParam, CLIConfig } from "../../types/app";
-import { HTTPHandler } from "../../types";
-import { NodeHttpServer } from "../../transport/node_http_server";
-import { ApiImpl, WrapApiHandler } from "../../app";
-import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq";
-import { RunifiedResFactoryImpl } from "../../generated/runifiedres";
-import { RunifiedHandler } from "./runified_handler";
-import { ApiHandlers } from "../../app/app";
+import { Api, App, AppParam, CLIConfig } from "../../types/app/index.js";
+import { HTTPHandler } from "../../types/index.js";
+import { NodeHttpServer } from "../../transport/node_http_server.js";
+import { ApiImpl, WrapApiHandler } from "../../app.js";
+import { RunifiedReqFactory, RunifiedReqFactoryImpl } from "../../generated/runifiedreq.js";
+import { RunifiedResFactoryImpl } from "../../generated/runifiedres.js";
+import { RunifiedHandler } from "./runified_handler.js";
+import { ApiHandlers } from "../../app/app.js";
 import { Logger, SysAbstraction } from "@adviser/cement";
 import { NodeSysAbstraction } from "@adviser/cement/node";
 

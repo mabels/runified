@@ -1,5 +1,5 @@
 import { parse } from "ts-command-line-args";
-import { CLIConfig } from "../types/app";
+import { CLIConfig } from "../types/app/index.js";
 import { String2TimeMode } from "@adviser/cement";
 
 interface Transfer {

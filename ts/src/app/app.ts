@@ -1,9 +1,9 @@
 import { v4 } from "uuid";
-import { AllowMethods, HandleOPTIONS, SetConnectionClose, SetCorsHeader } from "../handlers/http";
-import { ApiHandlerTyped, ApiHandlerUnTyped, App, AppHandler, AppHandlerFn } from "../types/app";
-import { HttpHandlerFunc, HttpRequest, HttpResponseWriter } from "../types";
-import { CountingResponseWriter, CountingReadableStream, FilterHeaders, CalculateHeaderByteLength } from "../utils";
-import { WrapUntypedApi } from "./api_handler";
+import { AllowMethods, HandleOPTIONS, SetConnectionClose, SetCorsHeader } from "../handlers/http.js";
+import { ApiHandlerTyped, ApiHandlerUnTyped, App, AppHandler, AppHandlerFn } from "../types/app/index.js";
+import { HttpHandlerFunc, HttpRequest, HttpResponseWriter } from "../types/index.js";
+import { CountingResponseWriter, CountingReadableStream, FilterHeaders, CalculateHeaderByteLength } from "../utils.js";
+import { WrapUntypedApi } from "./api_handler.js";
 
 export function BindAppToHandler(app: App, appHandlerfn: AppHandlerFn): HttpHandlerFunc {
   return async (s: HttpResponseWriter, q: HttpRequest) => {

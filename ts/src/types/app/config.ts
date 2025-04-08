@@ -1,5 +1,5 @@
 import { TimeMode } from "@adviser/cement";
-import { AddrPort } from "../app_port";
+import { AddrPort } from "../app_port.js";
 
 export interface FireBaseConfig {
   readonly DBUrl: string;

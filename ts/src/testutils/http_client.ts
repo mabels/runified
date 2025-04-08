@@ -1,8 +1,8 @@
-import { HttpRequest } from "../types/http_request";
-import { HttpClient } from "../types/http_client";
-import { HttpResponse } from "../types/http_response";
-import { HttpHeader } from "../types/http_header";
-import { HttpURL } from "../types/http_url";
+import { HttpRequest } from "../types/http_request.js";
+import { HttpClient } from "../types/http_client.js";
+import { HttpResponse } from "../types/http_response.js";
+import { HttpHeader } from "../types/http_header.js";
+import { HttpURL } from "../types/http_url.js";
 
 class httpClient implements HttpClient {
   readonly res: HttpResponse;

@@ -1,4 +1,4 @@
-import { HttpHeader, HttpMethods, HttpRequest, HttpRequestBase, HttpURL, toHttpMethods } from "../types";
+import { HttpHeader, HttpMethods, HttpRequest, HttpRequestBase, HttpURL, toHttpMethods } from "../types/index.js";
 
 class mapBrowserMethod implements HttpRequestBase {
   readonly _req: HttpRequest;

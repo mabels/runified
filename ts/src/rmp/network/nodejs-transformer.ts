@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "node:http";
-import { fromNodeJS } from "./nodejs-headers";
-import { EdgeHandler } from "../pony-types";
-import { HttpHeader, HttpURL } from "../../types";
+import { fromNodeJS } from "./nodejs-headers.js";
+import { EdgeHandler } from "../pony-types.js";
+import { HttpHeader, HttpURL } from "../../types/index.js";
 
 function toRequest(req: IncomingMessage): Request {
   let body: ReadableStream<Uint8Array> | undefined = undefined;

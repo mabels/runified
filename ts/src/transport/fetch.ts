@@ -9,7 +9,7 @@ import {
   HttpStatusCode,
   HttpURL,
   toHttpMethods,
-} from "../types";
+} from "../types/index.js";
 
 class FetchResponseWriter implements HttpResponseWriter {
   readonly _header: HttpHeader = new HttpHeader();

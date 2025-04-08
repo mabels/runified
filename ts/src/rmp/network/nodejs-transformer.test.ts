@@ -1,6 +1,6 @@
 import { createServer, Server } from "node:http";
-import { nodejsTransform } from "./nodejs-transformer";
-import { HttpHeader } from "../../types";
+import { nodejsTransform } from "./nodejs-transformer.js";
+import { HttpHeader } from "../../types/index.js";
 import { AddressInfo } from "node:net";
 import { stream2string } from "@adviser/cement/utils";
 

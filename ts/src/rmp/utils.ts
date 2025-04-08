@@ -1,6 +1,6 @@
-import { EnvelopeCtx, MatchFN } from "./envelope-handler";
-import { Envelope } from "./envelope-processor";
-import { UnregFn } from "./pony-types";
+import { EnvelopeCtx, MatchFN } from "./envelope-handler.js";
+import { Envelope } from "./envelope-processor.js";
+import { UnregFn } from "./pony-types.js";
 import * as crypto from "node:crypto";
 export type UnknownFn = (...args: unknown[]) => void;
 

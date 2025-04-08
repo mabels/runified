@@ -1,7 +1,7 @@
-import { EdgeHandler } from "../pony-types";
+import { EdgeHandler } from "../pony-types.js";
 import { Context } from "aws-lambda";
-import { base64DecToArr } from "../utils";
-import { HttpHeader, HttpURL } from "../../types";
+import { base64DecToArr } from "../utils.js";
+import { HttpHeader, HttpURL } from "../../types/index.js";
 
 interface AWSStreamReadable {
   write(o: string | Uint8Array | null): void;

@@ -1,5 +1,5 @@
-import { HttpRequest } from "../http_request";
-import { HttpResponseWriter } from "../http_response_writer";
+import { HttpRequest } from "../http_request.js";
+import { HttpResponseWriter } from "../http_response_writer.js";
 import { Logger } from "@adviser/cement";
 
 export interface CtxHandler {

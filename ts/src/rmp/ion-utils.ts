@@ -1,5 +1,5 @@
 import { IonType, IonTypes, makeBinaryWriter, makeReader, Reader, Writer } from "ion-js";
-import { HttpHeader } from "../types";
+import { HttpHeader } from "../types/index.js";
 
 export function makeEnvelopeWriter(): Writer {
   // return new BinaryWriter(envelopePayloadSymbols.symbolType, new Writeable());

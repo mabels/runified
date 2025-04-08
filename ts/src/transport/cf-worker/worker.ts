@@ -1,8 +1,8 @@
 // esbuild --bundle --sourcemap --outdir=dist --format=esm ./worker.ts
 
 import { ExecutionContext } from "@cloudflare/workers-types";
-import { FetchHttpServer } from "../fetch";
-import { setupTestServer } from "../test-server";
+import { FetchHttpServer } from "../fetch.js";
+import { setupTestServer } from "../test-server.js";
 
 export type Env = never;
 

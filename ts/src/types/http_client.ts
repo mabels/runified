@@ -1,5 +1,5 @@
-import { HttpRequest } from "./http_request";
-import { HttpResponse } from "./http_response";
+import { HttpRequest } from "./http_request.js";
+import { HttpResponse } from "./http_response.js";
 
 export interface HttpClient {
   // CloseIdleConnections()
