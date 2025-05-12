@@ -62,7 +62,7 @@
     "esbuild": "^0.25.0",
     "eslint": "^9.24.0",
     "jest": "^29.7.0",
-    "lint-staged": "^15.2.2",
+    "lint-staged": "^16.0.0",
     "prettier": "^3.2.5",
     "server-destroy": "^1.0.1",
     "ts-command-line-args": "^2.5.1",
