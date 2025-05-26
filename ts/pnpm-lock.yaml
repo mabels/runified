@@ -35,7 +35,7 @@ importers:
     devDependencies:
       '@azure/functions':
         specifier: ^4.5.1
-        version: 4.7.0
+        version: 4.7.2
       '@babel/preset-typescript':
         specifier: ^7.23.3
         version: 7.27.0(@babel/core@7.23.9)
@@ -130,8 +130,8 @@ packages:
     resolution: {integrity: sha512-lFMjJTrFL3j7L9yBxwYfCq2k6qqwHyzuUl/XBnif78PWTJYyL/dfowQHWE3sp6U6ZzqWiiIZnpTMO96zhkjwtg==}
     engines: {node: '>=6.0.0'}
 
-  '@azure/functions@4.7.0':
-    resolution: {integrity: sha512-y1caGX6LYrA7msAckQVb/quFOhWHSPiGzWfIML17t0ee2ydpinJTBF+Sti+URfLAH63dtmXJR4meraZkhhK9tw==}
+  '@azure/functions@4.7.2':
+    resolution: {integrity: sha512-5ps8yz4gn6oZSzeQbpUreWHFYl/YS03F1Sk/pz7YJphfctRcHuLF5tcrdm9AyRiYzja4Bkd63bju+g/E27opPQ==}
     engines: {node: '>=18.0'}
 
   '@babel/code-frame@7.23.5':
@@ -2978,8 +2978,8 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
-  undici@5.28.5:
-    resolution: {integrity: sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==}
+  undici@5.29.0:
+    resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
     engines: {node: '>=14.0'}
 
   unpipe@1.0.0:
@@ -3202,11 +3202,11 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.22
 
-  '@azure/functions@4.7.0':
+  '@azure/functions@4.7.2':
     dependencies:
       cookie: 0.7.2
       long: 4.0.0
-      undici: 5.28.5
+      undici: 5.29.0
 
   '@babel/code-frame@7.23.5':
     dependencies:
@@ -6358,7 +6358,7 @@ snapshots:
 
   undici-types@6.21.0: {}
 
-  undici@5.28.5:
+  undici@5.29.0:
     dependencies:
       '@fastify/busboy': 2.1.1
 
