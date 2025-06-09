@@ -43,8 +43,8 @@ importers:
         specifier: ^4.20240208.0
         version: 4.20250407.0
       '@fnproject/fdk':
-        specifier: ^0.0.76
-        version: 0.0.76
+        specifier: ^0.0.79
+        version: 0.0.79
       '@google-cloud/functions-framework':
         specifier: ^3.4.2
         version: 3.5.1
@@ -592,8 +592,8 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  '@fnproject/fdk@0.0.76':
-    resolution: {integrity: sha512-VE08976THjuE8D4kjttY38XTMeXFDOXRIETTM++MBTK3M0L31QQnNc9shDHNJGydQtrHXS1uV6FNAiqUPvvWfA==}
+  '@fnproject/fdk@0.0.79':
+    resolution: {integrity: sha512-s9GrUisr7GkSZLEPh5D/ca1ADpqdFm5XeVlWrjoJqwY8dUbqdOfEUGV+/ySB+4JRumjyO/HDCasMk/anHOOOXA==}
 
   '@google-cloud/functions-framework@3.5.1':
     resolution: {integrity: sha512-J01F8mCAb9SEsEGOJjKR/1UHmZTzBWIBNjAETtiPx7Xie3WgeWTvMnfrbsZbaBG0oePkepRxo28R8Fi9B2J++A==}
@@ -3668,7 +3668,7 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@fnproject/fdk@0.0.76':
+  '@fnproject/fdk@0.0.79':
     dependencies:
       cross-spawn: 7.0.6
 
