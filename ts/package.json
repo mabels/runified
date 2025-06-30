@@ -52,7 +52,7 @@
     "@jest/globals": "^29.7.0",
     "@types/aws-lambda": "^8.10.133",
     "@types/jest": "^29.5.12",
-    "@types/node": "^22.8.1",
+    "@types/node": "^24.0.7",
     "@types/server-destroy": "^1.0.3",
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.5.10",
