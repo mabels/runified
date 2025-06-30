@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@adviser/cement':
         specifier: ^0.4.10
-        version: 0.4.16(typescript@5.8.3)
+        version: 0.4.20(typescript@5.8.3)
       '@smithy/protocol-http':
         specifier: ^5.1.0
         version: 5.1.2
@@ -122,8 +122,8 @@ packages:
     resolution: {integrity: sha512-2tDiildR5goSj/UyfNCUZ45bz4ou2gigkuY49n3vaXbkx5kVRv/kNsxAU4XoWUD/Mhw8EQGrCkopwv5AbNUatw==}
     engines: {node: '>=16'}
 
-  '@adviser/cement@0.4.16':
-    resolution: {integrity: sha512-giAx3ll7xeeJmR6N92Ra+j3NJRAeqye91v8uCzOZNJIsOjW4r8L/3iWiDhd7+U1CY6ro53DLPGO9uXdpUtDdig==}
+  '@adviser/cement@0.4.20':
+    resolution: {integrity: sha512-d19VRq/9EbnqRdiHnxbIRNoVC1WAbmI3mDMD/ZZcyTIIKRgpxePdJTsgmCeHL1vTA576Lmanref27CSBeiC2Ng==}
     engines: {node: '>=20'}
 
   '@ampproject/remapping@2.2.1':
@@ -3227,7 +3227,7 @@ snapshots:
 
   '@adviser/cement@0.1.26': {}
 
-  '@adviser/cement@0.4.16(typescript@5.8.3)':
+  '@adviser/cement@0.4.20(typescript@5.8.3)':
     dependencies:
       ts-essentials: 10.1.1(typescript@5.8.3)
       yaml: 2.8.0
