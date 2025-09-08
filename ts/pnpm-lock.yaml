@@ -13,7 +13,7 @@ importers:
         version: 0.4.16(typescript@5.8.3)
       '@smithy/protocol-http':
         specifier: ^5.1.0
-        version: 5.1.2
+        version: 5.2.0
       cookie:
         specifier: 0.7.1
         version: 0.7.1
@@ -862,12 +862,12 @@ packages:
   '@sinonjs/fake-timers@10.3.0':
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
 
-  '@smithy/protocol-http@5.1.2':
-    resolution: {integrity: sha512-rOG5cNLBXovxIrICSBm95dLqzfvxjEmuZx4KK3hWwPFHGdW3lxY0fZNXfv2zebfRO7sJZ5pKJYHScsqopeIWtQ==}
+  '@smithy/protocol-http@5.2.0':
+    resolution: {integrity: sha512-bwjlh5JwdOQnA01be+5UvHK4HQz4iaRKlVG46hHSJuqi0Ribt3K06Z1oQ29i35Np4G9MCDgkOGcHVyLMreMcbg==}
     engines: {node: '>=18.0.0'}
 
-  '@smithy/types@4.3.1':
-    resolution: {integrity: sha512-UqKOQBL2x6+HWl3P+3QqFD4ncKq0I8Nuz9QItGv5WuKuMHuuwlhvqcZCoXGfc+P1QmfJE7VieykoYYmrOoFJxA==}
+  '@smithy/types@4.4.0':
+    resolution: {integrity: sha512-4jY91NgZz+ZnSFcVzWwngOW6VuK3gR/ihTwSU1R/0NENe9Jd8SfWgbhDCAGUWL3bI7DiDSW7XF6Ui6bBBjrqXw==}
     engines: {node: '>=18.0.0'}
 
   '@tsconfig/node10@1.0.9':
@@ -4036,12 +4036,12 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 3.0.1
 
-  '@smithy/protocol-http@5.1.2':
+  '@smithy/protocol-http@5.2.0':
     dependencies:
-      '@smithy/types': 4.3.1
+      '@smithy/types': 4.4.0
       tslib: 2.8.1
 
-  '@smithy/types@4.3.1':
+  '@smithy/types@4.4.0':
     dependencies:
       tslib: 2.8.1
 
